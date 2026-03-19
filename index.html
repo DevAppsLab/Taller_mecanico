@@ -1,0 +1,3694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f1117">
+<title>Taller Mecánico</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* ── COLORES BASE ───────────────────────────── */
+  --bg:#0f1117;          /* fondo principal */
+  --surface:#171b26;     /* fondo secundario (topbar, cards externas) */
+  --card:#1e2335;        /* fondo de tarjetas */
+  --border:#2a2f45;      /* borde normal */
+  --border2:#353b55;     /* borde más visible */
+
+  /* ── COLOR PRIMARIO ─────────────────────────── */
+  --orange:#ff6b2b;      /* color principal de la app */
+  --orange2:#e55520;     /* versión oscura para gradientes */
+  --og:rgba(255,107,43,0.18); /* fondo suave */
+
+  /* ── COLORES DE ESTADO ──────────────────────── */
+  --blue:#3b82f6;        /* en proceso */
+  --green:#22c55e;       /* completado / al día */
+  --red:#ef4444;         /* error / eliminar */
+  --yellow:#eab308;      /* pendiente */
+  --purple:#8b5cf6;      /* entregar */
+  --purple2:#6d28d9;     /* entregar oscuro */
+
+  /* ── TEXTOS ─────────────────────────────────── */
+  --text:#f0f2f8;        /* texto principal */
+  --text2:#9aa3bf;       /* texto secundario */
+  --text3:#5a6380;       /* texto tenue */
+
+  /* ── TIPOGRAFÍA ─────────────────────────────── */
+  --font:'Barlow',sans-serif;         /* fuente principal */
+  --font-title:'Barlow Condensed',sans-serif; /* fuente títulos */
+  --font-size:clamp(19px, 2.3vw, 23px);   /* mín 19px cel, máx 23px Mac */
+  --font-size-sm:clamp(14px, 1.8vw, 18px);
+  --font-size-xs:clamp(12px, 1.4vw, 15px);
+  --font-size-lg:clamp(19px, 2.5vw, 24px);
+
+  /* ── BORDES Y ESPACIADO ─────────────────────── */
+  --r:14px;              /* border-radius tarjetas */
+  --r-sm:9px;            /* border-radius pequeño */
+  --r-btn:9px;           /* border-radius botones */
+
+  /* ── SOMBRAS ────────────────────────────────── */
+  --shadow-orange:0 4px 14px rgba(255,107,43,.4);
+  --shadow-purple:0 4px 12px rgba(139,92,246,.4);
+
+  /* ── COMPLEMENTARIOS (se sobreescriben con applyPalette) ─── */
+  --comp-bright:#7cc7e8;  /* texto badges, etiquetas destacadas */
+  --comp-muted:#3e6374;   /* fondo de iconos/emojis */
+  --comp-dark:#162126;    /* fondo cards con acento */
+}
+html{font-size:clamp(19px, 2.3vw, 23px)}
+:root{--font-offset:0px;--icon-border:rgba(255,107,43,0.25)}
+/* Íconos/emojis: fondo suave del acento (og) — visible y con carácter */
+.logo-icon{background:var(--orange)}
+.mc-icon,.cc-av,.db-item-ico,.mci-av,.arb-ico{background:var(--og);border:1px solid var(--icon-border)}
+/* Badges/etiquetas: fondo og, texto acento */
+.tb-badge,.cc-count{background:var(--og);color:var(--orange);border:1px solid var(--icon-border)}
+.sec-lbl{color:var(--orange)}
+/* Totales */
+.ctotal{background:var(--og);border:1px solid var(--icon-border);color:var(--orange)}
+/* Stat números */
+.stat .sv{color:var(--orange)}
+html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font-family:var(--font);font-size:var(--font-size);-webkit-font-smoothing:antialiased}
+#app{height:100%;display:flex;flex-direction:column;overflow:hidden}
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden}
+.screen.active{display:flex}
+.scrollbody{flex:1;overflow-y:auto;padding:10px 20px 80px}
+.scrollbody::-webkit-scrollbar{display:none}
+/* Pantallas que no deben hacer scroll — distribuyen espacio disponible */
+.fit-screen{flex:1;display:flex;flex-direction:column;padding:clamp(6px,1vw,12px) 20px 20px;gap:clamp(4px,0.6vw,8px);overflow:hidden}
+.fit-screen .sec-card{margin-bottom:0;flex-shrink:0}
+.fit-screen .btn-reg{margin-top:auto;flex-shrink:0}
+/* Admin menu items — se estiran para llenar el espacio disponible */
+.fit-screen .mc{padding:clamp(7px,1vw,12px) clamp(10px,1.5vw,16px);flex:1}
+.fit-screen .mc-icon{width:clamp(30px,3.5vw,40px);height:clamp(30px,3.5vw,40px);font-size:clamp(0.9rem,1.5vw,1.2rem);border-radius:8px}
+.fit-screen .admin-section-title{margin-bottom:clamp(3px,0.5vw,6px);margin-top:clamp(3px,0.5vw,8px)}
+.fit-screen .admin-section-title:first-child{margin-top:0}
+.fit-screen .mc-title{font-size:clamp(0.78rem,1.3vw,0.92rem)}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:clamp(8px,1.5vw,14px);padding:0 20px;
+  background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;
+  height:clamp(100px,15vw,160px);position:relative;overflow:hidden;background-size:cover;background-position:center}
+.tb-back{width:clamp(32px,4vw,42px);height:clamp(32px,4vw,42px);border-radius:var(--r-sm);background:var(--card);border:1px solid var(--border);
+  color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:clamp(1rem,2vw,1.4rem);transition:all .15s;flex-shrink:0}
+.tb-back:hover{background:var(--border);color:var(--text)}
+.tb-sync{width:clamp(54px,7vw,72px);height:clamp(54px,7vw,72px);border-radius:var(--r-sm);background:var(--card);border:1px solid var(--border);
+  color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:clamp(1.4rem,3vw,2rem);transition:all .15s;flex-shrink:0;user-select:none}
+.tb-sync:active{transform:scale(.9)}
+.sync-dot{width:clamp(7px,1vw,10px);height:clamp(7px,1vw,10px);border-radius:50%;flex-shrink:0;transition:background .3s}
+.sync-dot.ok{background:var(--green);box-shadow:0 0 5px var(--green)}
+.sync-dot.syncing{background:var(--orange);animation:pulse .8s ease-in-out infinite}
+.sync-dot.error{background:var(--red);box-shadow:0 0 5px var(--red)}
+.sync-dot.pending{background:var(--yellow)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-title{font-family:var(--font-title);font-size:clamp(1.4rem,5vw,3rem);font-weight:800;letter-spacing:.03em;flex:1;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-badge{background:var(--og);color:var(--orange);border:1px solid rgba(255,107,43,.3);
+  border-radius:20px;font-size:0.68rem;font-weight:700;padding:3px 10px;letter-spacing:.05em;flex-shrink:0}
+/* Sync wrapper — botón arriba, estado abajo */
+.sync-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.sync-chip{display:flex;align-items:center;gap:4px;font-size:clamp(0.5rem,0.9vw,0.65rem);color:var(--text3);white-space:nowrap}
+
+/* HOME */
+#screen-home{overflow-y:auto}
+.home-header{padding:0 20px;background:var(--surface);border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;height:clamp(100px,15vw,160px);display:flex;align-items:center;flex-shrink:0}
+.home-header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;
+  background:radial-gradient(circle,rgba(255,107,43,.12) 0%,transparent 70%);pointer-events:none}
+.logo{display:flex;align-items:center;gap:clamp(10px,1.8vw,16px);min-width:0;flex:1}
+.logo-icon{width:clamp(54px,8vw,106px);height:clamp(54px,8vw,106px);background:var(--orange);border-radius:clamp(10px,1.4vw,16px);display:flex;
+  align-items:center;justify-content:center;font-size:clamp(1.4rem,3.5vw,2.5rem);box-shadow:0 4px 14px rgba(255,107,43,.4);flex-shrink:0;overflow:hidden}
+.logo-text{font-family:var(--font-title);font-size:clamp(1.4rem,5vw,4rem);font-weight:800;letter-spacing:.03em;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.logo-text span{color:var(--orange)}
+.home-sub{color:var(--text2);font-size:0.75rem;margin-top:2px}
+.home-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(4px,0.8vw,8px);padding:clamp(8px,1.5vw,16px) 12px;overflow-x:auto;scrollbar-width:none}
+@media(max-width:480px){.home-stats{grid-template-columns:repeat(3,1fr)}}
+.home-stats::-webkit-scrollbar{display:none}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:clamp(9px,1.2vw,14px);padding:clamp(6px,1vw,10px) clamp(6px,1vw,10px);min-width:0;overflow:hidden}
+.stat .sv{font-family:var(--font-title);font-size:clamp(0.95rem,2.2vw,1.5rem);font-weight:800;color:var(--orange);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.stat .sl{font-size:clamp(0.45rem,0.85vw,0.6rem);color:var(--text3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.home-menu{padding:12px 20px 24px;display:flex;flex-direction:column;gap:12px}
+.mc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;
+  cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s}
+.mc:active{transform:scale(.98)}
+.mc.primary{background:linear-gradient(135deg,var(--orange),var(--orange2));border-color:transparent;
+  box-shadow:0 5px 18px var(--shadow-orange)}
+.mc.primary .mc-title{color:#fff}.mc.primary .mc-desc{color:rgba(255,255,255,.72)}.mc.primary .mc-arr{color:rgba(255,255,255,.6)}
+.mc-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.mc.primary .mc-icon{background:rgba(255,255,255,.2)}
+.mc:not(.primary) .mc-icon{background:var(--og);border:1px solid rgba(255,107,43,.2)}
+.mc-info{flex:1}.mc-title{font-size:0.9rem;font-weight:700;margin-bottom:1px}.mc-desc{font-size:0.75rem;color:var(--text2)}
+.mc-arr{font-size:1.1rem;color:var(--text3)}
+
+/* REGISTRO */
+.tabs-row{display:flex;background:var(--card);border:1px solid var(--border);border-radius:11px;
+  padding:4px;margin-bottom:18px;gap:3px}
+.tab-btn{flex:1;padding:9px;border-radius:8px;border:none;background:transparent;color:var(--text2);
+  font-family:var(--font);font-size:0.8rem;font-weight:600;cursor:pointer;transition:all .2s}
+.tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.form-sec{display:none}.form-sec.active{display:block}
+.sec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:11px 12px;margin-bottom:8px}
+.sec-lbl{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--orange);margin-bottom:12px}
+.field{margin-bottom:8px;position:relative}.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:0.68rem;font-weight:600;color:var(--text2);margin-bottom:3px;
+  text-transform:uppercase;letter-spacing:.05em}
+.field input,.field textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r-sm);padding:7px 11px;color:var(--text);font-family:var(--font);
+  font-size:0.85rem;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.field input:focus,.field textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--og)}
+.field textarea{resize:none;height:50px;line-height:1.4}
+.cost-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.totals-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:12px;margin-top:9px}
+.tr{display:flex;justify-content:space-between;align-items:center;padding:4px 0;
+  font-size:0.8rem;color:var(--text2)}
+.tr.grand{border-top:1px solid var(--border);margin-top:5px;padding-top:9px;
+  font-size:0.9rem;font-weight:700;color:var(--text)}
+.tr.grand .tv{color:var(--orange)}
+.btn-reg{width:100%;padding:15px;background:linear-gradient(135deg,var(--orange),var(--orange2));
+  border:none;border-radius:var(--r);color:#fff;font-family:var(--font-title);
+  font-size:1rem;font-weight:800;letter-spacing:.06em;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 14px var(--shadow-orange);display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-reg:active{transform:scale(.98)}.btn-reg:disabled{opacity:.4;cursor:not-allowed}
+
+/* AUTOCOMPLETE */
+.ac-wrap{position:relative}
+.ac-list{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--surface);
+  border:1.5px solid var(--border2);border-radius:var(--r-sm);z-index:100;max-height:170px;overflow-y:auto;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);display:none}
+.ac-list.open{display:block}
+.ac-item{padding:9px 13px;cursor:pointer;font-size:0.8rem;border-bottom:1px solid var(--border);
+  transition:background .1s;display:flex;align-items:center;gap:7px}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover,.ac-item.focused{background:var(--card)}
+.ac-ico{font-size:0.8rem;opacity:.55}
+
+/* SELECTOR */
+.cs-box{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);
+  padding:10px 13px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:border-color .2s}
+.cs-box.sel{border-color:var(--orange)}
+.cs-av{width:32px;height:32px;border-radius:var(--r-sm);background:var(--og);border:1px solid rgba(255,107,43,.2);
+  display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+.cs-info{flex:1}.cs-name{font-size:0.85rem;font-weight:600}.cs-car{font-size:0.68rem;color:var(--text2)}
+.cs-arr{color:var(--text3);font-size:0.9rem}
+
+/* CLIENTES */
+.search-bar{padding:10px 16px;flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--border)}
+.si-wrap{position:relative}
+.si-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:0.9rem}
+.si-wrap input{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-sm);
+  padding:9px 13px 9px 34px;color:var(--text);font-family:var(--font);font-size:0.8rem;
+  outline:none;transition:border-color .2s}
+.si-wrap input:focus{border-color:var(--orange)}
+.clients-list{flex:1;overflow-y:auto;padding:12px 20px 80px}
+.clients-list::-webkit-scrollbar{display:none}
+
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:56px 20px;color:var(--text3);text-align:center;gap:10px}
+.empty .ei{font-size:44px;opacity:.35}.empty .et{font-size:0.9rem;font-weight:600;color:var(--text2)}
+.empty .es{font-size:0.75rem}
+
+/* CLIENT CARD */
+.ccard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  margin-bottom:11px;overflow:hidden}
+.ccard-head{padding:12px 16px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.ccard-body{padding:10px 16px 14px;display:none;border-top:1px solid var(--border)}
+.ccard.expanded .ccard-body{display:block}
+.ss{height:3px;width:100%}
+.ss.pending{background:var(--yellow)}.ss.process{background:var(--blue)}.ss.done{background:var(--green)}
+.cc-head{padding:12px 14px 0}
+.cc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.cc-av{width:38px;height:38px;border-radius:10px;background:var(--og);border:1px solid rgba(255,107,43,.2);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;cursor:pointer}
+.cc-info{flex:1;min-width:0;cursor:pointer}
+.cc-name{font-size:0.85rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-car{font-size:0.68rem;color:var(--text2);margin-top:1px}
+.cc-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.cc-count{background:var(--og);color:var(--orange);border:1px solid rgba(255,107,43,.2);
+  border-radius:20px;font-size:0.62rem;font-weight:700;padding:2px 8px}
+.cc-saldo{font-size:0.68rem;font-weight:700;white-space:nowrap}
+.cc-saldo.ok{color:var(--green)}.cc-saldo.pend{color:var(--red)}
+.cc-chev{font-size:0.75rem;color:var(--text3);transition:transform .3s;cursor:pointer;flex-shrink:0;margin-left:2px}
+.ccard.expanded .cc-chev{transform:rotate(180deg)}
+.s-btns{display:flex;gap:5px;margin-bottom:10px}
+.s-btn{flex:1;padding:6px 3px;border-radius:8px;border:1.5px solid transparent;
+  font-family:var(--font);font-size:0.68rem;font-weight:700;cursor:pointer;
+  transition:all .18s;background:var(--surface);letter-spacing:.02em}
+.s-btn.pending{border-color:rgba(234,179,8,.25);color:var(--yellow)}
+.s-btn.process{border-color:rgba(59,130,246,.25);color:var(--blue)}
+.s-btn.done   {border-color:rgba(34,197,94,.25);color:var(--green)}
+.s-btn.active.pending{background:rgba(234,179,8,.14);border-color:var(--yellow)}
+.s-btn.active.process{background:rgba(59,130,246,.14);border-color:var(--blue)}
+.s-btn.active.done   {background:rgba(34,197,94,.14);border-color:var(--green)}
+.abono-inline{display:flex;align-items:center;gap:7px;padding:0 0 12px;border-bottom:1px solid var(--border)}
+.abono-inline input{flex:1;min-width:0;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:8px;padding:8px 10px;color:var(--text);font-family:var(--font);font-size:0.8rem;
+  outline:none;-webkit-appearance:none}
+.abono-inline input::placeholder{color:var(--text3)}
+.abono-inline input:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(34,197,94,.1)}
+.abo-saldo{font-size:0.68rem;font-weight:700;flex-shrink:0;white-space:nowrap}
+.abo-saldo.ok{color:var(--green)}.abo-saldo.pend{color:var(--red)}
+.btn-abo{background:var(--green);border:none;border-radius:8px;color:#fff;
+  font-family:var(--font-title);font-size:0.8rem;font-weight:800;
+  padding:8px 13px;cursor:pointer;flex-shrink:0;white-space:nowrap;letter-spacing:.04em}
+.btn-abo:hover{opacity:.86}
+.btn-entregar{background:linear-gradient(135deg,var(--purple),var(--purple2));border:none;border-radius:var(--r-sm);color:#fff;
+  font-family:var(--font-title);font-size:0.85rem;font-weight:800;padding:10px 14px;
+  cursor:pointer;width:100%;margin-top:8px;letter-spacing:.04em;box-shadow:0 4px 12px var(--shadow-purple);
+  display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-entregar:active{transform:scale(.98)}
+.cc-body{display:none}.ccard.expanded .cc-body{display:block}
+.add-rep-btn{display:flex;align-items:center;gap:7px;padding:10px 14px;background:var(--surface);
+  border:none;border-bottom:1px solid var(--border);color:var(--orange);font-family:var(--font);
+  font-size:0.75rem;font-weight:600;cursor:pointer;width:100%}
+.arb-ico{width:21px;height:21px;background:var(--og);border-radius:5px;display:flex;
+  align-items:center;justify-content:center;font-size:0.75rem}
+.rep-item{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:5px;position:relative}
+.rep-item:last-of-type{border-bottom:none}
+.rep-dt{font-size:0.6rem;font-weight:600;color:var(--text3);flex-shrink:0;white-space:nowrap}
+.rep-desc{font-size:0.8rem;font-weight:600;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rep-costs{display:flex;gap:5px;flex-shrink:0;align-items:center}
+.cbadge{background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  padding:3px 8px;font-size:0.68rem;font-weight:600;display:flex;align-items:center;gap:3px}
+.cbadge .cbl{color:var(--text3)}.cbadge .cbv{color:var(--text)}
+.ctotal{background:var(--og);border:1px solid rgba(255,107,43,.2);color:var(--orange);
+  border-radius:6px;padding:3px 8px;font-size:0.68rem;font-weight:700}
+.rep-edit-row{display:none;gap:7px;margin-top:8px;align-items:flex-end}
+.rep-item.editing .rep-edit-row{display:flex}
+.rep-item.editing .rep-costs{display:none}
+.rep-eg{flex:1;min-width:0}
+.rep-eg label{font-size:0.56rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;
+  font-weight:600;display:block;margin-bottom:3px}
+.rep-eg input{width:100%;background:var(--surface);border:1.5px solid var(--border2);
+  border-radius:7px;padding:7px 9px;color:var(--text);font-family:var(--font);font-size:0.8rem;outline:none}
+.rep-eg input:focus{border-color:var(--orange)}
+.btn-se{background:var(--green);border:none;border-radius:7px;color:#fff;font-size:0.9rem;
+  width:31px;height:31px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.rep-actions{display:flex;gap:4px;flex-shrink:0}
+.rab{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:0.75rem;border:1px solid transparent;opacity:.65;transition:opacity .15s}
+.rab:hover{opacity:1}
+.rab.edit{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.25);color:var(--blue)}
+.rab.del{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.22);color:var(--red)}
+.abonos-body{padding:10px 14px;border-top:1px solid var(--border);background:rgba(34,197,94,.03)}
+.abonos-title{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--green);margin-bottom:7px}
+.abo-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;
+  border-bottom:1px solid rgba(42,47,69,.5);font-size:0.75rem;gap:8px}
+.abo-row:last-of-type{border-bottom:none}
+.abo-info{flex:1;display:flex;align-items:center;gap:6px;min-width:0}.abo-nota{color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.abo-fecha{font-size:0.62rem;color:var(--text3);flex-shrink:0;white-space:nowrap}
+.abo-monto{color:var(--green);font-weight:700;font-size:0.8rem;flex-shrink:0}
+.abo-del{width:19px;height:19px;border-radius:5px;background:rgba(239,68,68,.1);
+  border:1px solid rgba(239,68,68,.2);color:var(--red);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;font-size:0.62rem;opacity:.6;flex-shrink:0}
+.abo-del:hover{opacity:1}
+.cc-gt{background:var(--surface);padding:10px 14px;display:flex;justify-content:space-between;
+  align-items:center;font-size:0.8rem;font-weight:700;border-top:1px solid var(--border)}
+.cc-gt .gtl{color:var(--text2)}.cc-gt .gtv{color:var(--orange);font-size:0.9rem}
+
+/* MENSUAL */
+.month-list{flex:1;overflow-y:auto;padding:12px 16px 80px}
+.month-list::-webkit-scrollbar{display:none}
+.mcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  margin-bottom:10px;overflow:hidden;cursor:pointer}
+.mcard-head{display:flex;align-items:center;padding:14px;gap:12px}
+.mcard-ico{width:42px;height:42px;background:var(--og);border:1px solid rgba(255,107,43,.2);
+  border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.mcard-info{flex:1}
+.mcard-name{font-family:var(--font-title);font-size:1.1rem;font-weight:800;letter-spacing:.02em}
+.mcard-sub{font-size:0.75rem;color:var(--text2);margin-top:1px}
+.mcard-right{text-align:right;flex-shrink:0}
+.mcard-total{font-family:var(--font-title);font-size:1.2rem;font-weight:800;color:var(--orange)}
+.mcard-chev{font-size:0.75rem;color:var(--text3);margin-top:3px;transition:transform .3s}
+.mcard.open .mcard-chev{transform:rotate(180deg)}
+.mcard-body{display:none;border-top:1px solid var(--border)}
+.mcard.open .mcard-body{display:block}
+.mcr{padding:12px 14px;border-bottom:1px solid var(--border)}
+.mcr:last-child{border-bottom:none}
+.mcr-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.mcr-nm{font-size:0.8rem;font-weight:700}.mcr-car{font-size:0.68rem;color:var(--text2)}
+.mcr-tot{font-size:0.85rem;font-weight:800;color:var(--green)}
+.mcr-reps{display:flex;flex-direction:column;gap:3px}
+.mcr-rep{display:flex;justify-content:space-between;align-items:center;font-size:0.75rem;
+  color:var(--text2);padding:3px 0;border-bottom:1px solid rgba(42,47,69,.4)}
+.mcr-rep:last-child{border-bottom:none}
+/* Semana acordeón */
+.weeks-row{display:flex;gap:6px;padding:8px 10px 0}
+.week-block{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm) var(--r-sm) 0 0;overflow:hidden;cursor:pointer}
+.week-block.active-week{background:rgba(255,107,43,.08);border-color:var(--orange);border-bottom-color:var(--card)}
+.week-head{padding:7px 8px;text-align:center}
+.week-head:active{opacity:.7}
+.week-label{font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--orange);display:block;margin-bottom:2px;white-space:nowrap}
+.week-amount{font-size:0.75rem;font-weight:800;color:var(--text);display:block}
+.week-detail{display:none;border-top:2px solid var(--orange);background:var(--card);margin:0 10px 8px;border-radius:0 0 var(--r-sm) var(--r-sm);border:1px solid var(--border);border-top:2px solid var(--orange)}
+.week-detail.open{display:block}
+/* Cliente acordeón */
+.cli-block{border-bottom:1px solid var(--border)}
+.cli-block:last-child{border-bottom:none}
+.cli-head{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;
+  cursor:pointer;user-select:none}
+.cli-head:active{background:var(--card)}
+.cli-info{flex:1;min-width:0}
+.cli-nm{font-size:0.8rem;font-weight:700}
+.cli-car{font-size:0.68rem;color:var(--text2);margin-top:1px}
+.cli-right{text-align:right;flex-shrink:0;display:flex;align-items:center;gap:8px}
+.cli-tot{font-size:0.85rem;font-weight:800;color:var(--green)}
+.cli-chev{font-size:0.68rem;color:var(--text3);transition:transform .25s}
+.cli-block.open .cli-chev{transform:rotate(180deg)}
+.cli-body{display:none;padding:0 14px 12px;background:var(--surface)}
+.cli-block.open .cli-body{display:block}
+.rep-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(42,47,69,.4);font-size:0.75rem}
+.rep-row:last-child{border-bottom:none}
+.rep-row-info{flex:1;min-width:0;display:flex;align-items:center;gap:8px;overflow:hidden}
+.rep-row-desc{color:var(--text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1}
+.rep-row-sub{color:var(--text3);font-size:0.62rem;white-space:nowrap;flex-shrink:0}
+.rep-row-total{color:var(--orange);font-weight:700;font-size:0.8rem;flex-shrink:0;margin-left:auto}
+.mcr-rep-d{flex:1;margin-right:8px}.mcr-rep-a{color:var(--text);font-weight:600;flex-shrink:0}
+.mcr-rep-t{font-size:0.62rem;color:var(--text3);flex-shrink:0;margin-left:5px}
+
+/* ADMIN */
+.admin-section-title{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--text3);margin-bottom:12px;margin-top:4px}
+.danger-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);
+  border-radius:var(--r);padding:16px;margin-bottom:12px}
+.danger-title{font-size:0.85rem;font-weight:700;color:var(--red);margin-bottom:4px}
+.danger-desc{font-size:0.75rem;color:var(--text2);margin-bottom:14px;line-height:1.6}
+.btn-danger{background:var(--red);border:none;border-radius:var(--r-sm);color:#fff;
+  font-family:var(--font-title);font-size:0.95rem;font-weight:800;
+  padding:12px 20px;cursor:pointer;letter-spacing:.04em;width:100%}
+
+/* DB ITEMS */
+.db-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;margin-bottom:9px}
+.db-item-head{display:flex;align-items:flex-start;gap:10px}
+.db-item-ico{width:36px;height:36px;border-radius:var(--r-sm);background:var(--og);
+  border:1px solid rgba(255,107,43,.2);display:flex;align-items:center;
+  justify-content:center;font-size:0.95rem;flex-shrink:0}
+.db-item-info{flex:1;min-width:0}
+.db-item-name{font-size:0.85rem;font-weight:700}
+.db-item-sub{font-size:0.68rem;color:var(--text2);margin-top:1px}
+.db-item-date{font-size:0.62rem;color:var(--text3);margin-top:3px}
+.db-item-actions{display:flex;gap:6px;flex-shrink:0}
+.dba{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;font-size:0.9rem;border:1px solid transparent;
+  user-select:none;-webkit-user-select:none}
+.dba:active{transform:scale(.93)}
+.dba.edit{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.3);color:var(--blue)}
+.dba.del{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.22);color:var(--red)}
+.db-costs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.db-section-lbl{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text3);margin-bottom:10px}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);
+  z-index:200;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .22s}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal-sheet{background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 0 0;
+  width:100%;max-height:88vh;overflow-y:auto;padding:0 0 36px;
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.32,.72,0,1)}
+.modal-ov.open .modal-sheet{transform:translateY(0)}
+.modal-handle{width:38px;height:4px;background:var(--border2);border-radius:2px;margin:11px auto 3px}
+.modal-tbar{display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px 14px;border-bottom:1px solid var(--border)}
+.modal-tbar .mt{font-family:var(--font-title);font-size:1rem;font-weight:800}
+.modal-close{width:30px;height:30px;border-radius:7px;background:var(--card);
+  border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;font-size:0.9rem}
+.modal-body{padding:14px 16px}
+.mci{display:flex;align-items:center;gap:11px;padding:11px;border-radius:var(--r-sm);
+  cursor:pointer;transition:background .12s;border:1px solid transparent}
+.mci:hover{background:var(--card);border-color:var(--border)}
+.mci-av{width:36px;height:36px;background:var(--og);border:1px solid rgba(255,107,43,.2);
+  border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:1rem}
+.mci-name{font-size:0.85rem;font-weight:700}.mci-car{font-size:0.68rem;color:var(--text2)}
+
+/* PALETAS Y TIPOGRAFÍA */
+.palette-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.palette-item{height:36px;border-radius:var(--r-sm);cursor:pointer;border:2px solid transparent;
+  transition:all .18s;position:relative;overflow:hidden}
+.palette-item.active{border-color:var(--text);box-shadow:0 0 0 2px var(--text)}
+.palette-item::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;font-size:1rem;color:#fff;font-weight:800;opacity:0;transition:.15s}
+.palette-item.active::after{opacity:1}
+.font-option{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r-sm);
+  cursor:pointer;border:1.5px solid var(--border);background:var(--surface);transition:all .18s}
+.font-option.active{border-color:var(--orange);background:var(--og)}
+.font-option-name{font-size:0.82rem;font-weight:700;flex:1}
+.font-option-sample{font-size:0.75rem;color:var(--text3)}
+.size-track{position:relative;height:20px;display:flex;align-items:center}
+.size-track input[type=range]{width:100%;accent-color:var(--orange);height:4px}
+/* CROPPER MODAL */
+.cropper-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:14px}
+.cropper-modal.open{display:flex}
+.cropper-wrap{position:relative;overflow:hidden;background:#222;border-radius:var(--r);touch-action:none;cursor:grab;user-select:none;flex-shrink:0;min-width:100px;min-height:60px}
+.cropper-wrap:active{cursor:grabbing}
+.cropper-img{position:absolute;top:0;left:0;transform-origin:0 0;pointer-events:none;max-width:none;max-height:none;display:block;width:auto;height:auto;will-change:transform}
+.cropper-frame{position:absolute;inset:0;border:2px solid var(--orange);border-radius:var(--r);pointer-events:none}
+.cropper-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.cropper-btn{padding:10px 20px;border:none;border-radius:var(--r-sm);font-family:var(--font);font-size:0.85rem;font-weight:700;cursor:pointer}
+/* MENÚ ⋮ */
+.km-btn{width:clamp(36px,5vw,48px);height:clamp(36px,5vw,48px);border-radius:var(--r-sm);
+  background:var(--card);border:1px solid var(--border);color:var(--text2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:1.3rem;font-weight:900;letter-spacing:.05em;flex-shrink:0;
+  transition:all .15s;user-select:none}
+.km-btn:active{transform:scale(.92)}
+.km-overlay{position:fixed;inset:0;z-index:200;display:none}
+.km-overlay.open{display:block}
+.km-panel{position:fixed;top:0;right:0;width:200px;background:var(--surface);
+  border-left:1px solid var(--border);border-bottom:1px solid var(--border);
+  border-radius:0 0 0 var(--r);z-index:201;display:none;flex-direction:column;
+  box-shadow:-4px 4px 20px rgba(0,0,0,.35);overflow:hidden}
+.km-panel.open{display:flex}
+.km-item{display:flex;align-items:center;gap:12px;padding:14px 16px;
+  cursor:pointer;transition:background .12s;border-bottom:1px solid var(--border)}
+.km-item:last-child{border-bottom:none}
+.km-item:active{background:var(--card)}
+.km-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:1rem;flex-shrink:0}
+.km-lbl{font-size:0.82rem;font-weight:600;color:var(--text);flex:1}
+.km-sub{font-size:0.65rem;color:var(--text3);margin-top:1px}
+.km-sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* ── Clases plantilla buildClientCard ───────────────── */
+.ri-top{display:flex;align-items:center;gap:8px;min-width:0}
+.ri-desc{flex:1;min-width:0}
+.ri-actions{flex-shrink:0;display:flex;gap:4px}
+.ri-bottom{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ri-spacer{flex:1}
+.ri-costs-wrap{flex-shrink:0}
+.ri-edit-field{flex:1;min-width:80px}
+.ri-edit-label{font-size:0.62rem;color:var(--text3);font-weight:600;margin-bottom:3px}
+.ri-edit-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;color:var(--text);font-size:0.85rem;outline:none}
+.ri-edit-save{background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);padding:7px 12px;font-weight:700;cursor:pointer;font-size:0.8rem;white-space:nowrap}
+.ri-edit-cancel{background:var(--surface);color:var(--text2);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;font-weight:600;cursor:pointer;font-size:0.8rem}
+.cc-info-row{flex:1;min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow:hidden}
+.cc-rep-count{flex-shrink:0;font-size:0.65rem;color:var(--text3);white-space:nowrap}
+.cc-saldo-wrap{flex-shrink:0;margin-left:auto}
+.entregar-wrap{padding:0 0 10px}
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(72px);
+  background:var(--card);border:1px solid var(--border2);border-radius:11px;padding:11px 18px;
+  font-size:0.8rem;font-weight:600;z-index:999;transition:transform .28s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;display:flex;align-items:center;gap:7px;box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:rgba(34,197,94,.4);color:var(--green)}
+.toast.error{border-color:rgba(239,68,68,.4);color:var(--red)}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.ani{animation:fadein .28s ease both}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ LOGIN ══ -->
+  <div id="screen-login" class="screen active" style="justify-content:center;align-items:center;background:var(--bg)">
+    <div style="width:100%;max-width:340px;padding:clamp(20px,5vw,40px);display:flex;flex-direction:column;align-items:center;gap:14px">
+      <div id="login-logo" style="width:72px;height:72px;background:var(--orange);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 6px 20px var(--shadow-orange);margin-bottom:4px">🔧</div>
+      <div style="text-align:center;margin-bottom:4px">
+        <div id="login-title" class="logo-text" style="font-size:clamp(1.6rem,5vw,2.4rem)">Taller Mecánico</div>
+      </div>
+      <!-- Tabs login/register -->
+      <div style="display:flex;width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px;gap:3px">
+        <button id="tab-login" onclick="showLoginTab('login')"
+          style="flex:1;padding:8px;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:0.8rem;transition:all .2s;background:var(--orange);color:#fff">
+          Iniciar sesión</button>
+        <button id="tab-reg" onclick="showLoginTab('reg')"
+          style="flex:1;padding:8px;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:0.8rem;transition:all .2s;background:transparent;color:var(--text3)">
+          Registrarse</button>
+      </div>
+      <!-- Login form -->
+      <div id="login-form" style="width:100%;display:flex;flex-direction:column;gap:12px">
+        <div class="field" style="margin-bottom:0">
+          <label>Usuario</label>
+          <input type="text" id="login-user" placeholder="Tu nombre de usuario" autocomplete="username"
+            onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Contraseña</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div id="login-error" style="display:none;color:var(--red);font-size:0.78rem;text-align:center">❌ Usuario o contraseña incorrectos</div>
+        <button class="btn-reg" onclick="doLogin()">Iniciar sesión</button>
+      </div>
+      <!-- Register form -->
+      <div id="reg-form" style="width:100%;display:none;flex-direction:column;gap:12px">
+        <div class="field" style="margin-bottom:0">
+          <label>Nombre</label>
+          <input type="text" id="reg-nombre" placeholder="Tu nombre" autocomplete="name"
+            onkeydown="if(event.key==='Enter')document.getElementById('reg-pass').focus()">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Contraseña</label>
+          <input type="password" id="reg-pass" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter')document.getElementById('reg-pass2').focus()">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Confirmar contraseña</label>
+          <input type="password" id="reg-pass2" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div id="reg-error" style="display:none;color:var(--red);font-size:0.78rem;text-align:center"></div>
+        <button class="btn-reg" onclick="doRegister()">Crear cuenta</button>
+      </div>
+      <div id="login-loading" style="display:none;font-size:0.75rem;color:var(--text3)">🔄 Verificando...</div>
+    </div>
+  </div>
+
+  <!-- ══ HOME CLIENTE ══ -->
+  <div id="screen-home-cliente" class="screen">
+    <div class="home-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
+        <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+            <div class="km-btn" onclick="openKMenu()">⋮</div>
+            <div class="sync-chip" style="border:none;background:transparent;padding:0">
+              <div class="sync-dot pending" id="sd-home-cli"></div>
+              <span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Cargando...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:10px 20px 4px;font-size:0.75rem;color:var(--text3)" id="cli-bienvenida"></div>
+    <!-- Tabs -->
+    <div style="display:flex;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0">
+      <button id="ctab-activo" onclick="showClienteTab('activo')"
+        style="flex:1;padding:12px;border:none;background:transparent;font-weight:700;font-size:0.82rem;cursor:pointer;border-bottom:2px solid var(--orange);color:var(--orange)">
+        🔧 Mis reparaciones</button>
+      <button id="ctab-hist" onclick="showClienteTab('hist')"
+        style="flex:1;padding:12px;border:none;background:transparent;font-weight:700;font-size:0.82rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--text3)">
+        📋 Historial</button>
+    </div>
+    <div class="scrollbody" id="cli-activo-list" style="padding:12px 20px 60px"></div>
+    <div class="scrollbody" id="cli-hist-list" style="padding:12px 20px 60px;display:none"></div>
+  </div>
+
+  <!-- ══ HOME ══ -->
+  <div id="screen-home" class="screen">
+    <div class="home-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
+        <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+            <div class="km-btn" onclick="openKMenu()">⋮</div>
+            <div class="sync-chip" style="border:none;background:transparent;padding:0">
+              <div class="sync-dot pending" id="sd-home"></div>
+              <span id="sync-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Cargando...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="home-stats">
+      <div class="stat"><div class="sv" id="s-cli">0</div><div class="sl">Clientes</div></div>
+      <div class="stat" id="stat-rep"><div class="sv" id="s-rep">0</div><div class="sl">Reparaciones</div></div>
+      <div class="stat"><div class="sv" id="s-pend">0</div><div class="sl">Pendientes</div></div>
+      <div class="stat" id="stat-sem"><div class="sv" id="s-sem">$0</div><div class="sl" id="sl-sem">Semana</div></div>
+      <div class="stat" id="stat-mes"><div class="sv" id="s-mes">$0</div><div class="sl" id="sl-mes">Mes</div></div>
+    </div>
+    <div class="home-menu">
+      <!-- Siempre visible -->
+      <div class="mc primary" onclick="goTo('screen-registro')">
+        <div class="mc-icon">➕</div>
+        <div class="mc-info"><div class="mc-title">Nuevo Ingreso</div><div class="mc-desc">Registrar cliente o agregar reparación</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <!-- Admin: clientes completo -->
+      <div id="home-admin-btns" style="display:flex;flex-direction:column;gap:12px">
+        <div class="mc" onclick="goTo('screen-clientes')">
+          <div class="mc-icon">👥</div>
+          <div class="mc-info"><div class="mc-title">Clientes</div><div class="mc-desc">Ver historial y reparaciones por cliente</div></div>
+          <div class="mc-arr">›</div>
+        </div>
+        <div class="mc" onclick="goTo('screen-mensual')">
+          <div class="mc-icon">📅</div>
+          <div class="mc-info"><div class="mc-title">Cierre Mensual</div><div class="mc-desc">Clientes liquidados agrupados por mes</div></div>
+          <div class="mc-arr">›</div>
+        </div>
+        <div class="mc" onclick="goTo('screen-admin')">
+          <div class="mc-icon">⚙️</div>
+          <div class="mc-info"><div class="mc-title">Administración</div><div class="mc-desc">Historial, bases de datos y ajustes</div></div>
+          <div class="mc-arr">›</div>
+        </div>
+      </div>
+      <!-- Empleado: clientes simplificado -->
+      <div id="home-emp-btns" style="display:none;flex-direction:column;gap:12px">
+        <div class="mc" onclick="goTo('screen-clientes-emp')">
+          <div class="mc-icon">👥</div>
+          <div class="mc-info"><div class="mc-title">Clientes</div><div class="mc-desc">Ver estado y agregar abonos</div></div>
+          <div class="mc-arr">›</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ INGRESO UNIFICADO ══ -->
+  <div id="screen-registro" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
+      <div class="tb-title">Nuevo Ingreso</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-registro"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="scrollbody" style="padding-bottom:20px">
+      <div class="sec-card">
+        <div class="sec-lbl">🧑 Cliente</div>
+        <div class="cost-row" style="align-items:end">
+          <div class="field" style="margin-bottom:0">
+            <label style="color:var(--orange)">👤 Nombre</label>
+            <div class="ac-wrap">
+              <input type="text" id="inp-nombre" placeholder="Nombre o seleccionar…" autocomplete="off"
+                oninput="acIngreso(this)" onfocus="acIngreso(this)" onkeydown="acK(event,'ac-ing')"
+                style="font-weight:600;font-size:0.95rem">
+              <div class="ac-list" id="ac-ing"></div>
+            </div>
+          </div>
+          <div class="field" id="campo-vehiculo" style="margin-bottom:0">
+            <label>Vehículo</label>
+            <div class="ac-wrap">
+              <input type="text" id="inp-vehiculo" placeholder="Marca / Modelo" autocomplete="off"
+                oninput="acI(this,'ac-v','db-vehiculos')" onfocus="acI(this,'ac-v','db-vehiculos')" onkeydown="acK(event,'ac-v')">
+              <div class="ac-list" id="ac-v"></div>
+            </div>
+          </div>
+          <div class="field" id="campo-vehiculo-sel" style="margin-bottom:0;display:none">
+            <label>Vehículo</label>
+            <input type="text" id="inp-vehiculo-sel" readonly
+              style="background:var(--surface);opacity:.7;cursor:default">
+          </div>
+        </div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-lbl">🔩 Reparación</div>
+        <div class="field">
+          <label>Descripción</label>
+          <div class="ac-wrap">
+            <textarea id="inp-rep" placeholder="Ej: Cambio de frenos delanteros" autocomplete="off"
+              oninput="acI(this,'ac-r','db-reparaciones')" onfocus="acI(this,'ac-r','db-reparaciones')"
+              style="height:52px"></textarea>
+            <div class="ac-list" id="ac-r"></div>
+          </div>
+        </div>
+        <div class="cost-row">
+          <div class="field" style="margin-bottom:0"><label>Mano de obra ($)</label>
+            <input type="number" id="inp-mo" placeholder="0.00" min="0" step="0.01" oninput="calcT()" inputmode="decimal"></div>
+          <div class="field" style="margin-bottom:0"><label>Material ($)</label>
+            <input type="number" id="inp-mat" placeholder="0.00" min="0" step="0.01" oninput="calcT()" inputmode="decimal"></div>
+        </div>
+        <div onclick="regIngreso()" style="margin-top:10px;background:linear-gradient(135deg,var(--orange),var(--orange2));border-radius:var(--r);
+          padding:14px 16px;display:flex;justify-content:space-between;align-items:center;
+          box-shadow:0 4px 14px var(--shadow-orange);cursor:pointer;user-select:none;transition:transform .1s;active:scale(.98)"
+          onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.98)'" ontouchend="this.style.transform=''">
+          <span style="color:rgba(255,255,255,.85);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em">✅ Registrar · Total</span>
+          <span id="t-total" style="color:#fff;font-size:1.4rem;font-weight:800;letter-spacing:.02em">$0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CLIENTES EMPLEADO (sin costos) ══ -->
+  <div id="screen-clientes-emp" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
+      <div class="tb-title">Clientes</div>
+      <div class="tb-badge" id="badge-cli-emp">0</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-clientes-emp"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="search-bar">
+      <div class="si-wrap">
+        <span class="si-ico">🔍</span>
+        <input type="text" placeholder="Buscar cliente…" id="inp-search-emp" oninput="renderClientesEmp()" autocomplete="off">
+      </div>
+    </div>
+    <div class="scrollbody" id="clients-list-emp" style="padding-left:20px;padding-right:20px"></div>
+  </div>
+
+  <!-- ══ CLIENTES ══ -->
+  <div id="screen-clientes" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
+      <div class="tb-title">Clientes</div>
+      <div class="tb-badge" id="badge-cli">0</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-clientes"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="search-bar">
+      <div class="si-wrap">
+        <span class="si-ico">🔍</span>
+        <input type="text" placeholder="Buscar por nombre o vehículo…" id="inp-search" oninput="renderClientes()" autocomplete="off">
+      </div>
+    </div>
+    <div class="clients-list" id="clients-list"></div>
+  </div>
+
+  <!-- ══ MENSUAL ══ -->
+  <div id="screen-mensual" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
+      <div class="tb-title">Cierre Mensual</div>
+      <div class="tb-badge" id="badge-mes">0</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-mensual"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="month-list" id="month-list"></div>
+  </div>
+
+  <!-- ══ HISTORIAL — accesible desde Admin ══ -->
+  <div id="screen-historial" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
+      <div class="tb-title">Historial</div>
+      <div class="tb-badge" id="badge-hist">0</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-historial"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="scrollbody" id="hist-list" style="padding-top:12px"></div>
+  </div>
+
+  <!-- ══ ADMIN ══ -->
+  <div id="screen-admin" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
+      <div class="tb-title">Administración</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-admin"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="fit-screen" style="gap:clamp(6px,0.8vw,10px);padding:clamp(10px,1.5vw,16px) 20px 20px">
+      <div class="admin-section-title">Apariencia</div>
+      <!-- Todo en un solo flex container para altura uniforme -->
+      <div style="display:flex;flex-direction:column;flex:1;gap:clamp(3px,0.5vw,7px)">
+        <!-- Fila apariencia: 2 columnas, misma altura que los demás -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(3px,0.5vw,7px);flex:1">
+          <div class="mc" onclick="goTo('screen-apariencia')" style="align-items:center;gap:8px;padding:clamp(8px,1.2vw,12px)">
+            <div class="mc-icon">🎨</div>
+            <div class="mc-info"><div class="mc-title" style="font-size:clamp(0.72rem,1.2vw,0.85rem)">Personalizar</div></div>
+          </div>
+          <div class="mc" style="align-items:center;gap:8px;padding:clamp(8px,1.2vw,12px);cursor:default;pointer-events:none">
+            <div class="mc-icon">🌓</div>
+            <div class="mc-info"><div class="mc-title" style="font-size:clamp(0.72rem,1.2vw,0.85rem)">Tema</div></div>
+            <label style="position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0;pointer-events:all;margin-left:auto">
+              <input type="checkbox" class="theme-toggle-input" onchange="toggleTheme()" style="opacity:0;width:0;height:0">
+              <span style="position:absolute;inset:0;background:var(--border2);border-radius:22px;cursor:pointer;transition:.3s;display:flex;align-items:center;padding:2px">
+                <span class="theme-toggle-knob" style="width:18px;height:18px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.3)"></span>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div class="admin-section-title" style="flex-shrink:0">Bases de datos</div>
+        <div class="mc" onclick="goTo('screen-tabla')" style="flex:1;align-items:center;gap:8px;padding:clamp(8px,1.2vw,12px)">
+          <div class="mc-icon">📊</div>
+          <div class="mc-info"><div class="mc-title" style="font-size:clamp(0.72rem,1.2vw,0.85rem)">Ver Datos</div></div>
+          <div class="mc-arr">›</div>
+        </div>
+        <div class="mc" onclick="goTo('screen-historial')" style="flex:1;align-items:center;gap:8px;padding:clamp(8px,1.2vw,12px)">
+          <div class="mc-icon">📋</div>
+          <div class="mc-info"><div class="mc-title" style="font-size:clamp(0.72rem,1.2vw,0.85rem)">Historial</div></div>
+          <div class="mc-arr">›</div>
+        </div>
+        <div class="mc" onclick="goTo('screen-db-clientes')" style="flex:1;align-items:center;gap:8px;padding:clamp(8px,1.2vw,12px)">
+          <div class="mc-icon">👥</div>
+          <div class="mc-info"><div class="mc-title" style="font-size:clamp(0.72rem,1.2vw,0.85rem)">Base de Clientes</div></div>
+          <div class="mc-arr">›</div>
+        </div>
+        <div class="mc" onclick="goTo('screen-db-reparaciones')" style="flex:1;align-items:center;gap:8px;padding:clamp(8px,1.2vw,12px)">
+          <div class="mc-icon">🔩</div>
+          <div class="mc-info"><div class="mc-title" style="font-size:clamp(0.72rem,1.2vw,0.85rem)">Base de Reparaciones</div></div>
+          <div class="mc-arr">›</div>
+        </div>
+        <div class="mc" onclick="goTo('screen-db-cierre')" style="flex:1;align-items:center;gap:8px;padding:clamp(8px,1.2vw,12px)">
+          <div class="mc-icon">📦</div>
+          <div class="mc-info"><div class="mc-title" style="font-size:clamp(0.72rem,1.2vw,0.85rem)">Cierre Mensual</div></div>
+          <div class="mc-arr">›</div>
+        </div>
+        <div class="mc" onclick="openDeleteAll()" style="flex:1;align-items:center;gap:8px;padding:clamp(8px,1.2vw,12px);border-color:rgba(239,68,68,.3)">
+          <div class="mc-icon" style="background:rgba(239,68,68,.12);color:var(--red)">🗑</div>
+          <div class="mc-info"><div class="mc-title" style="font-size:clamp(0.72rem,1.2vw,0.85rem);color:var(--red)">Borrar Todo</div></div>
+          <div class="mc-arr" style="color:var(--red)">›</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- ══ APARIENCIA ══ -->
+  <div id="screen-apariencia" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
+      <div class="tb-title">Personalizar App</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-apariencia"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="scrollbody" style="padding-bottom:40px">
+      <!-- Nombre -->
+      <div class="sec-card">
+        <div style="display:flex;align-items:center;gap:10px;justify-content:space-between">
+          <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);flex-shrink:0">✏️ Nombre</span>
+          <input type="text" id="cfg-name" placeholder="Taller Mecánico" autocomplete="off"
+            style="flex:1;min-width:0;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 10px;color:var(--text);font-size:0.85rem;outline:none;margin:0 8px">
+          <button onclick="saveCfgName()" style="background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);padding:6px 12px;font-weight:700;cursor:pointer;white-space:nowrap;font-size:0.8rem;flex-shrink:0">✅ Guardar</button>
+        </div>
+      </div>
+      <!-- Usuarios -->
+      <div class="sec-card" style="cursor:pointer;padding:11px 12px" onclick="goTo('screen-usuarios')">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:1.1rem">👤</span>
+          <span style="font-size:0.82rem;font-weight:700;flex:1">Gestionar Usuarios</span>
+          <span style="color:var(--text3)">›</span>
+        </div>
+      </div>
+      <!-- Logo + Fondo en una fila -->
+      <div class="sec-card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <!-- Logo -->
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">🖼 Logo</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div id="logo-preview" style="width:34px;height:34px;background:var(--orange);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden">🔧</div>
+              <div style="flex:1"></div>
+              <label style="width:34px;height:34px;background:var(--orange);color:#fff;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                📁<input type="file" accept="image/*" style="display:none" onchange="uploadLogo(this)">
+              </label>
+              <button onclick="removeLogo()" style="width:34px;height:34px;background:var(--surface);color:var(--text3);border:1px solid var(--border);border-radius:var(--r-sm);padding:0;cursor:pointer;font-size:0.8rem;flex-shrink:0">🗑</button>
+            </div>
+          </div>
+          <!-- Fondo -->
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">🌅 Fondo</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div id="bg-preview" style="flex:1;min-width:0;height:34px;background:var(--surface);border-radius:8px;overflow:hidden;background-size:cover;background-position:center;border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--text3)">—</div>
+              <label style="width:34px;height:34px;background:var(--orange);color:#fff;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                📁<input type="file" accept="image/*" style="display:none" onchange="uploadBg(this)">
+              </label>
+              <button onclick="removeBg()" style="width:34px;height:34px;background:var(--surface);color:var(--text3);border:1px solid var(--border);border-radius:var(--r-sm);padding:0;cursor:pointer;font-size:0.8rem;flex-shrink:0">🗑</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Paleta de colores -->
+      <div class="sec-card">
+        <div class="sec-lbl">🎨 Color de acento</div>
+        <div class="palette-grid" id="palette-grid"></div>
+      </div>
+      <!-- Tipografía acordeón -->
+      <div class="sec-card" style="padding:0;overflow:hidden">
+        <div style="display:flex;align-items:center;padding:11px 12px;cursor:pointer" onclick="togFontPanel()">
+          <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);flex:1">🔤 Tipografía</span>
+          <span id="font-current-label" style="font-size:0.75rem;color:var(--orange);font-weight:700;margin-right:8px"></span>
+        </div>
+        <div id="font-panel" style="display:none;padding:0 12px 12px;border-top:1px solid var(--border);flex-direction:column;gap:6px;max-height:280px;overflow-y:auto">
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px" id="font-list"></div>
+          <div style="margin-top:10px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+              <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Tamaño</span>
+              <span id="font-size-label" style="font-size:0.68rem;color:var(--orange);font-weight:700">Normal</span>
+            </div>
+            <div class="size-track">
+              <input type="range" id="font-size-slider" min="-2" max="4" step="1" value="0"
+                oninput="applyFontSize(this.value)" style="width:100%">
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:3px">
+              <span style="font-size:0.6rem;color:var(--text3)">Pequeño</span>
+            <span style="font-size:0.6rem;color:var(--text3)">Grande</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Contraseña — acordeón -->
+      <div class="sec-card" style="padding:0;overflow:hidden">
+        <div style="display:flex;align-items:center;padding:11px 12px;cursor:pointer" onclick="togPassForm()">
+          <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);flex:1">🔑 Contraseña de borrado</span>
+          <span id="pass-chev" style="font-size:0.75rem;color:var(--text3);transition:transform .25s"></span>
+        </div>
+        <div id="pass-form" style="display:none;padding:0 12px 12px;border-top:1px solid var(--border);gap:8px;flex-direction:column">
+          <div class="field" style="margin-top:10px"><label>Contraseña actual</label>
+            <input type="password" id="pass-actual" placeholder="••••" style="letter-spacing:.3em;text-align:center"></div>
+          <div class="field"><label>Nueva contraseña</label>
+            <input type="password" id="pass-nueva" placeholder="••••" style="letter-spacing:.3em;text-align:center"></div>
+          <div class="field"><label>Confirmar nueva</label>
+            <input type="password" id="pass-confirmar" placeholder="••••" style="letter-spacing:.3em;text-align:center"></div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button onclick="changePassword()" style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--green);color:#fff;border:none;font-weight:700;cursor:pointer">✅ Cambiar</button>
+            <button onclick="togPassForm()" style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--surface);color:var(--text2);border:1px solid var(--border);font-weight:600;cursor:pointer">✕ Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TABLA DE DATOS ══ -->
+  <div id="screen-tabla" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
+      <div class="tb-title">Ver Datos</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-tabla"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div style="padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:center">
+      <a id="btn-open-sheet" href="#" target="_blank"
+        style="display:flex;align-items:center;gap:5px;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-sm);
+        padding:6px 10px;text-decoration:none;color:var(--text2);font-size:0.75rem;font-weight:600;white-space:nowrap;flex-shrink:0">
+        <span>📋</span> Sheet
+      </a>
+      <div class="si-wrap" style="flex:1">
+        <span class="si-ico">🔍</span>
+        <input type="text" id="tabla-search" placeholder="Filtrar…" autocomplete="off"
+          oninput="renderTabla()" style="background:transparent;border:none;outline:none;flex:1;color:var(--text);font-family:var(--font);font-size:0.85rem">
+      </div>
+    </div>
+    <div style="flex:1;overflow:auto">
+      <table id="tabla-data" style="width:100%;border-collapse:collapse;font-size:clamp(0.65rem,1.2vw,0.82rem)">
+        <thead>
+          <tr style="background:var(--surface);position:sticky;top:0;z-index:1">
+            <th style="padding:8px 6px;text-align:center;font-weight:700;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;font-size:0.7rem">Est.</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap">Cliente</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap">Vehículo</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);border-bottom:1px solid var(--border)">Reparación</th>
+            <th style="padding:8px 10px;text-align:right;font-weight:700;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap">MO</th>
+            <th style="padding:8px 10px;text-align:right;font-weight:700;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap">Mat</th>
+            <th style="padding:8px 10px;text-align:right;font-weight:700;color:var(--orange);border-bottom:1px solid var(--border);white-space:nowrap">Total</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap">Fecha</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ USUARIOS ══ -->
+  <div id="screen-usuarios" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-apariencia')">‹</div>
+      <div class="tb-title">Usuarios</div>
+      <div class="tb-badge" id="badge-usr">0</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-usuarios"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="scrollbody">
+      <div class="sec-card">
+        <div class="sec-lbl">➕ Nuevo usuario</div>
+        <div class="field"><label>Nombre de usuario</label>
+          <input type="text" id="usr-nombre" placeholder="Ej: carlos" autocomplete="off"></div>
+        <div class="field"><label>Contraseña</label>
+          <input type="password" id="usr-pass" placeholder="Mínimo 4 caracteres"></div>
+        <div class="field" style="margin-bottom:0"><label>Rol</label>
+          <select id="usr-rol" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:7px 11px;color:var(--text);font-family:var(--font);font-size:0.85rem;outline:none">
+            <option value="admin">👑 Dueño / Admin</option>
+            <option value="empleado">🔧 Empleado</option>
+          </select>
+        </div>
+        <button class="btn-reg" style="margin-top:10px" onclick="addUsuario()">✅ Agregar usuario</button>
+      </div>
+      <div id="usr-list"></div>
+    </div>
+  </div>
+
+  <!-- ══ DB CLIENTES ══ -->
+  <div id="screen-db-clientes" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
+      <div class="tb-title">Base de Clientes</div>
+      <div class="tb-badge" id="badge-dbc">0</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-db-clientes"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="scrollbody" id="dbc-list" style="padding-top:12px"></div>
+  </div>
+
+  <!-- ══ DB REPARACIONES ══ -->
+  <div id="screen-db-reparaciones" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
+      <div class="tb-title">Base de Reparaciones</div>
+      <div class="tb-badge" id="badge-dbr">0</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-db-reparaciones"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="scrollbody" id="dbr-list" style="padding-top:12px"></div>
+  </div>
+
+  <!-- ══ DB CIERRE MENSUAL ══ -->
+  <div id="screen-db-cierre" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
+      <div class="tb-title">Cierre Mensual DB</div>
+      <div class="tb-badge" id="badge-db-cierre">0</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-db-cierre"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+      </div>
+    </div>
+    <div class="scrollbody" id="db-cierre-list" style="padding-top:12px"></div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- MODALES (fuera del #app a propósito, posición fixed) -->
+
+<div class="modal-ov" id="modal-clients" onclick="closeMBg(event,'modal-clients')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-tbar">
+      <span class="mt">Seleccionar Cliente</span>
+      <div class="modal-close" onclick="closeModal('modal-clients')">✕</div>
+    </div>
+    <div class="modal-body" id="modal-clients-body"></div>
+  </div>
+</div>
+
+<div class="modal-ov" id="modal-rep" onclick="closeMBg(event,'modal-rep')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-tbar">
+      <span class="mt" id="modal-rep-title">Nueva Reparación</span>
+      <div class="modal-close" onclick="closeModal('modal-rep')">✕</div>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="modal-cid">
+      <div class="field">
+        <label>Descripción</label>
+        <div class="ac-wrap">
+          <textarea id="inp-mrep" placeholder="Ej: Cambio de aceite" autocomplete="off"
+            oninput="acI(this,'ac-mr','db-reparaciones')" onfocus="acI(this,'ac-mr','db-reparaciones')"></textarea>
+          <div class="ac-list" id="ac-mr"></div>
+        </div>
+      </div>
+      <div class="cost-row">
+        <div class="field"><label>Mano de obra ($)</label>
+          <input type="number" id="inp-mmo" placeholder="0.00" min="0" step="0.01" oninput="calcTM()" inputmode="decimal"></div>
+        <div class="field"><label>Material ($)</label>
+          <input type="number" id="inp-mmat" placeholder="0.00" min="0" step="0.01" oninput="calcTM()" inputmode="decimal"></div>
+      </div>
+      <div class="totals-box" style="margin-bottom:14px">
+        <div class="tr grand"><span>Total</span><span class="tv" id="t-modal">$0.00</span></div>
+      </div>
+      <button class="btn-reg" onclick="regDesdeModal()">✅ Guardar Reparación</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-ov" id="modal-deleteall" onclick="closeMBg(event,'modal-deleteall')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-tbar">
+      <span class="mt" style="color:var(--red)">⚠️ Borrar Todo</span>
+      <div class="modal-close" onclick="closeModal('modal-deleteall')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">
+        Borrará <strong style="color:var(--text)">todos los datos</strong>: clientes, reparaciones, abonos, historial y cierre mensual.<br><br>Ingresa la contraseña para confirmar:
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="inp-pass" placeholder="••••"
+          onclick="event.stopPropagation()"
+          onkeydown="event.stopPropagation();if(event.key==='Enter')confirmDeleteAll()"
+          style="font-size:22px;letter-spacing:.4em;text-align:center">
+      </div>
+      <div id="pass-error" style="color:var(--red);font-size:12px;font-weight:600;margin-bottom:10px;display:none">❌ Contraseña incorrecta</div>
+      <button onclick="event.stopPropagation();confirmDeleteAll()" class="btn-danger" style="border-radius:var(--r);font-size:17px;padding:14px">🗑 Confirmar borrado</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-ov" id="modal-edit-client" onclick="closeMBg(event,'modal-edit-client')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-tbar">
+      <span class="mt">✏️ Editar Cliente</span>
+      <div class="modal-close" onclick="closeModal('modal-edit-client')">✕</div>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-client-id">
+      <div class="field"><label>Nombre</label><input type="text" id="edit-client-nombre" placeholder="Nombre del cliente"></div>
+      <div class="field"><label>Vehículo</label><input type="text" id="edit-client-vehiculo" placeholder="Marca / Modelo"></div>
+      <button onclick="saveClientEdit()" class="btn-reg">✅ Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-ov" id="modal-edit-rep" onclick="closeMBg(event,'modal-edit-rep')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-tbar">
+      <span class="mt">✏️ Editar Reparación</span>
+      <div class="modal-close" onclick="closeModal('modal-edit-rep')">✕</div>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-rep-id">
+      <div class="field"><label>Descripción</label>
+        <textarea id="edit-rep-desc" style="height:66px;resize:none" placeholder="Descripción de la reparación"></textarea></div>
+      <div class="cost-row">
+        <div class="field"><label>Mano de obra ($)</label>
+          <input type="number" id="edit-rep-mo" min="0" step="0.01" inputmode="decimal" oninput="calcEditRep()"></div>
+        <div class="field"><label>Material ($)</label>
+          <input type="number" id="edit-rep-mat" min="0" step="0.01" inputmode="decimal" oninput="calcEditRep()"></div>
+      </div>
+      <div class="totals-box" style="margin-bottom:14px">
+        <div class="tr"><span>Mano de obra</span><span id="er-mo">$0.00</span></div>
+        <div class="tr"><span>Material</span><span id="er-mat">$0.00</span></div>
+        <div class="tr grand"><span>Total</span><span class="tv" id="er-total">$0.00</span></div>
+      </div>
+      <button onclick="saveRepEdit()" class="btn-reg">✅ Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+window.onerror=function(msg,src,line,col,err){
+  document.body.innerHTML='<div style="padding:20px;color:#ff6b6b;font-family:monospace;background:#0f1117;min-height:100vh"><h2>Error de JavaScript</h2><p>'+msg+'</p><p>Línea: '+line+'</p><p>'+(err?.stack||'')+'</p></div>'
+  return false
+}
+window.addEventListener('unhandledrejection',function(e){
+  console.error('Unhandled promise rejection:',e.reason)
+})
+const GS_URL='https://script.google.com/macros/s/AKfycbxm5I0uZfn8xKKcewG-el0Jhzb6opzZI_xyrJu8QrkRoOf2CaCNh57l1hsjzx6fhn6opw/exec'
+const SH_CLI='clientes',SH_SES='sesiones',SH_CIE='cierre',SH_ABO='abonos'
+const SH_CAT_REP='catalogo_reparaciones',SH_CAT_CLI='catalogo_clientes',SH_CFG='config',SH_USR='usuarios'
+const ALL_SHEETS=[SH_CLI,SH_SES,SH_CIE,SH_ABO,SH_CAT_REP,SH_CAT_CLI,SH_CFG,SH_USR]
+const LS_KEY='tp_cache'
+const LS_VER='tp_version'
+const LS_DID='tp_device'
+const LS_SESSION='tp_session' // {userId, role, nombre} guardado en localStorage
+const _deviceId=(()=>{
+  let id=localStorage.getItem(LS_DID)
+  if(!id){ id=Math.random().toString(36).slice(2,10); localStorage.setItem(LS_DID,id) }
+  return id
+})()
+// Sesión activa
+let _session=null // {id, nombre, rol}
+function getRole(){ return _session?.rol||'guest' }
+function isAdmin(){ return _session?.rol==='admin' }
+function isEmpleado(){ return _session?.rol==='empleado' }
+function isCliente(){ return _session?.rol==='cliente' }
+
+// ── Cache central ─────────────────────────────────────────────────
+const DB={clientes:[],sesiones:[],cierre:[],abonos:[],catalogo_reparaciones:[],catalogo_clientes:[],config:[],usuarios:[]}
+let _ready=false, _polling=false, _version=localStorage.getItem(LS_VER)||'0'
+
+// ── localStorage — carga y guarda cache local ─────────────────────
+function lsLoad(){
+  try{
+    const raw=localStorage.getItem(LS_KEY)
+    if(!raw) return false
+    const cached=JSON.parse(raw)
+    ALL_SHEETS.forEach(sh=>{ if(Array.isArray(cached[sh])) DB[sh]=cached[sh] })
+    return true
+  }catch(e){ return false }
+}
+function lsSave(){
+  try{
+    const data={}
+    ALL_SHEETS.forEach(sh=>data[sh]=DB[sh])
+    localStorage.setItem(LS_KEY,JSON.stringify(data))
+    localStorage.setItem(LS_VER,String(_version))
+  }catch(e){}
+}
+
+// ── Config helpers ────────────────────────────────────────────────
+function cfgGet(key,def=''){
+  const row=DB[SH_CFG].find(r=>r.clave===key)
+  return row?row.valor:def
+}
+function cfgSet(key,val){
+  const i=DB[SH_CFG].findIndex(r=>r.clave===key)
+  if(i!==-1){ DB[SH_CFG][i]={clave:key,valor:val}; gsUpdateBg(SH_CFG,{clave:key,valor:val},'clave') }
+  else { DB[SH_CFG].push({clave:key,valor:val}); gsAppendBg(SH_CFG,{clave:key,valor:val}) }
+  _version++; lsSave()
+}
+function applyConfig(){
+  const name=cfgGet('app_name','Taller Mecánico')
+  document.querySelectorAll('.logo-text').forEach(el=>{ el.innerHTML=name })
+  document.title=name
+  // Login screen name
+  const lt=document.getElementById('login-title'); if(lt) lt.textContent=name
+  const ll=document.getElementById('login-logo')
+  const logo=cfgGet('app_logo','')
+  if(ll&&logo) ll.innerHTML=`<img src="${logo}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`
+  else if(ll) ll.innerHTML='🔧'
+  // Logo en topbar
+  document.querySelectorAll('.logo-icon').forEach(el=>{
+    el.innerHTML=logo?`<img src="${logo}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`:'🔧'
+  })
+  // Fondo del header — aplica a home-header y topbar
+  const bg=cfgGet('app_bg','')
+  const bgPos=cfgGet('app_bg_pos','center')
+  const logoPos=cfgGet('app_logo_pos','center')
+  document.querySelectorAll('.home-header,.topbar').forEach(el=>{
+    el.style.backgroundImage=bg?`url(${bg})`:'none'
+    el.style.backgroundSize='cover'
+    el.style.backgroundPosition=bgPos
+    if(bg) el.style.backgroundBlendMode='overlay'
+  })
+  // Logo position
+  document.querySelectorAll('.logo-icon img').forEach(img=>{
+    img.style.objectPosition=logoPos
+  })
+  // Tema: admin usa config del Sheet, empleado/cliente usa localStorage local
+  if(isAdmin()){
+    applyTheme(cfgGet('theme','dark'))
+    updateToggleKnob()
+  }
+  // Paleta y fuente — siempre aplica (afecta a todos)
+  applyPalette(cfgGet('app_palette','orange'),false)
+  applyFont(cfgGet('app_font','barlow'),false)
+  applyFontSize(cfgGet('app_font_size','0'),false)
+}
+function applyTheme(theme){
+  const root=document.documentElement
+  if(theme==='light'){
+    root.style.setProperty('--bg','#f0f2f7')
+    root.style.setProperty('--surface','#ffffff')
+    root.style.setProperty('--card','#ffffff')
+    root.style.setProperty('--border','#e2e8f0')
+    root.style.setProperty('--border2','#cbd5e1')
+    root.style.setProperty('--text','#1e293b')
+    root.style.setProperty('--text2','#475569')
+    root.style.setProperty('--text3','#94a3b8')
+    // Mantener og e icon-border del acento actual
+    const _lpid=typeof cfgGet==='function'?cfgGet('app_palette','orange'):'orange'
+    const _lp=typeof PALETTES!=='undefined'?PALETTES.find(x=>x.id===_lpid):null
+    root.style.setProperty('--og',_lp?_lp.og.replace('0.14','0.10'):'rgba(255,107,43,0.10)')
+    root.style.setProperty('--icon-border',_lp?_lp.c1+'28':'rgba(255,107,43,0.18)')
+  } else {
+    // Dark: restaurar fondos propios de la paleta activa
+    const _pid=typeof cfgGet==='function'?cfgGet('app_palette','orange'):'orange'
+    const _p=typeof PALETTES!=='undefined'?PALETTES.find(x=>x.id===_pid):null
+    root.style.setProperty('--bg',     _p?_p.bg    :'#0f1117')
+    root.style.setProperty('--surface',_p?_p.surface:'#171b26')
+    root.style.setProperty('--card',   _p?_p.card   :'#1e2335')
+    root.style.setProperty('--border', _p?_p.border :'#2a2f45')
+    root.style.setProperty('--border2',_p?_p.border2:'#353b55')
+    root.style.setProperty('--text','#f0f2f8')
+    root.style.setProperty('--text2','#9aa3bf')
+    root.style.setProperty('--text3','#5a6380')
+    // og del acento activo
+    if(_p) root.style.setProperty('--og',_p.og)
+    root.style.setProperty('--icon-border',_p?_p.c1+'38':'rgba(255,107,43,0.22)')
+  }
+  updateToggleKnob()
+}
+function toggleTheme(){
+  const current=cfgGet('theme','dark')
+  const next=current==='dark'?'light':'dark'
+  cfgSet('theme',next)
+  applyTheme(next)
+  // Reaplicar paleta para que el acento y og se mantengan correctos
+  applyPalette(cfgGet('app_palette','orange'),false)
+  updateToggleKnob()
+  showToast('🌓 Tema cambiado','success')
+}
+async function compressImage(file,maxSize=36000){
+  return new Promise(res=>{
+    const reader=new FileReader()
+    reader.onload=e=>{
+      const img=new Image()
+      img.onload=()=>{
+        let w=img.width,h=img.height
+        const canvas=document.createElement('canvas')
+        // Reducir hasta que quepa en maxSize bytes (~27kb base64)
+        let scale=1
+        do{
+          canvas.width=Math.round(w*scale)
+          canvas.height=Math.round(h*scale)
+          const ctx=canvas.getContext('2d')
+          ctx.drawImage(img,0,0,canvas.width,canvas.height)
+          scale*=0.85
+        }while(canvas.toDataURL('image/jpeg',0.7).length>maxSize&&canvas.width>50)
+        res(canvas.toDataURL('image/jpeg',0.7))
+      }
+      img.src=e.target.result
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
+// Pide solo el número de versión — muy ligero (~200ms)
+// ── Versión basada en hash del contenido ─────────────────────────
+// Genera un número a partir del contenido real de los datos
+// Sin timestamps — sin falsos positivos
+function dataHash(){
+  const str=ALL_SHEETS.map(sh=>JSON.stringify(DB[sh])).join('|')
+  let h=0
+  for(let i=0;i<str.length;i++){h=(Math.imul(31,h)+str.charCodeAt(i))|0}
+  return String(h>>>0)
+}
+
+async function gsGetVersion(){
+  const r=await gsPost({action:'getVersion'})
+  return r.v||'0'
+}
+
+// ── Cola batch + manejo online/offline ───────────────────────────
+const _queue=[]
+let _flushTimeout=null
+const LS_QUEUE='tp_queue'
+let _isOnline=navigator.onLine
+
+// Flush cada 3 segundos (no inmediato)
+function queueOp(op){
+  _queue.push(op)
+  clearTimeout(_flushTimeout)
+  if(_isOnline){
+    flushQueue() // envío inmediato
+  } else {
+    try{ localStorage.setItem(LS_QUEUE,JSON.stringify(_queue)) }catch(e){}
+  }
+}
+
+// Versiones generadas por este dispositivo — nunca provocan re-render
+const _myVersions=new Set()
+
+async function flushQueue(){
+  if(!_queue.length||!_isOnline) return
+  const ops=[..._queue]
+  _queue.length=0
+  clearTimeout(_flushTimeout)
+  try{
+    localStorage.removeItem(LS_QUEUE)
+    await gsPost({action:'batch',ops:JSON.stringify(ops)})
+    // Registrar la versión que enviamos como "nuestra"
+    _myVersions.add(_version)
+    // Limpiar versiones antiguas para no acumular memoria (guardar solo las últimas 20)
+    if(_myVersions.size>20){
+      const arr=[..._myVersions]
+      arr.slice(0,arr.length-20).forEach(v=>_myVersions.delete(v))
+    }
+  }catch(e){
+    _queue.unshift(...ops)
+    console.error('batch error',e)
+  }
+}
+
+// Al perder conexión
+window.addEventListener('offline',()=>{
+  _isOnline=false
+  setDot('pending','Sin conexión')
+  // Guardar cola actual en localStorage
+  if(_queue.length) try{ localStorage.setItem(LS_QUEUE,JSON.stringify(_queue)) }catch(e){}
+})
+
+// Al reconectar — vaciar cola acumulada y sincronizar
+window.addEventListener('online',()=>{
+  _isOnline=true
+  setDot('syncing','Reconectando...')
+  // Recuperar operaciones guardadas offline
+  try{
+    const saved=localStorage.getItem(LS_QUEUE)
+    if(saved){
+      const savedOps=JSON.parse(saved)
+      savedOps.forEach(o=>{
+        if(!_queue.find(q=>JSON.stringify(q)===JSON.stringify(o))) _queue.push(o)
+      })
+    }
+  }catch(e){}
+  // Enviar todo y luego sincronizar UI
+  flushQueue().then(()=>{ if(_ready) autoSync() })
+})
+
+// ── HTTP ──────────────────────────────────────────────────────────
+async function gsPost(params){
+  const r=await fetch(GS_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:new URLSearchParams(params).toString()
+  })
+  return r.json()
+}
+async function gsLoadAll(){
+  _invalidateRenderCache()
+  const data=await gsPost({action:'getAll'})
+  ALL_SHEETS.forEach(sh=>{ if(Array.isArray(data[sh])) DB[sh]=data[sh] })
+  if(!DB[SH_CFG].find(r=>r.clave==='_lastmod')){
+    const ts=Date.now().toString()
+    DB[SH_CFG].push({clave:'_lastmod',valor:ts})
+    gsPost({action:'append',sheet:SH_CFG,row:JSON.stringify({clave:'_lastmod',valor:ts})}).catch(()=>{})
+  }
+  // Sincronizar _version con el valor real del Sheet
+  // Esto evita falsos positivos: si el Sheet tiene ts=X, nosotros también tenemos X
+  const sheetLastmod=DB[SH_CFG].find(r=>r.clave==='_lastmod')?.valor||'0'
+  _version=sheetLastmod
+  localStorage.setItem(LS_VER,_version)
+  takeSnap()
+  lsSave()
+}
+
+// ── Operaciones — solo encolar, no tocar UI ───────────────────────
+// ── lsSave diferida: guarda una sola vez aunque haya N operaciones ──
+let _lsSaveTimer=null
+function lsSaveDeferred(){
+  clearTimeout(_lsSaveTimer)
+  _lsSaveTimer=setTimeout(lsSave, 300) // espera 300ms de silencio antes de guardar
+}
+
+function bumpVersion(){
+  const ts=`${Date.now()}:${_deviceId}`
+  _version=ts
+  _myVersions.add(ts)
+  localStorage.setItem(LS_VER,ts)
+  lsSaveDeferred() // diferida en lugar de inmediata
+  queueOp({action:'update',sheet:SH_CFG,row:{clave:'_lastmod',valor:ts},idCol:'clave'})
+}
+
+function gsAppendBg(sheet,row){
+  DB[sheet].push(row)
+  _invalidateRenderCache()
+  bumpVersion()
+  queueOp({action:'append',sheet,row})
+}
+function gsUpdateBg(sheet,row,idCol='id'){
+  const i=DB[sheet].findIndex(r=>String(r[idCol])===String(row[idCol]))
+  if(i!==-1) DB[sheet][i]={...DB[sheet][i],...row}
+  bumpVersion()
+  queueOp({action:'update',sheet,row,idCol})
+}
+function gsDeleteBg(sheet,idVal,idCol='id'){
+  DB[sheet]=DB[sheet].filter(r=>String(r[idCol])!==String(idVal))
+  _invalidateRenderCache()
+  bumpVersion()
+  queueOp({action:'delete',sheet,idVal,idCol})
+}
+function gsDeleteWhereBg(sheet,col,val){
+  DB[sheet]=DB[sheet].filter(r=>String(r[col])!==String(val))
+  bumpVersion()
+  queueOp({action:'deleteWhere',sheet,col,val})
+}
+
+// ── Auto-sync cada 10s ────────────────────────────────────────────
+// ── Snapshot para diff ────────────────────────────────────────────
+let _snap={} // copia de los datos en el último sync
+// ── Caché de renders pesados ─────────────────────────────────────
+let _cacheHistorial={hash:'',html:''}
+let _cacheTabla={hash:'',html:''}
+function _quickHash(sheets){
+  let h=0
+  sheets.forEach(sh=>{
+    const s=String(DB[sh]?.length||0)
+    for(let i=0;i<s.length;i++){h=(Math.imul(31,h)+s.charCodeAt(i))|0}
+  })
+  return String(h>>>0)+String(DB[SH_SES]?.length||0)
+}
+
+function _sheetHash(sh){
+  // Hash rápido de un array — evita JSON.stringify completo en cada snap
+  const arr=DB[sh]
+  if(!arr||!arr.length) return '0'
+  let h=arr.length
+  // Mezcla el id/clave del primer y último elemento para detección rápida
+  const first=arr[0], last=arr[arr.length-1]
+  const sample=JSON.stringify(first)+JSON.stringify(last)
+  for(let i=0;i<sample.length;i++){h=(Math.imul(31,h)+sample.charCodeAt(i))|0}
+  return String(h>>>0)
+}
+function takeSnap(){
+  // Guardar hashes en lugar de JSON completo — mucho más liviano
+  _snap={
+    cli: _sheetHash(SH_CLI),
+    ses: _sheetHash(SH_SES),
+    cie: _sheetHash(SH_CIE),
+    abo: _sheetHash(SH_ABO),
+    cfg: _sheetHash(SH_CFG)
+  }
+}
+
+async function autoSync(){
+  if(!_ready||_polling||_queue.length) return
+  _polling=true
+  try{
+    await flushQueue()
+    const remoteV=await gsGetVersion()
+    // Ignorar si la versión es mía — contiene mi deviceId
+    if(remoteV===_version||remoteV.includes(_deviceId)){ _polling=false; return }
+    setDot('syncing','Sincronizando...')
+    const prevSnap={..._snap}
+    await gsLoadAll()
+    lsSave()
+    applyConfig()
+    smartUpdate(prevSnap)
+    setDot('ok','Sincronizado')
+  }catch(e){ setDot('error','Sin conexión') }
+  finally{ _polling=false }
+}
+
+function smartUpdate(prev){
+  const screen=document.querySelector('.screen.active')?.id
+
+  // Config: comparar hash en lugar de JSON completo
+  if(prev.cfg!==_sheetHash(SH_CFG)) applyConfig()
+
+  // Cliente — refrescar su vista
+  if(isCliente()){
+    const active=document.getElementById('screen-home-cliente')?.classList.contains('active')
+    if(active){ renderClienteActivo(); renderClienteHist() }
+    return
+  }
+
+  // ── Home stats ────────────────────────────────────────────────
+  updateStats()
+  if(screen==='screen-home') return
+
+  // ── Clientes: diff por tarjeta ────────────────────────────────
+  if(screen==='screen-clientes'){
+    // prev ahora contiene hashes, no JSON — comparar hashes directamente
+    const cliChanged=prev.cli!==_sheetHash(SH_CLI)
+    const sesChanged=prev.ses!==_sheetHash(SH_SES)
+    const aboChanged=prev.abo!==_sheetHash(SH_ABO)
+    if(!cliChanged&&!sesChanged&&!aboChanged){ _polling=false; return }
+    // Datos cambiaron — re-render completo de la lista
+    renderClientes()
+    return
+  }
+
+  // ── Resto: re-render completo de la pantalla activa ──────────
+  rerenderActive()
+}
+
+function startAutoSync(){
+  setInterval(()=>{ if(document.visibilityState==='visible'&&_isOnline) autoSync() },1000)
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'&&_isOnline) autoSync() })
+}
+
+// ── Indicadores ───────────────────────────────────────────────────
+const DOT_IDS=['sd-home','sd-home-cli','sd-registro','sd-clientes','sd-clientes-emp','sd-mensual','sd-historial','sd-admin','sd-apariencia','sd-tabla','sd-usuarios','sd-db-clientes','sd-db-reparaciones','sd-db-cierre']
+function setDot(status,label=''){
+  DOT_IDS.forEach(id=>{ const el=document.getElementById(id); if(el) el.className='sync-dot '+status })
+  // Actualizar label en home
+  const lbl=document.getElementById('sync-label'); if(lbl) lbl.textContent=label
+  // Actualizar labels en todas las pestañas
+  document.querySelectorAll('.sync-chip-label').forEach(el=>el.textContent=label)
+}
+
+// ── Sync manual ───────────────────────────────────────────────────
+async function manualSync(btn){
+  if(btn){ btn.style.pointerEvents='none' }
+  setDot('syncing','Sincronizando...')
+  try{
+    await flushQueue()
+    await gsLoadAll()
+    rerenderActive()
+    setDot('ok','Sincronizado')
+    showToast('✅ Sincronizado','success')
+  }catch(e){ setDot('error','Error'); showToast('❌ Error al sincronizar','error') }
+  finally{ if(btn){ btn.style.pointerEvents='' } }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function gid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function toTitle(s){return(s||'').replace(/\b\w/g,c=>c.toUpperCase())}
+function f$(n){return'$'+parseFloat(n||0).toLocaleString('es-MX',{minimumFractionDigits:0,maximumFractionDigits:0})}
+function numF(v){return parseFloat(v)||0}
+function fDT(iso){
+  if(!iso)return'—'
+  const d=new Date(iso)
+  return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+
+    ' · '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',hour12:true})
+}
+function fD(iso){
+  if(!iso)return'—'
+  return new Date(iso).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})
+}
+function fMes(iso){const d=new Date(iso);return d.toLocaleDateString('es-MX',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase())}
+function mKey(iso){const d=new Date(iso);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
+function escQ(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;')}
+
+// ── Navegación ────────────────────────────────────────────────────
+function goTo(id){
+  const prev=document.querySelector('.screen.active')?.id
+  if(prev==='screen-registro'&&id!=='screen-registro') clearIngreso()
+  // Cerrar todos los menús/accordeones abiertos al cambiar pantalla
+  document.querySelectorAll('.ac-list').forEach(l=>l.classList.remove('open'))
+  document.querySelectorAll('.mcard.open').forEach(m=>m.classList.remove('open'))
+  document.querySelectorAll('.week-detail.open').forEach(w=>w.classList.remove('open'))
+  document.querySelectorAll('.week-block.active-week').forEach(w=>w.classList.remove('active-week'))
+  document.querySelectorAll('.cli-block.open').forEach(c=>c.classList.remove('open'))
+  document.querySelectorAll('.hist-body[style*="block"]').forEach(h=>h.style.display='none')
+  document.querySelectorAll('.ccard.expanded').forEach(c=>c.classList.remove('expanded'))
+  const fp=document.getElementById('font-panel'); if(fp) fp.style.display='none'
+  const pf=document.getElementById('pass-form'); if(pf) pf.style.display='none'
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))
+  document.getElementById(id).classList.add('active')
+  rerenderActive()
+  if(_queue.length) flushQueue()
+}
+function clearIngreso(){
+  selCid=null
+  ;['inp-nombre','inp-vehiculo','inp-rep','inp-mo','inp-mat'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''})
+  calcT()
+  document.getElementById('campo-vehiculo').style.display='block'
+  const selV=document.getElementById('campo-vehiculo-sel');if(selV)selV.style.display='none'
+  document.getElementById('ac-ing')?.classList.remove('open')
+}// Render con debounce — acumula cambios y hace un solo re-render
+let _renderTimeout=null
+function scheduleRender(){
+  clearTimeout(_renderTimeout)
+  _renderTimeout=setTimeout(()=>rerenderActive(), 50)
+}
+
+function rerenderActive(){
+  const id=document.querySelector('.screen.active')?.id
+  const openMonths=new Set([...document.querySelectorAll('.mcard.open')].map(el=>el.id))
+  const openCards=new Set([...document.querySelectorAll('.ccard.expanded')].map(el=>el.id))
+  const openWeeks=new Set([...document.querySelectorAll('.week-block.open')].map(el=>el.id))
+  const openClis=new Set([...document.querySelectorAll('.cli-block.open')].map(el=>el.id))
+  const openHist=new Set([...document.querySelectorAll('.hist-body[style*="block"]')].map(el=>el.closest('[id^="hg-"]')?.id).filter(Boolean))
+  try{
+    if(id==='screen-home')           updateStats()
+    if(id==='screen-clientes')       renderClientes()
+    if(id==='screen-clientes-emp')   renderClientesEmp()
+    if(id==='screen-usuarios')       renderUsuarios()
+    if(id==='screen-mensual')        renderMensual()
+    if(id==='screen-historial')      renderHistorial()
+    if(id==='screen-db-clientes')    renderDbClientes()
+    if(id==='screen-db-reparaciones')renderDbReparaciones()
+    if(id==='screen-db-cierre')      renderDbCierre()
+    if(id==='screen-tabla')          renderTabla()
+    if(id==='screen-apariencia')     openApariencia()
+  }catch(err){
+    console.error('rerenderActive error in '+id+':', err)
+    showToast('❌ Error al cargar: '+err.message,'error')
+  }
+  openMonths.forEach(id=>document.getElementById(id)?.classList.add('open'))
+  openCards.forEach(id=>document.getElementById(id)?.classList.add('expanded'))
+  openWeeks.forEach(id=>document.getElementById(id)?.classList.add('open'))
+  openClis.forEach(id=>document.getElementById(id)?.classList.add('open'))
+  openHist.forEach(id=>{
+    const card=document.getElementById(id);if(!card)return
+    const body=card.querySelector('.hist-body')
+    const i=id.replace('hg-','')
+    const chev=card.querySelector('.hist-chev-'+i)
+    if(body) body.style.display='block'
+    if(chev) chev.textContent=''
+  })
+}
+
+// ── Stats ─────────────────────────────────────────────────────────
+function updateStats(){
+  const active=DB[SH_CLI].filter(c=>c.activeSession&&c.activeSession!=='')
+  document.getElementById('s-cli').textContent=active.length
+  document.getElementById('s-pend').textContent=active.filter(c=>!c.status||c.status==='pending').length
+  if(isAdmin()){
+    document.getElementById('s-rep').textContent=DB[SH_SES].length
+    const now=new Date(),mk=mKey(now.toISOString()),wn=getWeekNum(now.toISOString())
+    // Mes
+    const activeMes=DB[SH_SES].filter(r=>{const d=new Date(r.fecha);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()}).reduce((s,r)=>s+numF(r.total),0)
+    const closedMes=DB[SH_CIE].filter(c=>mKey(c.closedAt)===mk).reduce((s,c)=>s+numF(c.total),0)
+    const mes=activeMes+closedMes
+    document.getElementById('s-mes').textContent=mes>=1000?'$'+(mes/1000).toFixed(1)+'k':f$(mes)
+    // Semana
+    const activeSem=DB[SH_SES].filter(r=>{const d=new Date(r.fecha);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()&&getWeekNum(r.fecha)===wn}).reduce((s,r)=>s+numF(r.total),0)
+    const closedSem=DB[SH_CIE].filter(c=>mKey(c.closedAt)===mk&&getWeekNum(c.closedAt)===wn).reduce((s,c)=>s+numF(c.total),0)
+    const sem=activeSem+closedSem
+    document.getElementById('s-sem').textContent=sem>=1000?'$'+(sem/1000).toFixed(1)+'k':f$(sem)
+    // Labels dinámicos
+    const mesLabel=now.toLocaleDateString('es-MX',{month:'long'}).replace(/^\w/,ch=>ch.toUpperCase())
+    const slMes=document.getElementById('sl-mes');if(slMes)slMes.textContent=mesLabel
+    const slSem=document.getElementById('sl-sem');if(slSem)slSem.textContent='Semana '+wn
+  }
+  const repStat=document.getElementById('stat-rep')
+  const mesStat=document.getElementById('stat-mes')
+  const semStat=document.getElementById('stat-sem')
+  if(repStat) repStat.style.display=isAdmin()?'':'none'
+  if(mesStat) mesStat.style.display=isAdmin()?'':'none'
+  if(semStat) semStat.style.display=isAdmin()?'':'none'
+}
+
+// ── Autocomplete ──────────────────────────────────────────────────
+let selCid=null
+function acI(el,lid,dbk){
+  const q=el.value.trim().toLowerCase(),list=document.getElementById(lid)
+  let fil=[],html=''
+  if(dbk==='db-nombres'){
+    const raw=DB[SH_CAT_CLI]
+    fil=(q?raw.filter(i=>i.nombre&&i.nombre.toLowerCase().includes(q)):raw.slice(-8).reverse()).slice(0,8)
+    if(!fil.length){list.classList.remove('open');return}
+    html=fil.map((item,i)=>`<div class="ac-item" data-i="${i}"
+      onclick="acSN('${el.id}','${lid}','${(item.nombre||'').replace(/'/g,"\\'")}','${(item.vehiculo||'').replace(/'/g,"\\'")}')">
+      <span class="ac-ico">👤</span>
+      <div style="flex:1;min-width:0"><div style="font-weight:600">${item.nombre}</div>
+      <div style="font-size:11px;color:var(--text3)">🚗 ${item.vehiculo}</div></div></div>`).join('')
+  } else if(dbk==='db-reparaciones'){
+    const raw=DB[SH_CAT_REP]
+    fil=(q?raw.filter(i=>i.reparacion&&i.reparacion.toLowerCase().includes(q)):raw.slice(-8).reverse()).slice(0,8)
+    if(!fil.length){list.classList.remove('open');return}
+    html=fil.map((item,i)=>`<div class="ac-item" data-i="${i}"
+      onclick="acSR('${el.id}','${lid}','${(item.reparacion||'').replace(/'/g,"\\'").replace(/"/g,'&quot;')}',${numF(item.manoObra)},${numF(item.material)})">
+      <span class="ac-ico">🔧</span>
+      <div style="flex:1;min-width:0"><div style="font-weight:600">${item.reparacion}</div>
+      <div style="font-size:11px;color:var(--text3)">MO: ${f$(item.manoObra)} · Mat: ${f$(item.material)}</div></div></div>`).join('')
+  } else if(dbk==='db-vehiculos'){
+    const veh=[...new Set(DB[SH_CAT_CLI].map(i=>i.vehiculo).filter(Boolean))]
+    fil=(q?veh.filter(v=>v.toLowerCase().includes(q)):veh.slice(-8).reverse()).slice(0,8)
+    if(!fil.length){list.classList.remove('open');return}
+    html=fil.map((v,i)=>`<div class="ac-item" data-i="${i}"
+      onclick="acS('${el.id}','${lid}','${v.replace(/'/g,"\\'")}')">
+      <span class="ac-ico">🚗</span><span>${v}</span></div>`).join('')
+  }
+  list.innerHTML=html;list.classList.add('open')
+}
+function acSN(eid,lid,nombre,vehiculo){
+  document.getElementById(eid).value=nombre
+  const v=document.getElementById('inp-vehiculo');if(v)v.value=vehiculo
+  document.getElementById(lid).classList.remove('open')
+}
+function acSR(eid,lid,rep,mo,mat){
+  document.getElementById(eid).value=rep
+  document.getElementById(lid).classList.remove('open')
+  let mi,ti
+  if(eid==='inp-rep'){mi='inp-mo';ti='inp-mat'}
+  else if(eid==='inp-rep2'){mi='inp-mo2';ti='inp-mat2'}
+  else if(eid==='inp-mrep'){mi='inp-mmo';ti='inp-mmat'}
+  if(mi&&document.getElementById(mi)){
+    document.getElementById(mi).value=mo;document.getElementById(ti).value=mat
+    calcT();calcT2();calcTM()
+  }
+}
+function acS(eid,lid,val){document.getElementById(eid).value=val;document.getElementById(lid).classList.remove('open')}
+function acK(e,lid){
+  const list=document.getElementById(lid);if(!list.classList.contains('open'))return
+  const items=list.querySelectorAll('.ac-item'),foc=list.querySelector('.focused')
+  let idx=foc?parseInt(foc.dataset.i):-1
+  if(e.key==='ArrowDown')idx=Math.min(idx+1,items.length-1)
+  else if(e.key==='ArrowUp')idx=Math.max(idx-1,0)
+  else if(e.key==='Enter'&&foc){foc.click();return}
+  else if(e.key==='Escape'){list.classList.remove('open');return}
+  items.forEach(i=>i.classList.remove('focused'));if(items[idx])items[idx].classList.add('focused')
+}
+function sAC(dbk,val,mo,mat){
+  if(!val?.trim())return
+  if(dbk==='db-nombres'){
+    if(!DB[SH_CAT_CLI].find(i=>i.nombre===val.trim()))
+      gsAppendBg(SH_CAT_CLI,{nombre:val.trim(),vehiculo:(mo||'').trim()})
+  } else if(dbk==='db-reparaciones'){
+    const existing=DB[SH_CAT_REP].find(i=>i.reparacion===val.trim())
+    if(existing) gsUpdateBg(SH_CAT_REP,{reparacion:val.trim(),manoObra:numF(mo),material:numF(mat)},'reparacion')
+    else gsAppendBg(SH_CAT_REP,{reparacion:val.trim(),manoObra:numF(mo),material:numF(mat)})
+  }
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.ac-wrap'))document.querySelectorAll('.ac-list').forEach(l=>l.classList.remove('open'))
+})
+// Cerrar otros autocompletes al abrir uno nuevo
+function closeOtherAC(exceptId){
+  document.querySelectorAll('.ac-list').forEach(l=>{ if(l.id!==exceptId) l.classList.remove('open') })
+}
+
+// ── Totales ───────────────────────────────────────────────────────
+function calcT(){
+  const mo=numF(document.getElementById('inp-mo').value),mat=numF(document.getElementById('inp-mat').value)
+  document.getElementById('t-total').textContent=f$(mo+mat)
+}
+function calcT2(){
+  // inp-mo2/inp-mat2 removed — kept for compatibility only
+  const mo=numF(document.getElementById('inp-mo2')?.value||0)
+  const mat=numF(document.getElementById('inp-mat2')?.value||0)
+  const el=document.getElementById('t-total2'); if(el) el.textContent=f$(mo+mat)
+}
+function calcTM(){
+  const mo=numF(document.getElementById('inp-mmo').value),mat=numF(document.getElementById('inp-mmat').value)
+  document.getElementById('t-modal').textContent=f$(mo+mat)
+}
+
+// ── Registro unificado ───────────────────────────────────────────
+
+// ── Registrar a existente ─────────────────────────────────────────
+// ── Ingreso unificado ─────────────────────────────────────────────
+// selCid = null → cliente nuevo, selCid = id → cliente existente
+function acIngreso(el){
+  const q=el.value.trim().toLowerCase()
+  const list=document.getElementById('ac-ing')
+  if(!el.value.trim()&&selCid){
+    selCid=null
+    document.getElementById('campo-vehiculo').style.display='block'
+    document.getElementById('campo-vehiculo-sel').style.display='none'
+    document.getElementById('inp-vehiculo').value=''
+  }
+  const cl=DB[SH_CLI]
+  if(!cl.length){list.classList.remove('open');return}
+  const fil=q
+    ?cl.filter(c=>c.nombre.toLowerCase().includes(q)||c.vehiculo.toLowerCase().includes(q)).slice(0,10)
+    :cl.slice(-10).reverse()
+  if(!fil.length){list.classList.remove('open');return}
+  list.innerHTML=fil.map((c,i)=>`<div class="ac-item" data-i="${i}"
+    onclick="selClientIngreso('${c.id}','${escQ(c.nombre)}','${escQ(c.vehiculo)}')">
+    <span class="ac-ico">🧑</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600">${c.nombre}</div>
+      <div style="font-size:0.68rem;color:var(--text3)">🚗 ${c.vehiculo}</div>
+    </div></div>`).join('')
+  closeOtherAC('ac-ing')
+  list.classList.add('open')
+}
+function selClientIngreso(id,nombre,vehiculo){
+  selCid=id
+  document.getElementById('inp-nombre').value=nombre
+  document.getElementById('ac-ing').classList.remove('open')
+  document.getElementById('campo-vehiculo').style.display='none'
+  const selV=document.getElementById('campo-vehiculo-sel')
+  const selVInp=document.getElementById('inp-vehiculo-sel')
+  if(selV){ selV.style.display='block'; selVInp.value=vehiculo }
+}
+function regIngreso(){
+  const nombre=toTitle(document.getElementById('inp-nombre').value.trim())
+  const rep=toTitle(document.getElementById('inp-rep').value.trim())
+  const mo=numF(document.getElementById('inp-mo').value)
+  const mat=numF(document.getElementById('inp-mat').value)
+  if(!nombre){showToast('⚠️ Ingresa el nombre','error');return}
+  if(!rep){showToast('⚠️ Describe la reparación','error');return}
+  const now=new Date().toISOString()
+  if(selCid){
+    // ── Cliente existente — solo agregar reparación ──
+    const ci=DB[SH_CLI].findIndex(c=>c.id===selCid);if(ci===-1)return
+    let sid=DB[SH_CLI][ci].activeSession
+    if(!sid||sid==='') sid=gid()
+    DB[SH_CLI][ci]={...DB[SH_CLI][ci],activeSession:sid,status:'pending'}
+    gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
+    gsAppendBg(SH_SES,{id:gid(),clientId:selCid,sessionId:sid,reparacion:rep,manoObra:mo,material:mat,total:mo+mat,fecha:now})
+    sAC('db-reparaciones',rep,mo,mat)
+    showToast('✅ Reparación agregada','success')
+  } else {
+    // ── Cliente nuevo ──
+    const vehiculo=toTitle(document.getElementById('inp-vehiculo').value.trim())
+    if(!vehiculo){showToast('⚠️ Ingresa el vehículo','error');return}
+    const cid=gid(),sid=gid()
+    gsAppendBg(SH_CLI,{id:cid,nombre,vehiculo,status:'pending',activeSession:sid,createdAt:now})
+    gsAppendBg(SH_SES,{id:gid(),clientId:cid,sessionId:sid,reparacion:rep,manoObra:mo,material:mat,total:mo+mat,fecha:now})
+    sAC('db-nombres',nombre,vehiculo)
+    sAC('db-reparaciones',rep,mo,mat)
+    showToast('✅ Cliente registrado','success')
+  }
+  // Limpiar formulario
+  selCid=null
+  ;['inp-nombre','inp-vehiculo','inp-rep','inp-mo','inp-mat'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value='' })
+  calcT()
+  document.getElementById('campo-vehiculo').style.display='block'
+  const selV=document.getElementById('campo-vehiculo-sel'); if(selV) selV.style.display='none'
+  goTo('screen-clientes')
+}
+// Mantener compatibilidad con código que llame a regNuevo/regExistente
+function regNuevo(){ regIngreso() }
+function regExistente(){ regIngreso() }
+
+// ── Status ────────────────────────────────────────────────────────
+function setStatus(cid,status,e){
+  e&&e.stopPropagation()
+  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  DB[SH_CLI][ci]={...DB[SH_CLI][ci],status}
+  gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
+  // Actualizar solo la tarjeta afectada — sin re-renderizar toda la lista
+  const card=document.getElementById('cc-'+cid)
+  if(card){
+    const ss=card.querySelector('.ss'); if(ss) ss.className='ss '+status
+    card.querySelectorAll('.s-btn').forEach(btn=>{
+      btn.classList.remove('active')
+      if(btn.classList.contains(status)) btn.classList.add('active')
+    })
+    const existing=card.querySelector('.btn-entregar')
+    if(existing) existing.closest('div[style*="padding"]')?.remove()
+    if(status==='done'){
+      const _sid=DB[SH_CLI].find(c=>c.id===cid)?.activeSession
+      const _tot=DB[SH_SES].filter(r=>r.clientId===cid&&r.sessionId===_sid).reduce((s,r)=>s+numF(r.total),0)
+      const _abo=DB[SH_ABO].filter(a=>a.clientId===cid).reduce((s,a)=>s+numF(a.monto),0)
+      if(_abo>=_tot){
+        const abonoInline=card.querySelector('.abono-inline')
+        if(abonoInline){
+          const div=document.createElement('div')
+          div.style.cssText='padding:0 0 10px'
+          div.innerHTML=`<button class="btn-entregar" onclick="entregar('${cid}',event)">🚗 Entregar</button>`
+          abonoInline.insertAdjacentElement('afterend',div)
+        }
+      }
+    }
+    setTimeout(()=>card.classList.add('expanded'),30)
+  }
+  showToast({pending:'⏳ Pendiente',process:'🔧 En proceso',done:'✅ Completado — listo para entregar'}[status]||'','success')
+}
+
+// ── Abono ─────────────────────────────────────────────────────────
+function doAbono(cid,e){
+  e&&e.stopPropagation()
+  const inp=document.getElementById('abo-inp-'+cid)
+  const monto=numF(inp.value)
+  if(monto<=0){showToast('⚠️ Ingresa un monto válido','error');return}
+  gsAppendBg(SH_ABO,{id:gid(),clientId:cid,monto,nota:'',fecha:new Date().toISOString()})
+  inp.value=''
+  showToast('💵 Abono registrado','success')
+  const _abCard=document.getElementById('cc-'+cid)
+  if(_abCard){
+    const _abCi=DB[SH_CLI].findIndex(c=>c.id===cid)
+    if(_abCi!==-1&&DB[SH_CLI][_abCi].status==='done'){
+      const _abSid=DB[SH_CLI][_abCi].activeSession
+      const _abTot=DB[SH_SES].filter(r=>r.clientId===cid&&r.sessionId===_abSid).reduce((s,r)=>s+numF(r.total),0)
+      const _abAbo=DB[SH_ABO].filter(a=>a.clientId===cid).reduce((s,a)=>s+numF(a.monto),0)
+      const _abEx=_abCard.querySelector('.btn-entregar')
+      if(_abEx) _abEx.closest('div[style*="padding"]')?.remove()
+      if(_abAbo>=_abTot){
+        const _abAI=_abCard.querySelector('.abono-inline')
+        if(_abAI){
+          const _abDiv=document.createElement('div')
+          _abDiv.style.cssText='padding:0 0 10px'
+          _abDiv.innerHTML=`<button class="btn-entregar" onclick="entregar('${cid}',event)">🚗 Entregar</button>`
+          _abAI.insertAdjacentElement('afterend',_abDiv)
+        }
+      }
+    }
+  }
+  scheduleRender()
+  setTimeout(()=>document.getElementById('cc-'+cid)?.classList.add('expanded'),50)
+}
+
+// ── Cierre ────────────────────────────────────────────────────────
+function autoClose(cid){
+  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  const client=DB[SH_CLI][ci];if(client.status!=='done')return
+  const sid=client.activeSession
+  const cycleReps=DB[SH_SES].filter(r=>r.clientId===cid&&r.sessionId===sid)
+  const now=new Date().toISOString()
+  cycleReps.forEach(r=>{
+    gsAppendBg(SH_CIE,{closedAt:now,nombre:client.nombre,vehiculo:client.vehiculo,
+      reparacion:r.reparacion,manoObra:r.manoObra,material:r.material,total:r.total,fechaRep:r.fecha})
+  })
+  gsDeleteWhereBg(SH_SES,'clientId',cid)
+  gsDeleteWhereBg(SH_ABO,'clientId',cid)
+  DB[SH_CLI][ci]={...client,activeSession:'',status:'done'}
+  gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
+  scheduleRender()
+  showToast('🏆 Archivado en Cierre Mensual','success')
+}
+
+// ── Entregar — archiva al cliente cuando completado y liquidado ───
+function entregar(cid,e){
+  e&&e.stopPropagation()
+  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  const client=DB[SH_CLI][ci]
+  if(client.status!=='done'){showToast('⚠️ Marca el carro como Completado primero','error');return}
+  const sid=client.activeSession
+  const totalRep=DB[SH_SES].filter(r=>r.clientId===cid&&r.sessionId===sid).reduce((s,r)=>s+numF(r.total),0)
+  const totalAbo=DB[SH_ABO].filter(a=>a.clientId===cid).reduce((s,a)=>s+numF(a.monto),0)
+  if(totalRep>0&&totalAbo<totalRep){
+    showToast(`⚠️ Falta liquidar ${f$(totalRep-totalAbo)}`,'error');return
+  }
+  autoClose(cid)
+}
+function buildClientCard(c,i){
+    const sid=c.activeSession
+    const cReps=DB[SH_SES].filter(r=>r.clientId===c.id&&r.sessionId===sid).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha))
+    const cAbos=DB[SH_ABO].filter(a=>a.clientId===c.id)
+    const gTotal=cReps.reduce((s,r)=>s+numF(r.total),0)
+    const tAbo=cAbos.reduce((s,a)=>s+numF(a.monto),0)
+    const saldo=gTotal-tAbo,st=c.status||'pending',sc=saldo<=0?'ok':'pend'
+    const repsHTML=cReps.map(r=>`
+      <div class="rep-item" id="ri-${r.id}">
+        <div class="ri-top">
+          <div class="rep-desc ri-desc">${r.reparacion}</div>
+          <div class="ri-actions">
+            <div class="rab edit" onclick="togEdit('${r.id}')">✏️</div>
+            <div class="rab del" onclick="delRep('${r.id}','${c.id}')">🗑</div>
+          </div>
+        </div>
+        <div class="ri-bottom">
+          <div class="rep-dt">📅 ${fD(r.fecha)}</div>
+          <div class="ri-spacer"></div>
+          <div class="rep-costs ri-costs-wrap">
+            <div class="cbadge"><span class="cbl">M.O.</span>&nbsp;<span class="cbv">${f$(r.manoObra)}</span></div>
+            <div class="cbadge"><span class="cbl">Mat.</span>&nbsp;<span class="cbv">${f$(r.material)}</span></div>
+            <div class="ctotal">${f$(r.total)}</div>
+          </div>
+        </div>
+        <div id="rer-${r.id}" style="display:none;gap:7px;padding-top:8px;border-top:1px solid var(--border);align-items:flex-end;flex-wrap:wrap">
+          <div class="ri-edit-field"><div class="ri-edit-label">M.O. ($)</div>
+            <input type="number" id="emo-${r.id}" value="${numF(r.manoObra)}" min="0" step="1" inputmode="decimal" class="ri-edit-input"></div>
+          <div class="ri-edit-field"><div class="ri-edit-label">Mat. ($)</div>
+            <input type="number" id="emat-${r.id}" value="${numF(r.material)}" min="0" step="1" inputmode="decimal" class="ri-edit-input"></div>
+          <button onclick="saveEdit('${r.id}','${c.id}')" class="ri-edit-save">✅ Guardar</button>
+          <button onclick="togEdit('${r.id}')" class="ri-edit-cancel">✕</button>
+        </div>
+      </div>`).join('')
+    const abosHTML=cAbos.length>0
+      ?`<div class="abonos-body"><div class="abonos-title">💵 Abonos registrados</div>`
+        +cAbos.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).map(a=>`
+          <div class="abo-row">
+            <div class="abo-info"><div class="abo-nota">${a.nota||'Abono'}</div><div class="abo-fecha">${fD(a.fecha)}</div></div>
+            <div class="abo-monto">+${f$(a.monto)}</div>
+            <div class="abo-del" onclick="delAbo('${a.id}','${c.id}')">✕</div>
+          </div>`).join('')+`</div>`
+      :''
+    return `<div class="ccard ani" style="animation-delay:${i*.04}s" id="cc-${c.id}">
+      <div class="ss ${st}"></div>
+      <div class="cc-head">
+        <div class="cc-top">
+          <div class="cc-av" onclick="togCard('${c.id}')">🧑</div>
+          <div class="cc-info cc-info-row" onclick="togCard('${c.id}')">
+            <div class="cc-name">${c.nombre}</div>
+            <div class="cc-car">🚗 ${c.vehiculo}</div>
+            <div class="cc-rep-count">${cReps.length} rep.</div>
+            <div class="cc-saldo cc-saldo-wrap ${sc}">${saldo<=0?'✅ Al día':f$(saldo)}</div>
+          </div>
+        </div>
+        <div class="s-btns">
+          <button class="s-btn pending ${st==='pending'?'active':''}" onclick="setStatus('${c.id}','pending',event)">⏳ Pendiente</button>
+          <button class="s-btn process ${st==='process'?'active':''}" onclick="setStatus('${c.id}','process',event)">🔧 En proceso</button>
+          <button class="s-btn done    ${st==='done'   ?'active':''}" onclick="setStatus('${c.id}','done',event)">✅ Completado</button>
+        </div>
+        <div class="abono-inline">
+          <input type="number" id="abo-inp-${c.id}" placeholder="Abonar $…" min="0" step="0.01" inputmode="decimal"
+            onkeydown="if(event.key==='Enter')doAbono('${c.id}',event)" onclick="event.stopPropagation()">
+          <span class="abo-saldo ${sc}">${saldo<=0?f$(0):f$(saldo)}</span>
+          <button class="btn-abo" onclick="doAbono('${c.id}',event)">Abonar</button>
+        </div>
+        ${(()=>{
+          if(st!=='done') return ''
+          const liquidado=saldo<=0
+          if(!liquidado) return ''
+          return `<div style="padding:0 0 10px">
+            <button class="btn-entregar" onclick="entregar('${c.id}',event)">🚗 Entregar</button>
+          </div>`
+        })()}
+      </div>
+      <div class="cc-body">
+        <button class="add-rep-btn" onclick="openRepModal('${c.id}','${escQ(c.nombre)}','${escQ(c.vehiculo)}')">
+          <span class="arb-ico">➕</span> Agregar reparación
+        </button>
+        ${repsHTML}${abosHTML}
+        ${cReps.length>0?`<div class="cc-gt"><span class="gtl">Total (${cReps.length} rep.)</span><span class="gtv">${f$(gTotal)}</span></div>`:''}
+      </div>
+    </div>`
+}
+
+function renderClientes(){
+  try{
+  const q=(document.getElementById('inp-search')?.value||'').trim().toLowerCase()
+  const active=DB[SH_CLI].filter(c=>c.activeSession&&c.activeSession!=='')
+  const fil=q?active.filter(c=>c.nombre.toLowerCase().includes(q)||c.vehiculo.toLowerCase().includes(q)):active
+  document.getElementById('badge-cli').textContent=active.length
+  const list=document.getElementById('clients-list')
+  if(!fil.length){
+    list.innerHTML=`<div class="empty"><div class="ei">${q?'🔍':'🔧'}</div>
+      <div class="et">${q?'Sin resultados':'Sin clientes activos'}</div>
+      <div class="es">${q?'Intenta con otro nombre':'Registra tu primer cliente'}</div></div>`
+    return
+  }
+  list.innerHTML=fil.map((c,i)=>buildClientCard(c,i)).join('')
+  }catch(err){console.error("renderClientes:",err);showToast("❌ Error en renderClientes: "+err.message,"error")}
+}
+function togCard(id){document.getElementById('cc-'+id)?.classList.toggle('expanded')}
+function togEdit(rid){
+  const row=document.getElementById('rer-'+rid)
+  if(!row)return
+  const open=row.style.display==='flex'
+  row.style.display=open?'none':'flex'
+}
+function saveEdit(rid,cid){
+  const mo=numF(document.getElementById('emo-'+rid).value)
+  const mat=numF(document.getElementById('emat-'+rid).value)
+  const ri=DB[SH_SES].findIndex(r=>r.id===rid);if(ri===-1)return
+  DB[SH_SES][ri]={...DB[SH_SES][ri],manoObra:mo,material:mat,total:mo+mat}
+  gsUpdateBg(SH_SES,DB[SH_SES][ri])
+  sAC('db-reparaciones',DB[SH_SES][ri].reparacion,mo,mat)
+  showToast('✅ Costos actualizados','success')
+  scheduleRender()
+  setTimeout(()=>document.getElementById('cc-'+cid)?.classList.add('expanded'),50)
+}
+function delRep(rid,cid){
+  if(!confirm('¿Eliminar esta reparación?'))return
+  gsDeleteBg(SH_SES,rid)
+  scheduleRender();showToast('🗑 Eliminada','error')
+  setTimeout(()=>document.getElementById('cc-'+cid)?.classList.add('expanded'),50)
+}
+function delAbo(aid,cid){
+  if(!confirm('¿Eliminar este abono?'))return
+  gsDeleteBg(SH_ABO,aid)
+  scheduleRender();showToast('🗑 Abono eliminado','error')
+  setTimeout(()=>document.getElementById('cc-'+cid)?.classList.add('expanded'),50)
+}
+
+// ── Modal nueva rep ───────────────────────────────────────────────
+function openRepModal(cid,nombre,vehiculo){
+  document.getElementById('modal-cid').value=cid
+  document.getElementById('modal-rep-title').textContent=`${nombre} · ${vehiculo}`
+  ;['inp-mrep','inp-mmo','inp-mmat'].forEach(id=>document.getElementById(id).value='')
+  calcTM();openModal('modal-rep')
+}
+function regDesdeModal(){
+  const cid=document.getElementById('modal-cid').value
+  const rep=toTitle(document.getElementById('inp-mrep').value.trim())
+  const mo=numF(document.getElementById('inp-mmo').value)
+  const mat=numF(document.getElementById('inp-mmat').value)
+  if(!rep){showToast('⚠️ Describe la reparación','error');return}
+  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  let sid=DB[SH_CLI][ci].activeSession
+  if(!sid||sid==='') sid=gid()
+  const newRep={id:gid(),clientId:cid,sessionId:sid,reparacion:rep,manoObra:mo,material:mat,total:mo+mat,fecha:new Date().toISOString()}
+  DB[SH_CLI][ci]={...DB[SH_CLI][ci],activeSession:sid,status:'pending'}
+  gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
+  gsAppendBg(SH_SES,newRep)
+  sAC('db-reparaciones',rep,mo,mat)
+  closeModal('modal-rep');scheduleRender()
+  showToast('✅ Reparación guardada','success')
+  setTimeout(()=>document.getElementById('cc-'+cid)?.classList.add('expanded'),50)
+}
+
+// ── Cierre Mensual ────────────────────────────────────────────────
+function getWeekNum(dateStr){
+  const d=new Date(dateStr),day=d.getDate()
+  if(day<=7)return 1;if(day<=14)return 2;if(day<=21)return 3;return 4
+}
+function weekLabel(n){return['','Semana 1 (1–7)','Semana 2 (8–14)','Semana 3 (15–21)','Semana 4 (22–31)'][n]}
+function renderMensual(){
+  try{
+  const rows=DB[SH_CIE],list=document.getElementById('month-list')
+  if(!rows.length){
+    document.getElementById('badge-mes').textContent='0'
+    list.innerHTML=`<div class="empty"><div class="ei">📅</div><div class="et">Sin cierres aún</div>
+      <div class="es">Aparece cuando un cliente esté completado y liquidado</div></div>`
+    return
+  }
+  // Agrupar: mes → semana → cliente
+  const byMonth={}
+  rows.forEach(r=>{
+    const mk=mKey(r.closedAt)
+    if(!byMonth[mk])byMonth[mk]={key:mk,label:fMes(r.closedAt),weeks:{}}
+    const wk=getWeekNum(r.closedAt)
+    if(!byMonth[mk].weeks[wk])byMonth[mk].weeks[wk]={week:wk,clients:{}}
+    const ck=`${r.nombre}__${r.vehiculo}__${mk}`
+    if(!byMonth[mk].weeks[wk].clients[ck])
+      byMonth[mk].weeks[wk].clients[ck]={nombre:r.nombre,vehiculo:r.vehiculo,repairs:[]}
+    byMonth[mk].weeks[wk].clients[ck].repairs.push(r)
+  })
+  const months=Object.values(byMonth).sort((a,b)=>b.key.localeCompare(a.key))
+  document.getElementById('badge-mes').textContent=months.length
+  list.innerHTML=months.map((m,mi)=>{
+    const allClients=Object.values(m.weeks).flatMap(w=>Object.values(w.clients))
+    const totalMes=allClients.reduce((s,c)=>s+c.repairs.reduce((ss,r)=>ss+numF(r.total),0),0)
+    const totalReps=allClients.reduce((s,c)=>s+c.repairs.length,0)
+    const weeksHTML=[1,2,3,4].map(wn=>{
+      const w=m.weeks[wn]
+      const wid=`w-${m.key}-${wn}`
+      const hasData=!!w
+      const wTotal=w?Object.values(w.clients).reduce((s,c)=>s+c.repairs.reduce((ss,r)=>ss+numF(r.total),0),0):0
+      return `<div class="week-block${hasData?' has-data':''}" id="${wid}"
+        onclick="${hasData?`togWeekTab('${m.key}',${wn})`:''}">
+        <div class="week-head">
+          <span class="week-label">Sem ${wn}</span>
+          <span class="week-amount" style="${hasData?'color:var(--orange)':'color:var(--text3)'}">${f$(wTotal)}</span>
+        </div>
+      </div>`
+    }).join('')
+
+    // Detalles por semana — cada uno oculto, se muestra al seleccionar
+    const weekDetails=[1,2,3,4].map(wn=>{
+      const w=m.weeks[wn]
+      if(!w) return `<div class="week-detail" id="wd-${m.key}-${wn}"></div>`
+      const clientsHTML=Object.values(w.clients).map((c,ci)=>{
+        const cid=`c-${m.key}-${wn}-${ci}`
+        const tot=c.repairs.reduce((s,r)=>s+numF(r.total),0)
+        const repsHTML=c.repairs.map(r=>`
+          <div class="rep-row">
+            <div class="rep-row-info">
+              <div class="rep-row-desc">${r.reparacion}</div>
+              <div class="rep-row-sub">${fD(r.fechaRep)} · MO: ${f$(r.manoObra)} · Mat: ${f$(r.material)}</div>
+            </div>
+            <div class="rep-row-total">${f$(r.total)}</div>
+          </div>`).join('')
+        return `<div class="cli-block" id="${cid}">
+          <div class="cli-head" onclick="togCli('${cid}')">
+            <div class="cli-info" style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow:hidden">
+              <div class="cli-nm" style="flex-shrink:0">🧑 ${c.nombre}</div>
+              <div class="cli-car" style="margin-top:0;flex-shrink:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🚗 ${c.vehiculo}</div>
+            </div>
+            <div class="cli-right">
+              <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap">${c.repairs.length} rep.</div>
+              <div class="cli-tot">${f$(tot)}</div>
+              
+            </div>
+          </div>
+          <div class="cli-body">${repsHTML}</div>
+        </div>`
+      }).join('')
+      return `<div class="week-detail" id="wd-${m.key}-${wn}">${clientsHTML}</div>`
+    }).join('')
+    return `<div class="mcard ani" style="animation-delay:${mi*.05}s" id="mc-${m.key}">
+      <div class="mcard-head" onclick="togMonth('${m.key}')">
+        <div class="mcard-ico">📅</div>
+        <div class="mcard-info">
+          <div class="mcard-name">${m.label}</div>
+          <div class="mcard-sub">${allClients.length} cliente${allClients.length!==1?'s':''} · ${totalReps} reparaciones</div>
+        </div>
+        <div class="mcard-right">
+          <div class="mcard-total">${f$(totalMes)}</div>
+          
+        </div>
+      </div>
+      <div class="mcard-body">
+        <div class="weeks-row">${weeksHTML}</div>
+        ${weekDetails}
+      </div>
+    </div>`
+  }).join('')
+  }catch(err){console.error("renderMensual:",err);showToast("❌ Error en renderMensual: "+err.message,"error")}
+}
+function togMonth(k){
+  const card=document.getElementById('mc-'+k); if(!card)return
+  const wasOpen=card.classList.contains('open')
+  if(wasOpen){
+    // Al cerrar: retraer semanas y clientes hijos
+    card.querySelectorAll('.week-detail.open').forEach(w=>w.classList.remove('open'))
+    card.querySelectorAll('.week-block.active-week').forEach(w=>w.classList.remove('active-week'))
+    card.querySelectorAll('.cli-block.open').forEach(c=>c.classList.remove('open'))
+  }
+  card.classList.toggle('open')
+}
+function togWeekTab(mKey,wn){
+  const detail=document.getElementById(`wd-${mKey}-${wn}`)
+  const tab=document.getElementById(`w-${mKey}-${wn}`)
+  const isOpen=detail?.classList.contains('open')
+  // Cerrar todos los detalles y deseleccionar tabs de este mes
+  const mc=document.getElementById('mc-'+mKey)
+  mc?.querySelectorAll('.week-detail').forEach(d=>d.classList.remove('open'))
+  mc?.querySelectorAll('.week-block').forEach(t=>t.classList.remove('active-week'))
+  if(!isOpen){
+    detail?.classList.add('open')
+    tab?.classList.add('active-week')
+  }
+}
+function togWeek(id){} // kept for compatibility
+function togCli(id){document.getElementById(id)?.classList.toggle('open')}
+
+// ── Historial ─────────────────────────────────────────────────────
+function renderHistorial(){
+  try{
+  // Caché: si los datos no cambiaron, reusar HTML anterior
+  const hHash=_quickHash([SH_CLI,SH_SES,SH_CIE])
+  const list=document.getElementById('hist-list')
+  if(_cacheHistorial.hash===hHash&&_cacheHistorial.html){
+    if(list&&list.innerHTML!==_cacheHistorial.html) list.innerHTML=_cacheHistorial.html
+    document.getElementById('badge-hist').textContent=list?.querySelectorAll('.ccard').length||0
+    return
+  }
+  const cmap=Object.fromEntries(DB[SH_CLI].map(c=>[c.id,c]))
+  // Agrupar por cliente (sin importar mes)
+  const groups={}
+  DB[SH_SES].forEach(r=>{
+    const c=cmap[r.clientId]; if(!c) return
+    const k=r.clientId
+    if(!groups[k]) groups[k]={id:k,nombre:c.nombre,vehiculo:c.vehiculo,repairs:[],archived:false}
+    groups[k].repairs.push({...r,_activo:true})
+  })
+  DB[SH_CIE].forEach(r=>{
+    // Buscar si ya existe el grupo por nombre+vehiculo
+    const k=Object.keys(groups).find(id=>groups[id].nombre===r.nombre&&groups[id].vehiculo===r.vehiculo)
+      ||`arch_${r.nombre}_${r.vehiculo}`
+    if(!groups[k]) groups[k]={id:k,nombre:r.nombre,vehiculo:r.vehiculo,repairs:[],archived:true}
+    groups[k].repairs.push({...r,fecha:r.fechaRep,_activo:false})
+  })
+  const sorted=Object.values(groups)
+    .map(g=>({...g,repairs:g.repairs.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha))}))
+    .sort((a,b)=>new Date(b.repairs[0]?.fecha||0)-new Date(a.repairs[0]?.fecha||0))
+  document.getElementById('badge-hist').textContent=sorted.length
+  // list ya declarado arriba en el bloque de caché
+  if(!sorted.length){list.innerHTML=`<div class="empty"><div class="ei">📋</div><div class="et">Sin registros</div></div>`;return}
+  list.innerHTML=sorted.map((g,i)=>{
+    const tot=g.repairs.reduce((s,r)=>s+numF(r.total),0)
+    const hasActive=g.repairs.some(r=>r._activo)
+    const dot=hasActive?'var(--orange)':'var(--green)' 
+    const badge=hasActive
+      ?'<span style="font-size:9px;background:var(--og);color:var(--orange);border:1px solid rgba(255,107,43,.2);border-radius:4px;padding:1px 6px">activo</span>'
+      :'<span style="font-size:9px;background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2);border-radius:4px;padding:1px 6px">archivado</span>'
+    const tableRows=g.repairs.map(r=>{
+      const estIcon=r._activo?'🔧':'✅'
+      const estColor=r._activo?'var(--orange)':'var(--green)'
+      return `
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:6px 8px;text-align:center;font-size:0.8rem" title="${r._activo?'Activo':'Entregado'}"><span style="color:${estColor}">${estIcon}</span></td>
+        <td style="padding:6px 8px;font-size:0.75rem;color:var(--text2);white-space:nowrap">${fD(r.fecha)}</td>
+        <td style="padding:6px 8px;font-size:0.78rem;color:var(--text)">${r.reparacion}</td>
+        <td style="padding:6px 8px;font-size:0.78rem;color:var(--text2);white-space:nowrap">${f$(r.manoObra)}</td>
+        <td style="padding:6px 8px;font-size:0.78rem;color:var(--text2);white-space:nowrap">${f$(r.material)}</td>
+        <td style="padding:6px 8px;font-size:0.82rem;font-weight:700;color:var(--orange);white-space:nowrap;text-align:right">${f$(r.total)}</td>
+      </tr>`}).join('')
+    return `<div class="ccard ani" style="animation-delay:${i*.03}s;margin-bottom:10px" id="hg-${i}">
+      <div style="height:3px;background:${dot};width:100%"></div>
+      <div style="padding:11px 14px;cursor:pointer;display:flex;align-items:center;gap:10px" onclick="togHist('hg-${i}')">
+        <div style="width:34px;height:34px;border-radius:9px;background:var(--og);border:1px solid rgba(255,107,43,.2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">🧑</div>
+        <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;overflow:hidden">
+          <div style="font-size:0.85rem;font-weight:700;white-space:nowrap">${g.nombre}</div>
+          ${badge}
+          <div style="font-size:0.68rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">🚗 ${g.vehiculo}</div>
+          <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;flex-shrink:0">${g.repairs.length} rep.</div>
+        </div>
+        <div style="font-size:0.9rem;font-weight:800;color:var(--orange);flex-shrink:0">${f$(tot)}</div>
+      </div>
+      <div class="hist-body" style="display:none;border-top:1px solid var(--border)">
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:var(--surface)">
+                <th style="padding:6px 8px;font-size:0.65rem;font-weight:700;color:var(--text3);text-align:center;white-space:nowrap">Est.</th>
+                <th style="padding:6px 8px;font-size:0.65rem;font-weight:700;color:var(--text3);text-align:left;white-space:nowrap">Fecha</th>
+                <th style="padding:6px 8px;font-size:0.65rem;font-weight:700;color:var(--text3);text-align:left">Reparación</th>
+                <th style="padding:6px 8px;font-size:0.65rem;font-weight:700;color:var(--text3);text-align:left;white-space:nowrap">M.O.</th>
+                <th style="padding:6px 8px;font-size:0.65rem;font-weight:700;color:var(--text3);text-align:left;white-space:nowrap">Mat.</th>
+                <th style="padding:6px 8px;font-size:0.65rem;font-weight:700;color:var(--orange);text-align:right;white-space:nowrap">Total</th>
+              </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`
+  }).join('')
+  // Guardar en caché
+  if(list) _cacheHistorial={hash:hHash,html:list.innerHTML}
+  }catch(err){console.error("renderHistorial:",err);showToast("❌ Error en renderHistorial: "+err.message,"error")}
+}
+function togHist(id){
+  const card=document.getElementById(id);if(!card)return
+  const body=card.querySelector('.hist-body')
+  const open=body.style.display==='block'
+  body.style.display=open?'none':'block'
+  const i=id.replace('hg-','')
+  const chev=card.querySelector('.hist-chev-'+i)
+  if(chev) chev.textContent=''
+}
+
+// ── Borrar todo ───────────────────────────────────────────────────
+function openDeleteAll(){
+  document.getElementById('inp-pass').value=''
+  document.getElementById('pass-error').style.display='none'
+  openModal('modal-deleteall')
+  setTimeout(()=>document.getElementById('inp-pass').focus(),350)
+}
+async function confirmDeleteAll(){
+  const pass=document.getElementById('inp-pass')
+  const errEl=document.getElementById('pass-error')
+  const currentPass=String(cfgGet('delete_pass','1505')).trim()
+  if(String(pass.value).trim()!==currentPass){errEl.style.display='block';pass.value='';pass.focus();return}
+  errEl.style.display='none'
+  const btn=document.querySelector('#modal-deleteall .btn-danger')
+  if(btn){btn.disabled=true;btn.textContent='⏳ Borrando...'}
+  setDot('syncing','Borrando...')
+  _polling=true // bloquear autoSync mientras borramos
+  try{
+    _queue.length=0
+    const r=await gsPost({action:'clearAll'})
+    if(r.ok){
+      // No borrar config — conserva nombre, logo, fondo y tema
+      const CLEAR_SHEETS=[SH_CLI,SH_SES,SH_CIE,SH_ABO,SH_CAT_REP,SH_CAT_CLI]
+      CLEAR_SHEETS.forEach(sh=>DB[sh]=[])
+      // Conservar config pero resetear _lastmod
+      bumpVersion()
+      bumpVersion()
+      lsSave() // guarda config intacto
+      localStorage.removeItem(LS_VER)
+      closeModal('modal-deleteall')
+      showToast('🗑 Todo borrado','error')
+    } else throw new Error(r.error||'Error en servidor')
+  }catch(e){
+    showToast('❌ Error: '+e.message,'error')
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='🗑 Confirmar borrado'}
+    _polling=false // liberar autoSync
+    setDot('ok','Sincronizado')
+    setTimeout(()=>goTo('screen-home'),400)
+  }
+}
+
+// ── Admin DB Clientes ─────────────────────────────────────────────
+// ── Apariencia ────────────────────────────────────────────────────
+function togPassForm(){
+  const form=document.getElementById('pass-form')
+  const chev=document.getElementById('pass-chev')
+  if(!form)return
+  const open=form.style.display==='flex'
+  form.style.display=open?'none':'flex'
+  if(chev) chev.style.transform=open?'':'rotate(180deg)'
+  if(!open) ;['pass-actual','pass-nueva','pass-confirmar'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''})
+}
+function openApariencia(){
+  document.getElementById('cfg-name').value=cfgGet('app_name','Taller Mecánico')
+  renderPaletteGrid()
+  renderFontList()
+  const currentFont=FONTS.find(f=>f.id===cfgGet('app_font','barlow'))
+  const fcl=document.getElementById('font-current-label')
+  if(fcl&&currentFont) fcl.textContent=currentFont.name
+  const sizeVal=cfgGet('app_font_size','0')
+  const sl=document.getElementById('font-size-slider')
+  if(sl) sl.value=sizeVal
+  const lbl=document.getElementById('font-size-label')
+  if(lbl) lbl.textContent=SIZE_LABELS[sizeVal]||'Normal'
+  const logo=cfgGet('app_logo','')
+  const lp=document.getElementById('logo-preview')
+  if(logo) lp.innerHTML=`<img src="${logo}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`
+  else lp.innerHTML='🔧'
+  const bg=cfgGet('app_bg','')
+  const bp=document.getElementById('bg-preview')
+  if(bg){ bp.style.backgroundImage=`url(${bg})`; bp.textContent='' }
+  else{ bp.style.backgroundImage='none'; bp.textContent='—' }
+  const form=document.getElementById('pass-form')
+  if(form) form.style.display='none'
+  const chev=document.getElementById('pass-chev')
+  if(chev) chev.style.transform=''
+  updateToggleKnob()
+}
+function updateToggleKnob(){
+  const isLight=cfgGet('theme','dark')==='light'
+  // Actualizar todos los toggles que existan
+  document.querySelectorAll('.theme-toggle-input').forEach(tog=>{
+    tog.checked=isLight
+  })
+  document.querySelectorAll('.theme-toggle-knob').forEach(knob=>{
+    knob.style.transform=isLight?'translateX(20px)':'translateX(0)'
+    const track=knob.parentElement
+    if(track) track.style.background=isLight?'var(--orange)':'var(--border2)'
+  })
+}
+function saveCfgName(){
+  const val=document.getElementById('cfg-name').value.trim()
+  if(!val){showToast('⚠️ Ingresa un nombre','error');return}
+  cfgSet('app_name',val)
+  applyConfig()
+  showToast('✅ Nombre guardado','success')
+}
+function changePassword(){
+  const actual=document.getElementById('pass-actual').value
+  const nueva=document.getElementById('pass-nueva').value
+  const confirmar=document.getElementById('pass-confirmar').value
+  const current=String(cfgGet('delete_pass','1505')).trim()
+  if(String(actual).trim()!==current){showToast('❌ Contraseña actual incorrecta','error');return}
+  if(!nueva||nueva.length<4){showToast('⚠️ La nueva contraseña debe tener al menos 4 caracteres','error');return}
+  if(nueva!==confirmar){showToast('⚠️ Las contraseñas no coinciden','error');return}
+  cfgSet('delete_pass',nueva)
+  ;['pass-actual','pass-nueva','pass-confirmar'].forEach(id=>document.getElementById(id).value='')
+  togPassForm()
+  showToast('✅ Contraseña actualizada','success')
+}
+async function uploadLogo(input){
+  const file=input.files[0]; if(!file)return
+  openCropper('logo',file)
+  input.value=''
+}
+function removeLogo(){
+  cfgSet('app_logo','')
+  document.getElementById('logo-preview').innerHTML='🔧'
+  applyConfig()
+  showToast('🗑 Logo eliminado','error')
+}
+async function uploadBg(input){
+  const file=input.files[0]; if(!file)return
+  openCropper('bg',file)
+  input.value=''
+}
+function removeBg(){
+  cfgSet('app_bg','')
+  const bp=document.getElementById('bg-preview')
+  bp.style.backgroundImage='none'; bp.textContent='Sin imagen de fondo'
+  applyConfig()
+  showToast('🗑 Fondo eliminado','error')
+}
+
+function renderDbClientes(){
+  try{
+  const cl=DB[SH_CLI],list=document.getElementById('dbc-list')
+  document.getElementById('badge-dbc').textContent=cl.length
+  if(!cl.length){list.innerHTML=`<div class="empty"><div class="ei">👥</div><div class="et">Sin clientes</div></div>`;return}
+  const stL={pending:'⏳ Pendiente',process:'🔧 En proceso',done:'✅ Completado'}
+  list.innerHTML=`<div class="db-section-lbl">Total: ${cl.length} · ${cl.filter(c=>c.activeSession&&c.activeSession!=='').length} activos</div>`
+    +cl.map((c,i)=>{
+      const arch=!c.activeSession||c.activeSession===''
+      return `<div class="db-item ani" id="dbc-${c.id}" style="animation-delay:${i*.03}s">
+        <div class="db-item-head">
+          <div class="db-item-ico">${arch?'📦':'🧑'}</div>
+          <div class="db-item-info">
+            <div class="db-item-name">${c.nombre}</div>
+            <div class="db-item-sub">🚗 ${c.vehiculo}</div>
+            <div class="db-item-date">${arch?'📦 Archivado':stL[c.status||'pending']}</div>
+          </div>
+          <div class="db-item-actions">
+            <button class="dba edit" onclick="togDbcEdit('${c.id}')">✏️</button>
+            <button class="dba del"  onclick="dbDelClient('${c.id}')">🗑</button>
+          </div>
+        </div>
+        <div class="db-inline-form" id="dbc-form-${c.id}" style="display:none;padding:10px 12px 12px;border-top:1px solid var(--border);gap:8px;flex-direction:column">
+          <div class="field" style="margin-bottom:0"><label>Nombre</label>
+            <input type="text" id="dbc-nombre-${c.id}" value="${escQ(c.nombre)}" placeholder="Nombre del cliente"></div>
+          <div class="field" style="margin-bottom:0"><label>Vehículo</label>
+            <input type="text" id="dbc-vehiculo-${c.id}" value="${escQ(c.vehiculo)}" placeholder="Marca / Modelo"></div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn-se" style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--green);color:#fff;border:none;font-weight:700;cursor:pointer"
+              onclick="saveDbcEdit('${c.id}')">✅ Guardar</button>
+            <button class="btn-se" style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--surface);color:var(--text2);border:1px solid var(--border);font-weight:600;cursor:pointer"
+              onclick="togDbcEdit('${c.id}')">✕ Cancelar</button>
+          </div>
+        </div>
+      </div>`
+    }).join('')
+  }catch(err){console.error("renderDbClientes:",err);showToast("❌ Error en renderDbClientes: "+err.message,"error")}
+}
+function togDbcEdit(cid){
+  const form=document.getElementById('dbc-form-'+cid)
+  if(!form)return
+  const open=form.style.display==='flex'
+  // Cerrar todos los demás
+  document.querySelectorAll('.db-inline-form').forEach(f=>f.style.display='none')
+  if(!open) form.style.display='flex'
+}
+function saveDbcEdit(cid){
+  const nombre=toTitle(document.getElementById('dbc-nombre-'+cid).value.trim())
+  const vehiculo=toTitle(document.getElementById('dbc-vehiculo-'+cid).value.trim())
+  if(!nombre||!vehiculo){showToast('⚠️ Completa todos los campos','error');return}
+  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  DB[SH_CLI][ci]={...DB[SH_CLI][ci],nombre,vehiculo}
+  gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
+  renderDbClientes();showToast('✅ Cliente actualizado','success')
+}
+function openEditClient(cid){ togDbcEdit(cid) }
+function saveClientEdit(){}
+function dbDelClient(cid){
+  if(!confirm('¿Eliminar este cliente?\nEl cierre mensual se conserva.'))return
+  gsDeleteBg(SH_CLI,cid)
+  gsDeleteWhereBg(SH_SES,'clientId',cid)
+  gsDeleteWhereBg(SH_ABO,'clientId',cid)
+  renderDbClientes();showToast('🗑 Cliente eliminado','error')
+}
+
+// ── Admin DB Catálogo ─────────────────────────────────────────────
+function renderDbReparaciones(){
+  try{
+  const items=DB[SH_CAT_REP],list=document.getElementById('dbr-list')
+  document.getElementById('badge-dbr').textContent=items.length
+  if(!items.length){list.innerHTML=`<div class="empty"><div class="ei">🔩</div><div class="et">Sin tipos de reparación</div></div>`;return}
+  list.innerHTML=`<div class="db-section-lbl">Catálogo: ${items.length} tipo${items.length!==1?'s':''}</div>`
+    +items.map((r,i)=>{
+      const rid=encodeURIComponent(r.reparacion).replace(/'/g,'%27')
+      return `<div class="db-item ani" id="dbr-${i}" style="animation-delay:${i*.025}s">
+        <div class="db-item-head">
+          <div class="db-item-ico">🔧</div>
+          <div class="db-item-info">
+            <div class="db-item-name">${r.reparacion}</div>
+            <div class="db-item-date">Costos sugeridos · autocompletar</div>
+          </div>
+          <div class="db-item-actions">
+            <button class="dba edit" onclick="togDbrEdit(${i})">✏️</button>
+            <button class="dba del"  onclick="dbDelCatalogo('${(r.reparacion||'').replace(/'/g,"\\'")}')">🗑</button>
+          </div>
+        </div>
+        <div class="db-costs">
+          <div class="cbadge"><span class="cbl">M.O.</span>&nbsp;<span class="cbv">${f$(r.manoObra)}</span></div>
+          <div class="cbadge"><span class="cbl">Mat.</span>&nbsp;<span class="cbv">${f$(r.material)}</span></div>
+          <div class="ctotal">${f$(numF(r.manoObra)+numF(r.material))}</div>
+        </div>
+        <div class="db-inline-form" id="dbr-form-${i}" style="display:none;padding:10px 12px 12px;border-top:1px solid var(--border);gap:8px;flex-direction:column">
+          <div class="field" style="margin-bottom:0"><label>Descripción</label>
+            <input type="text" id="dbr-desc-${i}" value="${escQ(r.reparacion)}" placeholder="Descripción"></div>
+          <div class="cost-row" style="margin:0">
+            <div class="field" style="margin-bottom:0"><label>Mano de obra ($)</label>
+              <input type="number" id="dbr-mo-${i}" value="${numF(r.manoObra)}" min="0" step="0.01" inputmode="decimal" oninput="calcDbrEdit(${i})"></div>
+            <div class="field" style="margin-bottom:0"><label>Material ($)</label>
+              <input type="number" id="dbr-mat-${i}" value="${numF(r.material)}" min="0" step="0.01" inputmode="decimal" oninput="calcDbrEdit(${i})"></div>
+          </div>
+          <div style="font-size:0.75rem;color:var(--text3);text-align:right">Total: <strong id="dbr-tot-${i}" style="color:var(--orange)">${f$(numF(r.manoObra)+numF(r.material))}</strong></div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn-se" style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--green);color:#fff;border:none;font-weight:700;cursor:pointer"
+              onclick="saveDbrEdit(${i},'${(r.reparacion||'').replace(/'/g,"\\'")}')">✅ Guardar</button>
+            <button class="btn-se" style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--surface);color:var(--text2);border:1px solid var(--border);font-weight:600;cursor:pointer"
+              onclick="togDbrEdit(${i})">✕ Cancelar</button>
+          </div>
+        </div>
+      </div>`
+    }).join('')
+  }catch(err){console.error("renderDbReparaciones:",err);showToast("❌ Error en renderDbReparaciones: "+err.message,"error")}
+}
+function togDbrEdit(i){
+  const form=document.getElementById('dbr-form-'+i)
+  if(!form)return
+  const open=form.style.display==='flex'
+  document.querySelectorAll('.db-inline-form').forEach(f=>f.style.display='none')
+  if(!open) form.style.display='flex'
+}
+function calcDbrEdit(i){
+  const mo=numF(document.getElementById('dbr-mo-'+i)?.value)
+  const mat=numF(document.getElementById('dbr-mat-'+i)?.value)
+  const tot=document.getElementById('dbr-tot-'+i)
+  if(tot) tot.textContent=f$(mo+mat)
+}
+function saveDbrEdit(i,orig){
+  const desc=toTitle(document.getElementById('dbr-desc-'+i).value.trim())
+  const mo=numF(document.getElementById('dbr-mo-'+i).value)
+  const mat=numF(document.getElementById('dbr-mat-'+i).value)
+  if(!desc){showToast('⚠️ Ingresa una descripción','error');return}
+  const ri=DB[SH_CAT_REP].findIndex(r=>r.reparacion===orig);if(ri===-1)return
+  DB[SH_CAT_REP][ri]={reparacion:desc,manoObra:mo,material:mat}
+  gsUpdateBg(SH_CAT_REP,DB[SH_CAT_REP][ri],'reparacion')
+  renderDbReparaciones();showToast('✅ Catálogo actualizado','success')
+}
+function openEditRep(rep){ }
+function calcEditRep(){ }
+function saveRepEdit(){}
+function dbDelCatalogo(rep){
+  if(!confirm('¿Eliminar este tipo de reparación?'))return
+  gsDeleteBg(SH_CAT_REP,rep,'reparacion')
+  renderDbReparaciones();showToast('🗑 Eliminado','error')
+}
+
+// ── DB Cierre Mensual ─────────────────────────────────────────────
+function renderDbCierre(){
+  const rows=DB[SH_CIE],list=document.getElementById('db-cierre-list')
+  if(!rows.length){
+    document.getElementById('badge-db-cierre').textContent='0'
+    list.innerHTML=`<div class="empty"><div class="ei">📦</div><div class="et">Sin cierres registrados</div></div>`
+    return
+  }
+  // Agrupar por mes
+  const byMonth={}
+  rows.forEach(r=>{
+    const mk=mKey(r.closedAt)
+    if(!byMonth[mk])byMonth[mk]={key:mk,label:fMes(r.closedAt),rows:[]}
+    byMonth[mk].rows.push(r)
+  })
+  const months=Object.values(byMonth).sort((a,b)=>b.key.localeCompare(a.key))
+  document.getElementById('badge-db-cierre').textContent=months.length
+  list.innerHTML=months.map((m,i)=>{
+    const total=m.rows.reduce((s,r)=>s+numF(r.total),0)
+    const clientes=[...new Set(m.rows.map(r=>r.nombre))].length
+    return `<div class="db-item ani" style="animation-delay:${i*.03}s">
+      <div class="db-item-head">
+        <div class="db-item-ico">📅</div>
+        <div class="db-item-info">
+          <div class="db-item-name">${m.label}</div>
+          <div class="db-item-sub">${clientes} cliente${clientes!==1?'s':''} · ${m.rows.length} reparaciones</div>
+          <div class="db-item-date">Total: ${f$(total)}</div>
+        </div>
+        <div class="db-item-actions">
+          <button class="dba del" onclick="dbDelCierre('${m.key}')">🗑</button>
+        </div>
+      </div>
+    </div>`
+  }).join('')
+}
+function dbDelCierre(monthKey){
+  const m=DB[SH_CIE].filter(r=>mKey(r.closedAt)===monthKey)
+  if(!confirm(`¿Eliminar el cierre de ${fMes(m[0]?.closedAt||new Date().toISOString())}?\n${m.length} registros serán eliminados.`))return
+  // Borrar todas las filas de ese mes
+  m.forEach(r=>{
+    // Usamos closedAt+nombre+reparacion como identificador único
+    gsDeleteWhereBg(SH_CIE,'closedAt',r.closedAt)
+  })
+  showToast('🗑 Mes eliminado','error')
+  renderDbCierre()
+}
+
+// ── Tabla de datos ────────────────────────────────────────────────
+function _invalidateRenderCache(){ _cacheHistorial.hash=''; _cacheTabla.hash='' }
+function renderTabla(){
+  // Apuntar el botón al spreadsheet (extraer el ID del URL del Apps Script si es posible)
+  const btn=document.getElementById('btn-open-sheet')
+  if(btn) btn.href='https://docs.google.com/spreadsheets/d/1EcAw_xr37TSj0RJdA46RLQmn6x_Be0eZMPvQUWqkx3E/edit?usp=sharing'
+  const q=(document.getElementById('tabla-search')?.value||'').toLowerCase()
+  const cmap=Object.fromEntries(DB[SH_CLI].map(c=>[c.id,c]))
+  // Combinar activos + cierre
+  const rows=[
+    ...DB[SH_SES].map(r=>({
+      nombre:cmap[r.clientId]?.nombre||'—',
+      vehiculo:cmap[r.clientId]?.vehiculo||'—',
+      reparacion:r.reparacion,
+      manoObra:r.manoObra,
+      material:r.material,
+      total:r.total,
+      fecha:r.fecha,
+      _activo:true
+    })),
+    ...DB[SH_CIE].map(r=>({
+      nombre:r.nombre,
+      vehiculo:r.vehiculo,
+      reparacion:r.reparacion,
+      manoObra:r.manoObra,
+      material:r.material,
+      total:r.total,
+      fecha:r.fechaRep,
+      _activo:false
+    }))
+  ].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha))
+  const fil=q?rows.filter(r=>
+    r.nombre.toLowerCase().includes(q)||
+    r.vehiculo.toLowerCase().includes(q)||
+    r.reparacion.toLowerCase().includes(q)
+  ):rows
+  const tbody=document.getElementById('tabla-body')
+  if(!tbody) return
+  if(!fil.length){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Sin datos</td></tr>`
+    return
+  }
+  const rowStyle='border-bottom:1px solid var(--border)'
+  const td=(v,right=false,color='',center=false)=>`<td style="padding:7px 10px;${right?'text-align:right;':''}${center?'text-align:center;':''}${color?'color:'+color+';':''}${rowStyle}">${v}</td>`
+  tbody.innerHTML=fil.map(r=>{
+    const estIcon=r._activo?'🔧':'✅'
+    const estColor=r._activo?'var(--orange)':'var(--green)'
+    return `<tr style="background:${r._activo?'transparent':'rgba(34,197,94,.04)'}">
+    <td style="padding:7px 6px;text-align:center;${rowStyle};font-size:0.8rem" title="${r._activo?'Activo':'Entregado'}"><span style="color:${estColor}">${estIcon}</span></td>
+    ${td(r.nombre)}
+    ${td(r.vehiculo)}
+    ${td(r.reparacion)}
+    ${td(f$(r.manoObra),true)}
+    ${td(f$(r.material),true)}
+    ${td(f$(r.total),true,'var(--orange)')}
+    ${td(fDT(r.fecha))}
+  </tr>`}).join('')
+}
+
+// ── Modales ───────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function closeMBg(e,id){if(e.target===document.getElementById(id))closeModal(id)}
+
+// ── Toast ─────────────────────────────────────────────────────────
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast')
+  t.textContent=msg;t.className=`toast ${type} show`
+  clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),2800)
+}
+
+// ── Service Worker — cachea el HTML para carga instantánea ────────
+if('serviceWorker' in navigator){
+  const swCode=`
+const CACHE='tallerpro-v7'
+self.addEventListener('install',e=>e.waitUntil(
+  caches.open(CACHE).then(c=>c.addAll([location.pathname]))
+))
+self.addEventListener('fetch',e=>{
+  if(e.request.url.includes('script.google.com')) return
+  e.respondWith(
+    caches.match(e.request).then(cached=>{
+      const fresh=fetch(e.request).then(res=>{
+        caches.open(CACHE).then(c=>c.put(e.request,res.clone()))
+        return res
+      })
+      return cached||fresh
+    })
+  )
+})`
+  const blob=new Blob([swCode],{type:'application/javascript'})
+  const swUrl=URL.createObjectURL(blob)
+  navigator.serviceWorker.register(swUrl).catch(()=>{})
+}
+
+// ── Login tabs ────────────────────────────────────────────────────
+function showLoginTab(tab){
+  const isLogin=tab==='login'
+  document.getElementById('login-form').style.display=isLogin?'flex':'none'
+  document.getElementById('reg-form').style.display=isLogin?'none':'flex'
+  document.getElementById('tab-login').style.background=isLogin?'var(--orange)':'transparent'
+  document.getElementById('tab-login').style.color=isLogin?'#fff':'var(--text3)'
+  document.getElementById('tab-reg').style.background=isLogin?'transparent':'var(--orange)'
+  document.getElementById('tab-reg').style.color=isLogin?'var(--text3)':'#fff'
+  document.getElementById('login-error').style.display='none'
+  document.getElementById('reg-error').style.display='none'
+}
+
+async function doRegister(){
+  const nombre=document.getElementById('reg-nombre').value.trim()
+  const pass=document.getElementById('reg-pass').value
+  const pass2=document.getElementById('reg-pass2').value
+  const errEl=document.getElementById('reg-error')
+  errEl.style.display='none'
+  if(!nombre){errEl.style.display='block';errEl.textContent='⚠️ Ingresa tu nombre';return}
+  if(pass.length<4){errEl.style.display='block';errEl.textContent='⚠️ Mínimo 4 caracteres';return}
+  if(pass!==pass2){errEl.style.display='block';errEl.textContent='⚠️ Las contraseñas no coinciden';return}
+  if(!_ready){document.getElementById('login-loading').style.display='block';await new Promise(r=>setTimeout(r,1500));document.getElementById('login-loading').style.display='none'}
+  // Verificar que el nombre existe en clientes
+  const existe=DB[SH_CLI].find(c=>c.nombre.trim().toLowerCase()===nombre.toLowerCase())
+  if(!existe){errEl.style.display='block';errEl.textContent='❌ Tu nombre no está registrado en el taller. Contacta al taller.';return}
+  // Verificar que no tenga cuenta ya
+  if(DB[SH_USR].find(u=>u.nombre.trim().toLowerCase()===nombre.toLowerCase()&&u.rol==='cliente')){
+    errEl.style.display='block';errEl.textContent='⚠️ Ya tienes una cuenta. Inicia sesión.';return
+  }
+  const u={id:gid(),nombre:existe.nombre,password:pass,rol:'cliente'}
+  gsAppendBg(SH_USR,u)
+  _session={id:u.id,nombre:u.nombre,rol:'cliente'}
+  localStorage.setItem(LS_SESSION,JSON.stringify(_session))
+  showToast('✅ Cuenta creada','success')
+  enterApp()
+}
+
+// ── Vista cliente ─────────────────────────────────────────────────
+function showClienteTab(tab){
+  const isActivo=tab==='activo'
+  document.getElementById('cli-activo-list').style.display=isActivo?'block':'none'
+  document.getElementById('cli-hist-list').style.display=isActivo?'none':'block'
+  document.getElementById('ctab-activo').style.borderBottomColor=isActivo?'var(--orange)':'transparent'
+  document.getElementById('ctab-activo').style.color=isActivo?'var(--orange)':'var(--text3)'
+  document.getElementById('ctab-hist').style.borderBottomColor=isActivo?'transparent':'var(--orange)'
+  document.getElementById('ctab-hist').style.color=isActivo?'var(--text3)':'var(--orange)'
+  if(!isActivo) renderClienteHist()
+}
+
+function renderClienteActivo(){
+  const nombre=_session?.nombre||''
+  const bienvenida=document.getElementById('cli-bienvenida')
+  if(bienvenida) bienvenida.textContent=`Hola, ${nombre}`
+  const list=document.getElementById('cli-activo-list')
+  if(!list) return
+  // Clientes activos con ese nombre
+  const misClientes=DB[SH_CLI].filter(c=>
+    c.nombre.trim().toLowerCase()===nombre.trim().toLowerCase()&&
+    c.activeSession&&c.activeSession!==''
+  )
+  if(!misClientes.length){
+    list.innerHTML=`<div class="empty"><div class="ei">🔧</div><div class="et">Sin reparaciones activas</div><div class="es">Tu vehículo no tiene reparaciones en proceso</div></div>`
+    return
+  }
+  list.innerHTML=misClientes.map((c,i)=>{
+    const sid=c.activeSession
+    const reps=DB[SH_SES].filter(r=>r.clientId===c.id&&r.sessionId===sid)
+    const total=reps.reduce((s,r)=>s+numF(r.total),0)
+    const abos=DB[SH_ABO].filter(a=>a.clientId===c.id)
+    const pagado=abos.reduce((s,a)=>s+numF(a.monto),0)
+    const saldo=total-pagado
+    const stL={pending:'⏳ Pendiente',process:'🔧 En proceso',done:'✅ Completado'}
+    const st=c.status||'pending'
+    return `<div class="ccard ani" style="animation-delay:${i*.04}s;margin-bottom:12px">
+      <div class="ss ${st}"></div>
+      <div style="padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:0.9rem;font-weight:800">🚗 ${c.vehiculo}</div>
+        <div style="font-size:0.72rem;font-weight:700;color:var(--${st==='pending'?'yellow':st==='process'?'orange':'green'})">${stL[st]}</div>
+      </div>
+      <div style="padding:0 16px 12px">
+        ${reps.map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
+          <div style="flex:1;font-size:0.82rem;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.reparacion}</div>
+          <div style="font-size:0.78rem;font-weight:700;color:var(--orange);flex-shrink:0">${f$(r.total)}</div>
+          <div style="font-size:0.72rem;font-weight:700;flex-shrink:0;color:${saldo<=0?'var(--green)':'var(--red)'}">${saldo<=0?'✅':f$(saldo)}</div>
+        </div>`).join('')}
+      </div>
+    </div>`
+  }).join('')
+}
+
+function renderClienteHist(){
+  const nombre=_session?.nombre||''
+  const list=document.getElementById('cli-hist-list')
+  if(!list) return
+  // Historial del cierre mensual con ese nombre
+  const groups={}
+  DB[SH_CIE].filter(r=>r.nombre.trim().toLowerCase()===nombre.trim().toLowerCase()).forEach(r=>{
+    const k=`${r.vehiculo}`
+    if(!groups[k]) groups[k]={vehiculo:r.vehiculo,repairs:[]}
+    groups[k].repairs.push({...r,fecha:r.fechaRep})
+  })
+  // También activos
+  DB[SH_CLI].filter(c=>c.nombre.trim().toLowerCase()===nombre.trim().toLowerCase()).forEach(c=>{
+    const sid=c.activeSession
+    if(!sid||sid==='') return
+    const k=c.vehiculo
+    if(!groups[k]) groups[k]={vehiculo:c.vehiculo,repairs:[]}
+    DB[SH_SES].filter(r=>r.clientId===c.id&&r.sessionId===sid).forEach(r=>{
+      groups[k].repairs.push({...r,_activo:true})
+    })
+  })
+  const sorted=Object.values(groups).sort((a,b)=>new Date(b.repairs[0]?.fecha||0)-new Date(a.repairs[0]?.fecha||0))
+  if(!sorted.length){
+    list.innerHTML=`<div class="empty"><div class="ei">📋</div><div class="et">Sin historial aún</div></div>`
+    return
+  }
+  list.innerHTML=sorted.map((g,i)=>{
+    const tot=g.repairs.reduce((s,r)=>s+numF(r.total),0)
+    const rows=g.repairs.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).map(r=>`
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:6px 8px;font-size:0.7rem;color:var(--text2);white-space:nowrap">${fD(r.fecha)}</td>
+        <td style="padding:6px 8px;font-size:0.78rem;color:var(--text)">${r.reparacion}</td>
+        <td style="padding:6px 8px;font-size:0.78rem;font-weight:700;color:var(--orange);text-align:right;white-space:nowrap">${f$(r.total)}</td>
+      </tr>`).join('')
+    return `<div class="ccard ani" style="animation-delay:${i*.03}s;margin-bottom:10px">
+      <div style="padding:11px 16px;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:0.88rem;font-weight:800">🚗 ${g.vehiculo}</div>
+        <div style="font-size:0.9rem;font-weight:800;color:var(--orange)">${f$(tot)}</div>
+      </div>
+      <div style="border-top:1px solid var(--border);overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr style="background:var(--surface)">
+            <th style="padding:5px 8px;font-size:0.62rem;font-weight:700;color:var(--text3);text-align:left">Fecha</th>
+            <th style="padding:5px 8px;font-size:0.62rem;font-weight:700;color:var(--text3);text-align:left">Reparación</th>
+            <th style="padding:5px 8px;font-size:0.62rem;font-weight:700;color:var(--orange);text-align:right">Total</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`
+  }).join('')
+}
+
+// ── Login ─────────────────────────────────────────────────────────
+async function doLogin(){
+  const nombre=document.getElementById('login-user').value.trim()
+  const pass=document.getElementById('login-pass').value
+  const errEl=document.getElementById('login-error')
+  const loadEl=document.getElementById('login-loading')
+  errEl.style.display='none'
+  if(!nombre||!pass){errEl.style.display='block';errEl.textContent='⚠️ Ingresa usuario y contraseña';return}
+  loadEl.style.display='block'
+  // Si no hay caché esperar carga inicial, si hay caché entrar directo
+  if(!_ready){ await new Promise(r=>setTimeout(r,2000)) }
+  loadEl.style.display='none'
+  // Buscar usuario en DB (caché local — ya sincronizado en fondo)
+  const user=DB[SH_USR].find(u=>
+    String(u.nombre||'').trim().toLowerCase()===nombre.toLowerCase()&&
+    String(u.password||'').trim()===pass.trim()
+  )
+  if(!user){
+    // Fallback: si no hay usuarios creados, permitir admin con contraseña del config
+    const adminPass=String(cfgGet('admin_pass','admin123')).trim()
+    if(nombre.toLowerCase()==='admin'&&pass.trim()===adminPass){
+      _session={id:'admin',nombre:'Admin',rol:'admin'}
+    } else {
+      errEl.style.display='block';errEl.textContent='❌ Usuario o contraseña incorrectos';return
+    }
+  } else {
+    _session={id:user.id||gid(),nombre:user.nombre,rol:user.rol||'empleado'}
+  }
+  // Guardar sesión en localStorage para no pedir de nuevo
+  localStorage.setItem(LS_SESSION,JSON.stringify(_session))
+  enterApp()
+}
+function logout(){
+  _session=null
+  localStorage.removeItem(LS_SESSION)
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))
+  document.getElementById('screen-login').classList.add('active')
+  document.getElementById('login-user').value=''
+  document.getElementById('login-pass').value=''
+  document.getElementById('login-error').style.display='none'
+  showLoginTab('login')
+}
+function enterApp(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))
+  if(!isAdmin()) applyTheme(getLocalTheme())
+  if(isCliente()){
+    applyConfig()
+    renderClienteActivo()
+    document.getElementById('screen-home-cliente').classList.add('active')
+  } else {
+    applyRoleUI()
+    goTo('screen-home')
+  }
+}
+function applyRoleUI(){
+  const homeAdmin=document.getElementById('home-admin-btns')
+  const homeEmp=document.getElementById('home-emp-btns')
+  if(homeAdmin) homeAdmin.style.display=isAdmin()?'flex':'none'
+  if(homeEmp) homeEmp.style.display=isEmpleado()?'flex':'none'
+  const statsGrid=document.querySelector('.home-stats')
+  if(statsGrid) statsGrid.style.gridTemplateColumns=isAdmin()?'repeat(5,1fr)':'repeat(2,1fr)'
+  updateStats()
+}
+
+// ── Usuarios ──────────────────────────────────────────────────────
+function renderUsuarios(){
+  const list=document.getElementById('usr-list')
+  const users=DB[SH_USR]
+  document.getElementById('badge-usr').textContent=users.length
+  if(!users.length){list.innerHTML=`<div class="empty"><div class="ei">👤</div><div class="et">Sin usuarios creados</div></div>`;return}
+  const rolLabel={admin:'👑 Dueño / Admin',empleado:'🔧 Empleado'}
+  list.innerHTML=users.map((u,i)=>`
+    <div class="db-item ani" id="usr-item-${i}" style="animation-delay:${i*.03}s">
+      <div class="db-item-head">
+        <div class="db-item-ico">${u.rol==='admin'?'👑':'🔧'}</div>
+        <div class="db-item-info">
+          <div class="db-item-name">${u.nombre}</div>
+          <div class="db-item-sub">${rolLabel[u.rol]||u.rol}</div>
+        </div>
+        <div class="db-item-actions">
+          <button class="dba edit" onclick="togUsrEdit(${i})">✏️</button>
+          <button class="dba del" onclick="delUsuario('${u.id}')">🗑</button>
+        </div>
+      </div>
+      <div class="db-inline-form" id="usr-form-${i}" style="display:none;padding:10px 12px 12px;border-top:1px solid var(--border);gap:8px;flex-direction:column">
+        <div class="field" style="margin-bottom:0"><label>Nueva contraseña</label>
+          <input type="password" id="usr-np-${i}" placeholder="Dejar vacío para no cambiar"></div>
+        <div class="field" style="margin-bottom:0"><label>Rol</label>
+          <select id="usr-nr-${i}" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;color:var(--text);font-size:0.85rem;outline:none">
+            <option value="admin" ${u.rol==='admin'?'selected':''}>👑 Dueño / Admin</option>
+            <option value="empleado" ${u.rol==='empleado'?'selected':''}>🔧 Empleado</option>
+          </select></div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--green);color:#fff;border:none;font-weight:700;cursor:pointer"
+            onclick="saveUsrEdit(${i},'${u.id}')">✅ Guardar</button>
+          <button style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--surface);color:var(--text2);border:1px solid var(--border);font-weight:600;cursor:pointer"
+            onclick="togUsrEdit(${i})">✕ Cancelar</button>
+        </div>
+      </div>
+    </div>`).join('')
+}
+function togUsrEdit(i){
+  const form=document.getElementById('usr-form-'+i)
+  if(!form)return
+  const open=form.style.display==='flex'
+  document.querySelectorAll('[id^="usr-form-"]').forEach(f=>f.style.display='none')
+  if(!open) form.style.display='flex'
+}
+function saveUsrEdit(i,uid){
+  const newPass=document.getElementById('usr-np-'+i).value.trim()
+  const newRol=document.getElementById('usr-nr-'+i).value
+  const ui=DB[SH_USR].findIndex(u=>u.id===uid); if(ui===-1)return
+  const updated={...DB[SH_USR][ui],rol:newRol}
+  if(newPass&&newPass.length>=4) updated.password=newPass
+  else if(newPass&&newPass.length<4){showToast('⚠️ Contraseña mínimo 4 caracteres','error');return}
+  gsUpdateBg(SH_USR,updated)
+  renderUsuarios()
+  showToast('✅ Usuario actualizado','success')
+}
+function addUsuario(){
+  const nombre=document.getElementById('usr-nombre').value.trim()
+  const pass=document.getElementById('usr-pass').value.trim()
+  const rol=document.getElementById('usr-rol').value
+  if(!nombre){showToast('⚠️ Ingresa el nombre','error');return}
+  if(pass.length<4){showToast('⚠️ Contraseña mínimo 4 caracteres','error');return}
+  if(DB[SH_USR].find(u=>u.nombre.toLowerCase()===nombre.toLowerCase())){
+    showToast('⚠️ Ya existe un usuario con ese nombre','error');return
+  }
+  const u={id:gid(),nombre,password:pass,rol}
+  gsAppendBg(SH_USR,u)
+  document.getElementById('usr-nombre').value=''
+  document.getElementById('usr-pass').value=''
+  renderUsuarios()
+  showToast('✅ Usuario creado','success')
+}
+function delUsuario(uid){
+  if(!confirm('¿Eliminar este usuario?'))return
+  gsDeleteBg(SH_USR,uid)
+  renderUsuarios()
+  showToast('🗑 Usuario eliminado','error')
+}
+
+// ── Vista empleado (sin costos) ───────────────────────────────────
+function renderClientesEmp(){
+  try{
+  const q=(document.getElementById('inp-search-emp')?.value||'').trim().toLowerCase()
+  const active=DB[SH_CLI].filter(c=>c.activeSession&&c.activeSession!=='')
+  const fil=q?active.filter(c=>c.nombre.toLowerCase().includes(q)||c.vehiculo.toLowerCase().includes(q)):active
+  document.getElementById('badge-cli-emp').textContent=active.length
+  const list=document.getElementById('clients-list-emp')
+  if(!fil.length){
+    list.innerHTML=`<div class="empty"><div class="ei">🔧</div><div class="et">Sin clientes activos</div></div>`
+    return
+  }
+  const stL={pending:'⏳ Pendiente',process:'🔧 En proceso',done:'✅ Completado'}
+  const stC={pending:'var(--yellow)',process:'var(--orange)',done:'var(--green)'}
+  list.innerHTML=fil.map((c,i)=>{
+    const sid=c.activeSession
+    const reps=DB[SH_SES].filter(r=>r.clientId===c.id&&r.sessionId===sid)
+    const st=c.status||'pending'
+    const abos=DB[SH_ABO].filter(a=>a.clientId===c.id)
+    const total=reps.reduce((s,r)=>s+numF(r.total),0)
+    const pagado=abos.reduce((s,a)=>s+numF(a.monto),0)
+    const saldo=total-pagado
+    const isDone=st==='done'&&saldo<=0
+    return `<div class="ccard ani" id="emp-cc-${c.id}" style="animation-delay:${i*.03}s">
+      <div class="ss ${st}"></div>
+      <div class="ccard-head" onclick="document.getElementById('emp-cc-${c.id}').classList.toggle('expanded')">
+        <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;overflow:hidden">
+          <div class="cc-name" style="flex-shrink:0">${c.nombre}</div>
+          <div class="cc-car" style="flex-shrink:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🚗 ${c.vehiculo}</div>
+          <div style="flex-shrink:0;font-size:0.65rem;color:${stC[st]};font-weight:700;white-space:nowrap;margin-left:auto">${stL[st].split(' ').slice(1).join(' ')}</div>
+        </div>
+      </div>
+      <div class="ccard-body">
+        <div style="display:flex;gap:6px;margin-bottom:10px">
+          ${['pending','process','done'].map(s=>`<button class="s-btn ${s}${st===s?' active':''}"
+            onclick="setStatusEmp('${c.id}','${s}',event)"
+            style="flex:1;padding:7px;border-radius:var(--r-sm);border:1.5px solid ${stC[s]};
+            background:${st===s?stC[s]:'transparent'};color:${st===s?'#fff':stC[s]};font-size:0.68rem;font-weight:700;cursor:pointer">
+            ${stL[s].split(' ')[0]}
+          </button>`).join('')}
+        </div>
+        ${reps.map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div style="font-size:0.88rem;font-weight:700;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.reparacion}</div>
+          <div style="font-size:0.6rem;color:var(--text3);white-space:nowrap;flex-shrink:0">📅 ${fD(r.fecha)}</div>
+        </div>`).join('')}
+        <div class="abono-inline" style="margin-top:8px;display:flex;gap:6px">
+          <input type="number" id="emp-abo-${c.id}" placeholder="Abono $" min="0" step="0.01" inputmode="decimal"
+            style="flex:1;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;color:var(--text);font-family:var(--font);font-size:0.85rem;outline:none">
+          <button onclick="doAbonoEmp('${c.id}',event)"
+            style="padding:7px 14px;background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);font-weight:700;cursor:pointer">💵</button>
+        </div>
+        ${isDone?`<button class="btn-entregar" onclick="entregar('${c.id}',event)" style="margin-top:8px">🚗 Entregar</button>`:''}
+      </div>
+    </div>`
+  }).join('')
+  }catch(err){console.error("renderClientesEmp:",err);showToast("❌ Error en renderClientesEmp: "+err.message,"error")}
+}
+function setStatusEmp(cid,status,e){
+  e&&e.stopPropagation()
+  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  DB[SH_CLI][ci]={...DB[SH_CLI][ci],status}
+  gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
+  renderClientesEmp()
+  showToast({pending:'⏳ Pendiente',process:'🔧 En proceso',done:'✅ Completado'}[status]||'','success')
+}
+function doAbonoEmp(cid,e){
+  e&&e.stopPropagation()
+  const inp=document.getElementById('emp-abo-'+cid)
+  const monto=numF(inp.value)
+  if(monto<=0){showToast('⚠️ Ingresa un monto válido','error');return}
+  gsAppendBg(SH_ABO,{id:gid(),clientId:cid,monto,nota:'',fecha:new Date().toISOString()})
+  inp.value=''
+  showToast('💵 Abono registrado','success')
+  renderClientesEmp()
+}
+
+// ── Cropper ──────────────────────────────────────────────────────
+let _cropperMode=null // 'logo' | 'bg'
+let _cropX=0,_cropY=0,_cropScale=1
+let _dragStart=null,_lastPinchDist=0
+const _cropSizes={logo:{w:200,h:200},bg:{w:600,h:200}}
+
+let _cropNaturalScale=1
+let _cropNativeScale=1  // 1px imagen = 1px pantalla
+let _cropSnapV=0        // posición en la barra donde cae la escala nativa
+let _cropUrl=null
+let _cropLoader=null // Image() con la foto cargada
+function openCropper(mode,file){
+  _cropperMode=mode
+  if(_cropUrl){ URL.revokeObjectURL(_cropUrl); _cropUrl=null }
+  _cropUrl=URL.createObjectURL(file)
+  const img=document.getElementById('cropper-img')
+  const wrap=document.getElementById('cropper-wrap')
+  const modal=document.getElementById('cropper-modal')
+  // Calcular dimensiones del wrap
+  const modalPad=40
+  let wrapW,wrapH
+  if(mode==='bg'){
+    const headerEl=document.querySelector('.home-header')
+    wrapH=headerEl?headerEl.offsetHeight:Math.round(Math.min(160,Math.max(100,window.innerWidth*0.15)))
+    wrapW=window.innerWidth-modalPad
+  } else {
+    const sq=Math.min(window.innerWidth-modalPad,Math.round(window.innerHeight*0.4),240)
+    wrapW=sq; wrapH=sq
+  }
+  wrap.style.width=wrapW+'px'
+  wrap.style.height=wrapH+'px'
+  // Reset
+  _cropX=0; _cropY=0; _cropScale=1
+  img.style.transform='translate(0,0) scale(1)'
+  // Mostrar modal
+  modal.classList.add('open')
+  // Subtítulo
+  const sub=document.getElementById('cropper-subtitle')
+  if(sub) sub.textContent=mode==='bg'?'Vista previa exacta del header':'Arrastra · Slider para zoom'
+  // Cargar imagen con un objeto Image separado para obtener dimensiones
+  _cropLoader=new Image()
+  _cropLoader.onload=()=>{
+    const nw=_cropLoader.naturalWidth, nh=_cropLoader.naturalHeight
+    const fillScale=Math.max(wrapW/nw, wrapH/nh)
+    _cropNaturalScale=fillScale
+    _cropNativeScale=1
+    _cropScale=fillScale
+    _cropX=Math.round((wrapW-nw*fillScale)/2)
+    _cropY=Math.round((wrapH-nh*fillScale)/2)
+    const nativeV=Math.round(((1/fillScale)-1)/0.8*100)
+    _cropSnapV=Math.max(-50,Math.min(150,nativeV))
+    document.getElementById('cropper-zoom').value=0
+    document.getElementById('cropper-snap-label').textContent=''
+    // Forzar render: limpiar src primero, luego asignar
+    img.src=''
+    requestAnimationFrame(()=>{
+      img.src=_cropLoader.src
+      requestAnimationFrame(()=>cropperApply())
+    })
+  }
+  _cropLoader.src=_cropUrl
+  // Eventos de interacción
+  wrap.onmousedown=cropperMouseDown
+  wrap.ontouchstart=cropperTouchStart
+  wrap.ontouchend=cropperTouchEnd
+  wrap.ontouchcancel=cropperTouchEnd
+}
+function cropperApply(){
+  const img=document.getElementById('cropper-img')
+  if(!img) return
+  // translate(x,y) mueve la imagen, scale(s) la escala desde origen 0,0
+  // img siempre empieza en top:0 left:0 — solo transform lo mueve
+  img.style.transform=`translate(${_cropX}px,${_cropY}px) scale(${_cropScale})`
+}
+function cropperZoom(val){
+  const v=parseFloat(val)
+  const lbl=document.getElementById('cropper-snap-label')
+  const snapZone=4
+  // Snap 1: v≈0 → fillScale (imagen llena exactamente el área)
+  if(Math.abs(v)<=snapZone){
+    _cropScale=_cropNaturalScale
+    document.getElementById('cropper-zoom').value=0
+    if(lbl) lbl.textContent='⚡ Ajuste al área'
+    clampCrop(); cropperApply(); return
+  }
+  // Snap 2: v≈_cropSnapV → nativeScale (1px imagen = 1px pantalla)
+  if(_cropSnapV>=-50&&_cropSnapV<=150&&Math.abs(v-_cropSnapV)<=snapZone){
+    _cropScale=_cropNativeScale
+    document.getElementById('cropper-zoom').value=_cropSnapV
+    if(lbl) lbl.textContent='⚡ Tamaño real 1:1'
+    clampCrop(); cropperApply(); return
+  }
+  // Sin snap: calcular escala lineal
+  const factor=1+(v/100)*0.8
+  _cropScale=_cropNaturalScale*Math.max(0.05,factor)
+  if(lbl) lbl.textContent=''
+  clampCrop()
+  cropperApply()
+}
+function cropperMouseDown(e){
+  _dragStart={x:e.clientX-_cropX,y:e.clientY-_cropY}
+  window.onmousemove=cropperMouseMove
+  window.onmouseup=()=>{ window.onmousemove=null; window.onmouseup=null; _isDraggingCrop=false }
+}
+function cropperMouseMove(e){
+  if(!_dragStart)return
+  _cropX=e.clientX-_dragStart.x
+  _cropY=e.clientY-_dragStart.y
+  clampCrop()
+  cropperApply()
+}
+function clampCrop(){
+  if(!_cropLoader||!_cropLoader.naturalWidth) return
+  const wrap=document.getElementById('cropper-wrap')
+  const wW=parseInt(wrap.style.width)||wrap.offsetWidth||200
+  const wH=parseInt(wrap.style.height)||wrap.offsetHeight||150
+  const sw=_cropLoader.naturalWidth*_cropScale
+  const sh=_cropLoader.naturalHeight*_cropScale
+  // tx: si imagen más grande que wrap, mantener dentro. Si más pequeña, centrar
+  if(sw>=wW){ _cropX=Math.min(0,Math.max(wW-sw,_cropX)) }
+  else { _cropX=Math.max(0,Math.min(wW-sw,_cropX)) }
+  if(sh>=wH){ _cropY=Math.min(0,Math.max(wH-sh,_cropY)) }
+  else { _cropY=Math.max(0,Math.min(wH-sh,_cropY)) }
+}
+let _isDraggingCrop=false
+function cropperTouchStart(e){
+  // Solo activar drag si el toque empieza dentro del wrap de imagen
+  if(e.touches.length===1){
+    _isDraggingCrop=true
+    _dragStart={x:e.touches[0].clientX-_cropX,y:e.touches[0].clientY-_cropY}
+    e.preventDefault()
+  }
+}
+function cropperTouchEnd(){
+  _isDraggingCrop=false
+  _dragStart=null
+}
+document.addEventListener('touchmove',e=>{
+  // Solo interceptar si el drag empezó en el wrap de imagen
+  if(!_isDraggingCrop) return
+  const wrap=document.getElementById('cropper-wrap')
+  if(!wrap||!document.getElementById('cropper-modal').classList.contains('open'))return
+  if(e.touches.length===1&&_dragStart){
+    const img=document.getElementById('cropper-img')
+    const maxX=0,minX=wrap.offsetWidth-img.naturalWidth*_cropScale
+    const maxY=0,minY=wrap.offsetHeight-img.naturalHeight*_cropScale
+    _cropX=e.touches[0].clientX-_dragStart.x
+    _cropY=e.touches[0].clientY-_dragStart.y
+    clampCrop()
+    cropperApply()
+    e.preventDefault()
+  }
+},{passive:false})
+function cropperCancel(){
+  document.getElementById('cropper-modal').classList.remove('open')
+  if(_cropUrl){ URL.revokeObjectURL(_cropUrl); _cropUrl=null }
+  _cropperMode=null
+}
+async function cropperConfirm(){
+  if(!_cropLoader||!_cropLoader.naturalWidth){
+    showToast('⚠️ Imagen no cargada aún','error'); return
+  }
+  const wrap=document.getElementById('cropper-wrap')
+  const wW=parseInt(wrap.style.width)||wrap.offsetWidth
+  const wH=parseInt(wrap.style.height)||wrap.offsetHeight
+  // Canvas de salida: misma proporción del wrap pero resolución mayor
+  const exportScale=_cropperMode==='bg'?2:1.5
+  const outW=Math.round(wW*exportScale)
+  const outH=Math.round(wH*exportScale)
+  const canvas=document.createElement('canvas')
+  canvas.width=outW; canvas.height=outH
+  const ctx=canvas.getContext('2d')
+  // _cropX/_cropY = posición left/top de la imagen escalada dentro del wrap
+  // Para dibujar en canvas: calcular qué parte de la imagen original es visible
+  // srcX = origen en píxeles de imagen original
+  // Con transform: translate(tx,ty) scale(s) y transform-origin:0 0
+  // La esquina sup-izq del wrap corresponde a px (-tx/s, -ty/s) en la imagen original
+  const srcX = -_cropX / _cropScale
+  const srcY = -_cropY / _cropScale
+  const srcW = wW / _cropScale
+  const srcH = wH / _cropScale
+  // Clamp para no salir de los límites de la imagen
+  const clampedSrcX = Math.max(0, srcX)
+  const clampedSrcY = Math.max(0, srcY)
+  const clampedSrcW = Math.min(srcW, _cropLoader.naturalWidth - clampedSrcX)
+  const clampedSrcH = Math.min(srcH, _cropLoader.naturalHeight - clampedSrcY)
+  const destX = (clampedSrcX - srcX) * (_cropScale * outW / wW) / _cropScale
+  const destY = (clampedSrcY - srcY) * (_cropScale * outH / wH) / _cropScale
+  const destW = clampedSrcW * outW / srcW
+  const destH = clampedSrcH * outH / srcH
+  ctx.fillStyle='#000'
+  ctx.fillRect(0,0,outW,outH)
+  ctx.drawImage(_cropLoader, clampedSrcX, clampedSrcY, clampedSrcW, clampedSrcH, destX, destY, destW, destH)
+  const exportMax=_cropperMode==='bg'?120000:50000
+  let q=0.9, data=canvas.toDataURL('image/jpeg',q)
+  while(data.length>exportMax&&q>0.3){ q-=0.1; data=canvas.toDataURL('image/jpeg',q) }
+  document.getElementById('cropper-modal').classList.remove('open')
+  if(_cropperMode==='logo'){
+    cfgSet('app_logo',data)
+    const lp=document.getElementById('logo-preview')
+    if(lp) lp.innerHTML=`<img src="${data}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`
+    applyConfig(); showToast('✅ Logo guardado','success')
+  } else {
+    cfgSet('app_bg',data)
+    const bp=document.getElementById('bg-preview')
+    if(bp){ bp.style.backgroundImage=`url(${data})`; bp.textContent='' }
+    applyConfig(); showToast('✅ Fondo guardado','success')
+  }
+  if(_cropUrl){ URL.revokeObjectURL(_cropUrl); _cropUrl=null }
+  _cropLoader=null
+  _cropperMode=null
+}
+// ── Paletas de color ─────────────────────────────────────────────
+const PALETTES=[
+  // bg/surface/card/border = fondos propios calibrados por paleta
+  // hue del acento + saturación muy baja (12-20%) + luminosidad muy baja (7-18%)
+  // compBright = versión pastel del acento para badges y sec-lbl
+
+  // 🟠 Naranja — Raycast. Cálido, enérgico
+  {id:'orange', name:'Naranja',
+    c1:'#f97316', c2:'#ea6b0a', og:'rgba(249,115,22,0.14)',
+    compBright:'#fdba74',
+    bg:'#141008', surface:'#1c1710', card:'#231e15', border:'#302818', border2:'#3d3320'},
+
+  // 🔵 Índigo — Linear, Stripe. Profesional, confiable
+  {id:'blue', name:'Índigo',
+    c1:'#6366f1', c2:'#4f46e5', og:'rgba(99,102,241,0.14)',
+    compBright:'#a5b4fc',
+    bg:'#0c0c14', surface:'#121220', card:'#181828', border:'#222236', border2:'#2e2e48'},
+
+  // ⚫ Platino — Gris elegante, minimalista tipo Vercel/Linear neutral
+  {id:'purple', name:'Platino',
+    c1:'#94a3b8', c2:'#64748b', og:'rgba(148,163,184,0.14)',
+    compBright:'#cbd5e1',
+    bg:'#0d0e10', surface:'#141518', card:'#1a1c20', border:'#252830', border2:'#30333d'},
+
+  // 🟢 Esmeralda — Verde vibrante tipo joya, fresco y premium
+  {id:'green', name:'Esmeralda',
+    c1:'#00c896', c2:'#00a87e', og:'rgba(0,200,150,0.14)',
+    compBright:'#5eead4',
+    bg:'#071410', surface:'#0d1e18', card:'#12261f', border:'#1a3429', border2:'#224436'},
+
+  // 🔴 Rojo — Intenso y vibrante, no lavado
+  {id:'red', name:'Rojo',
+    c1:'#ff2d55', c2:'#e0001f', og:'rgba(255,45,85,0.14)',
+    compBright:'#ff8fab',
+    bg:'#150608', surface:'#200c10', card:'#2a1016', border:'#3a1620', border2:'#4a1e2a'},
+
+  // 🩵 Cian — Tecnológico, analítico
+  {id:'cyan', name:'Cian',
+    c1:'#22d3ee', c2:'#06b6d4', og:'rgba(34,211,238,0.14)',
+    compBright:'#a5f3fc',
+    bg:'#081214', surface:'#0e1c20', card:'#132228', border:'#1c3038', border2:'#254048'},
+
+  // 🟡 Ámbar — Productividad cálida, Notion-like
+  {id:'amber', name:'Ámbar',
+    c1:'#f59e0b', c2:'#d97706', og:'rgba(245,158,11,0.14)',
+    compBright:'#fcd34d',
+    bg:'#130f06', surface:'#1c1608', card:'#231c0e', border:'#302814', border2:'#3d3418'},
+
+  // 🌊 Azul marino — Elegante, sofisticado, confiable
+  {id:'rose', name:'Marino',
+    c1:'#2563eb', c2:'#1d4ed8', og:'rgba(37,99,235,0.14)',
+    compBright:'#93c5fd',
+    bg:'#080e18', surface:'#0e1624', card:'#14202e', border:'#1e2e42', border2:'#283c54'},
+]
+const FONTS=[
+  {id:'barlow',  name:'Barlow',   body:"'Barlow',sans-serif",      title:"'Barlow Condensed',sans-serif", sample:'El texto se ve así'},
+  {id:'inter',   name:'Inter',    body:"'Inter',sans-serif",        title:"'Inter',sans-serif",            sample:'El texto se ve así'},
+  {id:'outfit',  name:'Outfit',   body:"'Outfit',sans-serif",       title:"'Outfit',sans-serif",           sample:'El texto se ve así'},
+  {id:'dmsans',  name:'DM Sans',  body:"'DM Sans',sans-serif",      title:"'DM Sans',sans-serif",          sample:'El texto se ve así'},
+  {id:'rajdhani',name:'Rajdhani', body:"'Rajdhani',sans-serif",     title:"'Rajdhani',sans-serif",         sample:'El texto se ve así'},
+]
+const SIZE_LABELS={'-2':'Pequeño','-1':'Compacto','0':'Normal','1':'Mediano','2':'Grande','3':'Muy grande','4':'Máximo'}
+
+function applyPalette(id,save=true){
+  const p=PALETTES.find(x=>x.id===id); if(!p)return
+  const root=document.documentElement
+  // Color primario
+  root.style.setProperty('--orange',p.c1)
+  root.style.setProperty('--orange2',p.c2)
+  root.style.setProperty('--og',p.og)
+  root.style.setProperty('--shadow-orange',`0 4px 14px ${p.c1}55`)
+  // Análogos — fondo, tarjetas, bordes y textos con tinte del acento
+  root.style.setProperty('--comp-bright',p.compBright)
+  root.style.setProperty('--comp-muted',p.compMuted)
+  root.style.setProperty('--comp-dark',p.compDark)
+  // Bg, surface, card y border con tinte sutil del análogo oscuro
+  const _isLight=typeof cfgGet==='function'&&cfgGet('theme','dark')==='light'
+  if(!_isLight){
+    // Dark: fondos propios de la paleta
+    root.style.setProperty('--bg',      p.bg)
+    root.style.setProperty('--surface', p.surface)
+    root.style.setProperty('--card',    p.card)
+    root.style.setProperty('--border',  p.border)
+    root.style.setProperty('--border2', p.border2)
+    root.style.setProperty('--text',  '#f0f2f8')
+    root.style.setProperty('--text2', '#9aa3bf')
+    root.style.setProperty('--text3', '#5a6380')
+  }
+  // Borde de íconos y badges — siempre del acento actual
+  root.style.setProperty('--icon-border', p.c1+(_isLight?'28':'38'))
+  root.style.setProperty('--comp-bright', p.compBright)
+  if(save){ cfgSet('app_palette',id); renderPaletteGrid() }
+}
+// Mezcla un color de acento con un color base en una proporción t (0=base, 1=acento)
+function _blendWithAccent(accent,base,t){
+  const ah=accent.replace('#',''), bh=base.replace('#','')
+  const ar=parseInt(ah.slice(0,2),16), ag=parseInt(ah.slice(2,4),16), ab=parseInt(ah.slice(4,6),16)
+  const br=parseInt(bh.slice(0,2),16), bg2=parseInt(bh.slice(2,4),16), bb=parseInt(bh.slice(4,6),16)
+  const r=Math.round(br+(ar-br)*t), g=Math.round(bg2+(ag-bg2)*t), b=Math.round(bb+(ab-bb)*t)
+  return '#'+[r,g,b].map(x=>Math.min(255,Math.max(0,x)).toString(16).padStart(2,'0')).join('')
+}
+function applyFont(id,save=true){
+  const f=FONTS.find(x=>x.id===id); if(!f)return
+  const root=document.documentElement
+  root.style.setProperty('--font',f.body)
+  root.style.setProperty('--font-title',f.title)
+  document.querySelectorAll('*').forEach(el=>{
+    if(getComputedStyle(el).fontFamily.includes('Barlow')||
+       ['Inter','Outfit','DM Sans','Rajdhani'].some(fn=>getComputedStyle(el).fontFamily.includes(fn))){
+      el.style.fontFamily=''
+    }
+  })
+  if(save){
+    cfgSet('app_font',id)
+    renderFontList()
+    const fcl=document.getElementById('font-current-label')
+    const f2=FONTS.find(x=>x.id===id)
+    if(fcl&&f2) fcl.textContent=f2.name
+  }
+}
+function applyFontSize(val,save=true){
+  const offset=parseInt(val)||0
+  const min=19+offset, max=23+offset
+  document.documentElement.style.fontSize=`clamp(${min}px, 2.3vw, ${max}px)`
+  const lbl=document.getElementById('font-size-label')
+  if(lbl) lbl.textContent=SIZE_LABELS[String(val)]||'Normal'
+  if(save) cfgSet('app_font_size',String(val))
+}
+function renderPaletteGrid(){
+  const grid=document.getElementById('palette-grid'); if(!grid)return
+  const current=cfgGet('app_palette','orange')
+  grid.innerHTML=PALETTES.map(p=>`
+    <div class="palette-item${p.id===current?' active':''}"
+      style="background:linear-gradient(135deg,${p.c1},${p.c2})"
+      onclick="applyPalette('${p.id}')" title="${p.name}">
+    </div>`).join('')
+}
+function togFontPanel(){
+  const panel=document.getElementById('font-panel')
+  if(!panel)return
+  const open=panel.style.display==='flex'
+  panel.style.display=open?'none':'flex'
+}
+function renderFontList(){
+  const list=document.getElementById('font-list'); if(!list)return
+  const current=cfgGet('app_font','barlow')
+  list.innerHTML=FONTS.map(f=>`
+    <div class="font-option${f.id===current?' active':''}" onclick="applyFont('${f.id}')">
+      <div class="font-option-name" style="font-family:${f.body}">${f.name}</div>
+      <div class="font-option-sample" style="font-family:${f.body}">${f.sample}</div>
+    </div>`).join('')
+}
+// ── Menú ⋮ ───────────────────────────────────────────────────────
+const LS_THEME_LOCAL='tp_theme_local'
+function getLocalTheme(){ return localStorage.getItem(LS_THEME_LOCAL)||'dark' }
+function setLocalTheme(t){ localStorage.setItem(LS_THEME_LOCAL,t) }
+function toggleLocalTheme(){
+  const next=getLocalTheme()==='dark'?'light':'dark'
+  setLocalTheme(next)
+  applyTheme(next)
+  updateKMenu()
+  showToast('🌓 Tema '+(next==='light'?'claro':'oscuro'),'success')
+}
+function openKMenu(){
+  updateKMenu()
+  document.getElementById('km-overlay').classList.add('open')
+  document.getElementById('km-panel').classList.add('open')
+}
+function closeKMenu(){
+  document.getElementById('km-overlay').classList.remove('open')
+  document.getElementById('km-panel').classList.remove('open')
+}
+function updateKMenu(){
+  // dot de sync
+  const dot=document.querySelector('.sync-dot.ok')?'ok':document.querySelector('.sync-dot.syncing')?'syncing':'error'
+  const kmDot=document.getElementById('km-dot')
+  if(kmDot){ kmDot.className='km-sync-dot '+(dot); kmDot.style.background=dot==='ok'?'var(--green)':dot==='syncing'?'var(--orange)':'var(--red)' }
+  const kmSyncLabel=document.getElementById('km-sync-label')
+  const syncLabel=document.getElementById('sync-label')
+  if(kmSyncLabel&&syncLabel) kmSyncLabel.textContent=syncLabel.textContent
+  // tema — solo si no es admin
+  const themeItem=document.getElementById('km-theme-item')
+  if(themeItem) themeItem.style.display=isAdmin()?'none':'flex'
+  const kmThemeLbl=document.getElementById('km-theme-label')
+  if(kmThemeLbl) kmThemeLbl.textContent=getLocalTheme()==='light'?'Claro activo':'Oscuro activo'
+  // usuario
+  const kmUser=document.getElementById('km-user-label')
+  if(kmUser&&_session) kmUser.textContent=_session.nombre||''
+}
+// ── Arranque — carga localStorage primero, luego Sheet ───────────
+const hasCached=lsLoad()
+// Recuperar sesión guardada
+const savedSession=localStorage.getItem(LS_SESSION)
+if(savedSession){ try{ _session=JSON.parse(savedSession) }catch(e){} }
+
+if(hasCached){
+  // Caché disponible — entrar INMEDIATAMENTE, sincronizar en fondo
+  _ready=true
+  applyConfig()
+  if(_session){ enterApp() }
+  updateStats()
+  setDot('ok','Caché local')
+  // Sync en segundo plano sin bloquear UI
+  setTimeout(()=>{
+    setDot('syncing','Actualizando...')
+    gsGetVersion()
+      .then(async remoteV=>{
+        if(remoteV!==_version&&!remoteV.includes(_deviceId)){
+          await gsLoadAll()
+          _version=remoteV
+          lsSave()
+          applyConfig()
+          rerenderActive()
+        }
+        setDot('ok','Sincronizado')
+        startAutoSync()
+      })
+      .catch(()=>{
+        setDot('error','Sin conexión')
+        startAutoSync()
+      })
+  }, 100) // pequeño delay para que la UI renderice primero
+} else {
+  // Sin caché — mostrar login de inmediato y cargar datos en paralelo
+  setDot('syncing','Cargando...')
+  gsLoadAll()
+    .then(()=>{
+      _ready=true
+      applyConfig()
+      if(_session){ enterApp() }
+      updateStats()
+      setDot('ok','Sincronizado')
+      startAutoSync()
+    })
+    .catch(()=>{ setDot('error','Error de conexión'); showToast('❌ Error al conectar','error') })
+}
+</script>
+
+<!-- ══ CROPPER MODAL ══ -->
+<div class="cropper-modal" id="cropper-modal">
+  <div style="font-family:var(--font-title);font-size:1.1rem;font-weight:800;color:#fff;text-align:center">
+    Ajustar imagen
+    <div id="cropper-subtitle" style="font-size:0.7rem;font-weight:400;color:rgba(255,255,255,.5);margin-top:3px">Arrastra la imagen para mover · Usa el slider para zoom</div>
+  </div>
+  <div class="cropper-wrap" id="cropper-wrap">
+    <img id="cropper-img" class="cropper-img" src="" alt="">
+    <div class="cropper-frame"></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;width:min(280px,80vw)">
+    <span style="font-size:0.7rem;color:rgba(255,255,255,.4);flex-shrink:0">−</span>
+    <div style="flex:1;position:relative;display:flex;align-items:center">
+      <input type="range" id="cropper-zoom" min="-50" max="150" value="0"
+        style="width:100%;accent-color:var(--orange);cursor:pointer" oninput="cropperZoom(this.value)">
+
+    </div>
+    <span style="font-size:0.7rem;color:rgba(255,255,255,.4);flex-shrink:0">+</span>
+  </div>
+  <div id="cropper-snap-label" style="font-size:0.65rem;color:rgba(255,165,0,.8);font-weight:700;height:14px;transition:.15s"></div>
+  <div class="cropper-actions">
+    <button class="cropper-btn" style="background:var(--orange);color:#fff" onclick="cropperConfirm()">✅ Usar esta área</button>
+    <button class="cropper-btn" style="background:var(--surface);color:var(--text2);border:1px solid var(--border)" onclick="cropperCancel()">✕ Cancelar</button>
+  </div>
+</div>
+<!-- ══ MENÚ ⋮ GLOBAL ══ -->
+<div class="km-overlay" id="km-overlay" onclick="closeKMenu()"></div>
+<div class="km-panel" id="km-panel">
+  <!-- Sync -->
+  <div class="km-item" onclick="closeKMenu();manualSync(null)">
+    <div class="km-ico" style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.2)">🔄</div>
+    <div style="flex:1;min-width:0">
+      <div class="km-lbl">Sincronizar</div>
+      <div class="km-sub" id="km-sync-label">Sincronizado</div>
+    </div>
+    <div class="km-sync-dot ok" id="km-dot"></div>
+  </div>
+  <!-- Tema — solo empleado/cliente, admin lo tiene en Personalizar -->
+  <div class="km-item" id="km-theme-item" style="display:none" onclick="closeKMenu();toggleLocalTheme()">
+    <div class="km-ico" style="background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.2)">🌓</div>
+    <div style="flex:1;min-width:0">
+      <div class="km-lbl">Modo</div>
+      <div class="km-sub" id="km-theme-label">Oscuro</div>
+    </div>
+  </div>
+  <!-- Cerrar sesión -->
+  <div class="km-item" onclick="closeKMenu();logout()">
+    <div class="km-ico" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)">🚪</div>
+    <div style="flex:1;min-width:0">
+      <div class="km-lbl">Cerrar sesión</div>
+      <div class="km-sub" id="km-user-label"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
