@@ -158,11 +158,11 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .sec-lbl{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
   color:var(--orange);margin-bottom:12px}
 .field{margin-bottom:8px;position:relative}.field:last-child{margin-bottom:0}
-.field label{display:block;font-size:0.68rem;font-weight:600;color:var(--text2);margin-bottom:3px;
+.field label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px;
   text-transform:uppercase;letter-spacing:.05em}
 .field input,.field textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);
   border-radius:var(--r-sm);padding:7px 11px;color:var(--text);font-family:var(--font);
-  font-size:0.85rem;outline:none;transition:border-color .2s;-webkit-appearance:none}
+  font-size:15px;outline:none;transition:border-color .2s;-webkit-appearance:none}
 .field input:focus,.field textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--og)}
 .field textarea{resize:none;height:50px;line-height:1.4}
 .cost-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
@@ -3568,6 +3568,16 @@ function applyFontSize(val,save=true){
   const offset=parseInt(val)||0
   const min=19+offset, max=23+offset
   document.documentElement.style.fontSize=`clamp(${min}px, 2.3vw, ${max}px)`
+  // Mantener inputs y labels de formulario con tamaño fijo — no escalan con el html
+  // Se aplica una regla de CSS en tiempo real para garantizarlo
+  let fixStyle=document.getElementById('_form-fix-style')
+  if(!fixStyle){
+    fixStyle=document.createElement('style')
+    fixStyle.id='_form-fix-style'
+    document.head.appendChild(fixStyle)
+  }
+  fixStyle.textContent='.field input,.field textarea,.field label,.field select{font-size:revert !important}'
+  // revert usa el tamaño definido en la hoja de estilos (px fijos) sin heredar del html
   const lbl=document.getElementById('font-size-label')
   if(lbl) lbl.textContent=SIZE_LABELS[String(val)]||'Normal'
   if(save) cfgSet('app_font_size',String(val))
