@@ -1523,13 +1523,17 @@ function _quickHash(sheets){
 }
 
 function _sheetHash(sh){
-  // Hash rápido de un array — evita JSON.stringify completo en cada snap
   const arr=DB[sh]
   if(!arr||!arr.length) return '0'
   let h=arr.length
-  // Mezcla el id/clave del primer y último elemento para detección rápida
-  const first=arr[0], last=arr[arr.length-1]
-  const sample=JSON.stringify(first)+JSON.stringify(last)
+  let sample
+  if(sh===SH_CFG){
+    // Config: hashear todos los valores porque cualquiera puede cambiar (app_bg, tema, etc)
+    sample=arr.map(r=>String(r.clave||'')+String(r.valor||'').slice(0,40)).join('|')
+  } else {
+    // Otras hojas: primer + último elemento es suficiente para detectar cambios
+    sample=JSON.stringify(arr[0])+JSON.stringify(arr[arr.length-1])
+  }
   for(let i=0;i<sample.length;i++){h=(Math.imul(31,h)+sample.charCodeAt(i))|0}
   return String(h>>>0)
 }
