@@ -1710,6 +1710,7 @@ function goTo(id){
 // Manejar gesto de atrás (swipe izquierda en móvil, dos dedos en Mac, botón atrás)
 window.addEventListener('popstate',e=>{
   const target=e.state?.screen
+  showToast('↩ popstate: '+(target||'null'),'success')
   // Sin sesión: siempre login
   if(!_session){
     history.replaceState({screen:'screen-login'},'','')
