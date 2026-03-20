@@ -1718,14 +1718,13 @@ window.addEventListener('popstate',e=>{
     'screen-db-reparaciones','screen-db-cierre','screen-usuarios','screen-clientes-emp']
   if(target&&secondaries.includes(target)&&activeNow!==homeScreen){
     _showScreen(target)
-    // Reponer el dummy consumido
-    history.pushState({screen:'__dummy'},'','')
+    for(let _i=0;_i<10;_i++) history.pushState({screen:'__dummy'},'','')
     return
   }
-  // Todos los demás casos: ir a home y reponer un dummy consumido
+  // Todos los demás casos: ir a home y reponer dummies consumidos
   if(activeNow!==homeScreen) _showScreen(homeScreen)
-  // Reponer la entrada consumida para mantener el stack lleno
-  history.pushState({screen:'__dummy'},'','')
+  // Reponer varios dummies para mantener el colchón
+  for(let _i=0;_i<10;_i++) history.pushState({screen:'__dummy'},'','')
 })
 function clearIngreso(){
   selCid=null
@@ -3101,6 +3100,9 @@ function enterApp(){
     applyFontSize(getLocalFontSize(), false)
   }
   const homeScreen=isCliente()?'screen-home-cliente':'screen-home'
+  // Inyectar dummies ANTES de cualquier navegación
+  for(let _i=0;_i<50;_i++) history.pushState({screen:'__dummy'},'','')
+  history.pushState({screen:homeScreen},'','')
   if(isCliente()){
     applyConfig()
     renderClienteActivo()
@@ -3109,9 +3111,6 @@ function enterApp(){
     applyRoleUI()
     _showScreen('screen-home')
   }
-  // Inyectar 50 dummies — nunca se agota el stack sin importar cuántos gestos atrás
-  for(let _i=0;_i<50;_i++) history.pushState({screen:'__dummy'},'','')
-  history.pushState({screen:homeScreen},'','')
 }
 function applyRoleUI(){
   const homeAdmin=document.getElementById('home-admin-btns')
@@ -3708,7 +3707,9 @@ function updateKMenu(){
   if(kmUser&&_session) kmUser.textContent=_session.nombre||''
 }
 // ── Arranque — carga localStorage primero, luego Sheet ───────────
-// Inicializar historial con estado actual
+// Inyectar dummies INMEDIATAMENTE al cargar — antes de cualquier lógica
+// Así funciona sin importar si hay caché, sesión, o desde dónde arranque
+;(()=>{ for(let _i=0;_i<50;_i++) history.pushState({screen:'__dummy'},'','') })()
 if(!history.state) history.replaceState({screen:'screen-login'},'','')
 const hasCached=lsLoad()
 // Recuperar sesión guardada
