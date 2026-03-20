@@ -1685,25 +1685,30 @@ function goTo(id){
 // Manejar gesto de atrás (swipe izquierda en móvil, dos dedos en Mac, botón atrás)
 window.addEventListener('popstate',e=>{
   const target=e.state?.screen
-  // Si no hay sesión activa, siempre ir a login (seguridad post-logout)
+  // Sin sesión: siempre login
   if(!_session){
     history.replaceState({screen:'screen-login'},'','')
     _showScreen('screen-login')
     return
   }
+  const homeScreen=isCliente()?'screen-home-cliente':'screen-home'
+  // Estamos en home y el usuario intenta ir atrás — re-inyectar entrada para no cerrar
+  const activeNow=document.querySelector('.screen.active')?.id
+  if(activeNow===homeScreen){
+    history.pushState({screen:homeScreen},'','')
+    return // no hacer nada más — la app no se cierra
+  }
   if(target){
-    // No permitir volver a login si hay sesión activa
     if(target==='screen-login'){
-      const dest=isCliente()?'screen-home-cliente':'screen-home'
-      history.replaceState({screen:dest},'','')
-      _showScreen(dest)
+      // No permitir volver a login con sesión activa
+      history.replaceState({screen:homeScreen},'','')
+      _showScreen(homeScreen)
     } else {
       _showScreen(target)
     }
   } else {
-    const dest=isCliente()?'screen-home-cliente':'screen-home'
-    history.replaceState({screen:dest},'','')
-    _showScreen(dest)
+    history.replaceState({screen:homeScreen},'','')
+    _showScreen(homeScreen)
   }
 })
 function clearIngreso(){
@@ -2117,7 +2122,16 @@ function buildClientCard(c,i){
             <div class="cc-name">${c.nombre}</div>
             <div class="cc-car">🚗 ${c.vehiculo}</div>
             <div class="cc-rep-count">${cReps.length} rep.</div>
-            <div class="cc-saldo cc-saldo-wrap ${sc}">${saldo<=0?'✅ Al día':f$(saldo)}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;margin-left:auto" onclick="togCard('${c.id}')">
+            <div style="display:flex;align-items:center;gap:4px">
+              <span style="font-size:0.55rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Total</span>
+              <span style="font-size:0.78rem;font-weight:800;color:var(--orange)">${f$(gTotal)}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <span style="font-size:0.55rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Pendiente</span>
+              <span style="font-size:0.72rem;font-weight:800;color:${saldo<=0?'var(--green)':'var(--red)'}">${saldo<=0?'Al día':f$(saldo)}</span>
+            </div>
           </div>
         </div>
         <div class="s-btns">
@@ -2145,19 +2159,7 @@ function buildClientCard(c,i){
           <span class="arb-ico">➕</span> Agregar reparación
         </button>
         ${repsHTML}${abosHTML}
-        ${cReps.length>0?`<div class="cc-gt" style="display:flex;align-items:center;justify-content:space-between">
-          <span class="gtl">${cReps.length} rep.</span>
-          <div style="display:flex;gap:16px">
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:1px">
-              <span style="font-size:0.58rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Total</span>
-              <span class="gtv">${f$(gTotal)}</span>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:1px">
-              <span style="font-size:0.58rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Pendiente</span>
-              <span style="font-size:0.82rem;font-weight:800;color:${saldo<=0?'var(--green)':'var(--red)'}">${saldo<=0?'Al día':f$(saldo)}</span>
-            </div>
-          </div>
-        </div>`:''}
+
       </div>
     </div>`
 }
@@ -3635,6 +3637,19 @@ function setLocalTheme(t){ localStorage.setItem(LS_THEME_LOCAL,t) }
 const LS_FONTSIZE_LOCAL='tp_fontsize_local'
 function getLocalFontSize(){ return localStorage.getItem(LS_FONTSIZE_LOCAL)||'0' }
 function setLocalFontSize(v){ localStorage.setItem(LS_FONTSIZE_LOCAL,String(v)) }
+function toggleKConfig(){
+  const panel=document.getElementById('km-config-panel')
+  const arrow=document.getElementById('km-config-arrow')
+  if(!panel) return
+  const open=panel.style.display==='flex'
+  panel.style.display=open?'none':'flex'
+  if(arrow) arrow.style.transform=open?'':'rotate(90deg)'
+}
+function applyKFontSize(val){
+  applyFontSize(val, true)
+  const lbl=document.getElementById('km-fontsize-label')
+  if(lbl) lbl.textContent=SIZE_LABELS[String(val)]||'Normal'
+}
 function toggleLocalTheme(){
   const next=getLocalTheme()==='dark'?'light':'dark'
   setLocalTheme(next)
@@ -3664,6 +3679,12 @@ function updateKMenu(){
   if(themeItem) themeItem.style.display=isAdmin()?'none':'flex'
   const kmThemeLbl=document.getElementById('km-theme-label')
   if(kmThemeLbl) kmThemeLbl.textContent=getLocalTheme()==='light'?'Claro activo':'Oscuro activo'
+  // Sincronizar slider de fuente con valor actual
+  const kmSlider=document.getElementById('km-fontsize-slider')
+  const kmFsLbl=document.getElementById('km-fontsize-label')
+  const curFs=isAdmin()?cfgGet('app_font_size','0'):getLocalFontSize()
+  if(kmSlider) kmSlider.value=curFs
+  if(kmFsLbl) kmFsLbl.textContent=SIZE_LABELS[String(curFs)]||'Normal'
   // usuario
   const kmUser=document.getElementById('km-user-label')
   if(kmUser&&_session) kmUser.textContent=_session.nombre||''
@@ -3756,12 +3777,39 @@ if(hasCached){
     </div>
     <div class="km-sync-dot ok" id="km-dot"></div>
   </div>
-  <!-- Tema — solo empleado/cliente, admin lo tiene en Personalizar -->
-  <div class="km-item" id="km-theme-item" style="display:none" onclick="closeKMenu();toggleLocalTheme()">
-    <div class="km-ico" style="background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.2)">🌓</div>
-    <div style="flex:1;min-width:0">
-      <div class="km-lbl">Modo</div>
-      <div class="km-sub" id="km-theme-label">Oscuro</div>
+  <!-- Configuración — solo empleado/cliente, admin lo tiene en Personalizar -->
+  <div id="km-theme-item" style="display:none;flex-direction:column">
+    <div class="km-item" onclick="toggleKConfig()">
+      <div class="km-ico" style="background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.2)">⚙️</div>
+      <div style="flex:1;min-width:0">
+        <div class="km-lbl">Configuración</div>
+        <div class="km-sub">Tema y tamaño</div>
+      </div>
+      <div id="km-config-arrow" style="color:var(--text3);font-size:0.7rem;transition:.2s">›</div>
+    </div>
+    <!-- Sub-panel de configuración -->
+    <div id="km-config-panel" style="display:none;flex-direction:column;gap:0;background:var(--bg);border-top:1px solid var(--border)">
+      <!-- Modo claro/oscuro -->
+      <div class="km-item" style="padding-left:20px" onclick="toggleLocalTheme()">
+        <div class="km-ico" style="width:28px;height:28px;font-size:0.9rem;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.2)">🌓</div>
+        <div style="flex:1;min-width:0">
+          <div class="km-lbl" style="font-size:0.75rem">Modo</div>
+          <div class="km-sub" id="km-theme-label">Oscuro</div>
+        </div>
+      </div>
+      <!-- Tamaño de letra -->
+      <div style="padding:8px 12px 12px 20px;border-top:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:0.72rem;font-weight:700;color:var(--text2)">Tamaño de letra</span>
+          <span id="km-fontsize-label" style="font-size:0.68rem;color:var(--orange);font-weight:700">Normal</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:0.65rem;color:var(--text3)">−</span>
+          <input type="range" id="km-fontsize-slider" min="-2" max="4" step="1" value="0"
+            style="flex:1;accent-color:var(--orange)" oninput="applyKFontSize(this.value)">
+          <span style="font-size:0.65rem;color:var(--text3)">+</span>
+        </div>
+      </div>
     </div>
   </div>
   <!-- Cerrar sesión -->
