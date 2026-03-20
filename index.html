@@ -3675,6 +3675,7 @@ function updateKMenu(){
 // ── Arranque — carga localStorage primero, luego Sheet ───────────
 // Inyectar dummies INMEDIATAMENTE al cargar — antes de cualquier lógica
 // Así funciona sin importar si hay caché, sesión, o desde dónde arranque
+;(()=>{ for(let _i=0;_i<50;_i++) history.pushState({screen:'__dummy'},'','') })()
 if(!history.state) history.replaceState({screen:'screen-login'},'','')
 const hasCached=lsLoad()
 // Recuperar sesión guardada
