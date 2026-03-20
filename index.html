@@ -1677,18 +1677,8 @@ function _showScreen(id){
 function goTo(id){
   const prev=document.querySelector('.screen.active')?.id
   if(prev===id) return
-  const roots=['screen-login','screen-home','screen-home-cliente']
-  if(roots.includes(id)){
-    history.replaceState({screen:'__dummy'},'','')
-    history.pushState({screen:id},'','')
-  } else {
-    // Pantalla secundaria: siempre asegurar que debajo haya dummy+home
-    // Así al dar atrás 2 veces siempre llega al home con stack intacto
-    const homeScreen=isCliente()?'screen-home-cliente':'screen-home'
-    history.replaceState({screen:'__dummy'},'','')
-    history.pushState({screen:homeScreen},'','')
-    history.pushState({screen:id},'','')
-  }
+  // Solo apilar — los dummies del enterApp garantizan que nunca se agote el stack
+  history.pushState({screen:id},'','')
   _showScreen(id)
 }
 // ── Swipe táctil: fallback para PWA standalone donde popstate no funciona ──
@@ -1728,16 +1718,14 @@ window.addEventListener('popstate',e=>{
     'screen-db-reparaciones','screen-db-cierre','screen-usuarios','screen-clientes-emp']
   if(target&&secondaries.includes(target)&&activeNow!==homeScreen){
     _showScreen(target)
-    // Reconstruir siempre: dummy→home→target
-    history.replaceState({screen:'__dummy'},'','')
-    history.pushState({screen:homeScreen},'','')
-    history.pushState({screen:target},'','')
+    // Reponer el dummy consumido
+    history.pushState({screen:'__dummy'},'','')
     return
   }
-  // Todos los demás casos: ir a home y reconstruir stack
+  // Todos los demás casos: ir a home y reponer un dummy consumido
   if(activeNow!==homeScreen) _showScreen(homeScreen)
-  history.replaceState({screen:'__dummy'},'','')
-  history.pushState({screen:homeScreen},'','')
+  // Reponer la entrada consumida para mantener el stack lleno
+  history.pushState({screen:'__dummy'},'','')
 })
 function clearIngreso(){
   selCid=null
@@ -3112,19 +3100,19 @@ function enterApp(){
     // Empleado/cliente: usar su tamaño local, no el del Sheet
     applyFontSize(getLocalFontSize(), false)
   }
+  const homeScreen=isCliente()?'screen-home-cliente':'screen-home'
   if(isCliente()){
     applyConfig()
     renderClienteActivo()
     document.getElementById('screen-home-cliente').classList.add('active')
-    // Dos entradas: dummy + home — así el primer gesto atrás dispara popstate
-    history.replaceState({screen:'__dummy'},'','')
-    history.pushState({screen:'screen-home-cliente'},'','')
   } else {
     applyRoleUI()
-    history.replaceState({screen:'__dummy'},'','')
-    history.pushState({screen:'screen-home'},'','')
     _showScreen('screen-home')
   }
+  // Inyectar 30 dummies para que nunca se agote el stack con gestos atrás
+  history.replaceState({screen:'__dummy'},'','')
+  for(let _i=0;_i<29;_i++) history.pushState({screen:'__dummy'},'','')
+  history.pushState({screen:homeScreen},'','')
 }
 function applyRoleUI(){
   const homeAdmin=document.getElementById('home-admin-btns')
