@@ -1692,11 +1692,12 @@ window.addEventListener('popstate',e=>{
     return
   }
   const homeScreen=isCliente()?'screen-home-cliente':'screen-home'
-  // Estamos en home y el usuario intenta ir atrás — re-inyectar entrada para no cerrar
   const activeNow=document.querySelector('.screen.active')?.id
-  if(activeNow===homeScreen){
+  // Entrada dummy o estamos en home — re-inyectar para no cerrar la app
+  if(target==='__dummy'||activeNow===homeScreen){
     history.pushState({screen:homeScreen},'','')
-    return // no hacer nada más — la app no se cierra
+    if(activeNow!==homeScreen) _showScreen(homeScreen)
+    return
   }
   if(target){
     if(target==='screen-login'){
@@ -3088,10 +3089,13 @@ function enterApp(){
     applyConfig()
     renderClienteActivo()
     document.getElementById('screen-home-cliente').classList.add('active')
-    history.replaceState({screen:'screen-home-cliente'},'','')
+    // Dos entradas: dummy + home — así el primer gesto atrás dispara popstate
+    history.replaceState({screen:'__dummy'},'','')
+    history.pushState({screen:'screen-home-cliente'},'','')
   } else {
     applyRoleUI()
-    history.replaceState({screen:'screen-home'},'','')
+    history.replaceState({screen:'__dummy'},'','')
+    history.pushState({screen:'screen-home'},'','')
     _showScreen('screen-home')
   }
 }
