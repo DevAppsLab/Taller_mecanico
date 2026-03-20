@@ -1677,54 +1677,24 @@ function _showScreen(id){
 function goTo(id){
   const prev=document.querySelector('.screen.active')?.id
   if(prev===id) return
-  // Solo apilar — los dummies del enterApp garantizan que nunca se agote el stack
   history.pushState({screen:id},'','')
   _showScreen(id)
 }
-// ── Swipe táctil: fallback para PWA standalone donde popstate no funciona ──
-;(()=>{
-  let _tx=0,_ty=0
-  document.addEventListener('touchstart',e=>{
-    _tx=e.touches[0].clientX
-    _ty=e.touches[0].clientY
-  },{passive:true})
-  document.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-_tx
-    const dy=Math.abs(e.changedTouches[0].clientY-_ty)
-    // Swipe derecha desde borde izquierdo (primeros 30px): gesto atrás
-    if(dx>60&&dy<80&&_tx<30){
-      const activeNow=document.querySelector('.screen.active')?.id
-      const homeScreen=_session?(isCliente()?'screen-home-cliente':'screen-home'):null
-      if(!_session||activeNow===homeScreen) return // en home o sin sesión: no hacer nada
-      history.back() // dispara popstate
-    }
-  },{passive:true})
-})()
-
 // Manejar gesto de atrás (swipe izquierda en móvil, dos dedos en Mac, botón atrás)
 window.addEventListener('popstate',e=>{
   const target=e.state?.screen
-  // Sin sesión: ir a login
-  if(!_session){
-    history.replaceState({screen:'screen-login'},'','')
-    _showScreen('screen-login')
-    return
-  }
-  const homeScreen=(_session&&_session.rol==='cliente')?'screen-home-cliente':'screen-home'
   const activeNow=document.querySelector('.screen.active')?.id||''
-  // Caso 1: target es una pantalla secundaria real → navegar ahí
-  const secondaries=['screen-clientes','screen-registro','screen-mensual','screen-admin',
-    'screen-apariencia','screen-tabla','screen-historial','screen-db-clientes',
-    'screen-db-reparaciones','screen-db-cierre','screen-usuarios','screen-clientes-emp']
-  if(target&&secondaries.includes(target)&&activeNow!==homeScreen){
-    _showScreen(target)
-    for(let _i=0;_i<10;_i++) history.pushState({screen:'__dummy'},'','')
+  // Sin sesión o en login: no hacer nada
+  if(!_session||activeNow==='screen-login') return
+  const homeScreen=(_session.rol==='cliente')?'screen-home-cliente':'screen-home'
+  // En home: cerrar sesión
+  if(activeNow===homeScreen){
+    logout()
     return
   }
-  // Todos los demás casos: ir a home y reponer dummies consumidos
-  if(activeNow!==homeScreen) _showScreen(homeScreen)
-  // Reponer varios dummies para mantener el colchón
-  for(let _i=0;_i<10;_i++) history.pushState({screen:'__dummy'},'','')
+  // En pantalla secundaria: navegar a donde apunta el historial
+  if(target&&target!=='screen-login'&&target!=='__dummy') _showScreen(target)
+  else _showScreen(homeScreen)
 })
 function clearIngreso(){
   selCid=null
@@ -3087,9 +3057,7 @@ function logout(){
   document.getElementById('login-pass').value=''
   document.getElementById('login-error').style.display='none'
   showLoginTab('login')
-  // Ir al login y bloquear atrás: interceptar popstate temporalmente
   _showScreen('screen-login')
-  // Reemplazar con login — el listener de popstate redirigirá al login si no hay sesión
   history.replaceState({screen:'screen-login'},'','')
 }
 function enterApp(){
@@ -3100,9 +3068,6 @@ function enterApp(){
     applyFontSize(getLocalFontSize(), false)
   }
   const homeScreen=isCliente()?'screen-home-cliente':'screen-home'
-  // Inyectar dummies ANTES de cualquier navegación
-  for(let _i=0;_i<50;_i++) history.pushState({screen:'__dummy'},'','')
-  history.pushState({screen:homeScreen},'','')
   if(isCliente()){
     applyConfig()
     renderClienteActivo()
@@ -3111,6 +3076,7 @@ function enterApp(){
     applyRoleUI()
     _showScreen('screen-home')
   }
+  history.replaceState({screen:homeScreen},'','')
 }
 function applyRoleUI(){
   const homeAdmin=document.getElementById('home-admin-btns')
@@ -3709,7 +3675,6 @@ function updateKMenu(){
 // ── Arranque — carga localStorage primero, luego Sheet ───────────
 // Inyectar dummies INMEDIATAMENTE al cargar — antes de cualquier lógica
 // Así funciona sin importar si hay caché, sesión, o desde dónde arranque
-;(()=>{ for(let _i=0;_i<50;_i++) history.pushState({screen:'__dummy'},'','') })()
 if(!history.state) history.replaceState({screen:'screen-login'},'','')
 const hasCached=lsLoad()
 // Recuperar sesión guardada
