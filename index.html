@@ -1285,7 +1285,8 @@ function applyConfig(){
   // Paleta y fuente — siempre aplica (afecta a todos)
   applyPalette(cfgGet('app_palette','orange'),false)
   applyFont(cfgGet('app_font','barlow'),false)
-  applyFontSize(cfgGet('app_font_size','0'),false)
+  // Font size: admin usa el del Sheet, empleado/cliente usan su localStorage local
+  if(isAdmin()) applyFontSize(cfgGet('app_font_size','0'),false)
 }
 function applyTheme(theme){
   const root=document.documentElement
@@ -2144,7 +2145,19 @@ function buildClientCard(c,i){
           <span class="arb-ico">➕</span> Agregar reparación
         </button>
         ${repsHTML}${abosHTML}
-        ${cReps.length>0?`<div class="cc-gt"><span class="gtl">Total (${cReps.length} rep.)</span><span class="gtv">${f$(gTotal)}</span></div>`:''}
+        ${cReps.length>0?`<div class="cc-gt" style="display:flex;align-items:center;justify-content:space-between">
+          <span class="gtl">${cReps.length} rep.</span>
+          <div style="display:flex;gap:16px">
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:1px">
+              <span style="font-size:0.58rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Total</span>
+              <span class="gtv">${f$(gTotal)}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:1px">
+              <span style="font-size:0.58rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Pendiente</span>
+              <span style="font-size:0.82rem;font-weight:800;color:${saldo<=0?'var(--green)':'var(--red)'}">${saldo<=0?'Al día':f$(saldo)}</span>
+            </div>
+          </div>
+        </div>`:''}
       </div>
     </div>`
 }
@@ -2505,7 +2518,7 @@ function openApariencia(){
   const currentFont=FONTS.find(f=>f.id===cfgGet('app_font','barlow'))
   const fcl=document.getElementById('font-current-label')
   if(fcl&&currentFont) fcl.textContent=currentFont.name
-  const sizeVal=cfgGet('app_font_size','0')
+  const sizeVal=isAdmin()?cfgGet('app_font_size','0'):getLocalFontSize()
   const sl=document.getElementById('font-size-slider')
   if(sl) sl.value=sizeVal
   const lbl=document.getElementById('font-size-label')
@@ -3064,7 +3077,11 @@ function logout(){
 }
 function enterApp(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))
-  if(!isAdmin()) applyTheme(getLocalTheme())
+  if(!isAdmin()){
+    applyTheme(getLocalTheme())
+    // Empleado/cliente: usar su tamaño local, no el del Sheet
+    applyFontSize(getLocalFontSize(), false)
+  }
   if(isCliente()){
     applyConfig()
     renderClienteActivo()
@@ -3576,19 +3593,15 @@ function applyFontSize(val,save=true){
   const offset=parseInt(val)||0
   const min=19+offset, max=23+offset
   document.documentElement.style.fontSize=`clamp(${min}px, 2.3vw, ${max}px)`
-  // Mantener inputs y labels de formulario con tamaño fijo — no escalan con el html
-  // Se aplica una regla de CSS en tiempo real para garantizarlo
   let fixStyle=document.getElementById('_form-fix-style')
-  if(!fixStyle){
-    fixStyle=document.createElement('style')
-    fixStyle.id='_form-fix-style'
-    document.head.appendChild(fixStyle)
-  }
+  if(!fixStyle){ fixStyle=document.createElement('style'); fixStyle.id='_form-fix-style'; document.head.appendChild(fixStyle) }
   fixStyle.textContent='.field input,.field textarea,.field label,.field select{font-size:revert !important}'
-  // revert usa el tamaño definido en la hoja de estilos (px fijos) sin heredar del html
   const lbl=document.getElementById('font-size-label')
   if(lbl) lbl.textContent=SIZE_LABELS[String(val)]||'Normal'
-  if(save) cfgSet('app_font_size',String(val))
+  if(save){
+    if(isAdmin()) cfgSet('app_font_size',String(val))  // admin → Sheet (sync a todos los admins)
+    else setLocalFontSize(val)                          // empleado/cliente → localStorage local
+  }
 }
 function renderPaletteGrid(){
   const grid=document.getElementById('palette-grid'); if(!grid)return
@@ -3618,6 +3631,10 @@ function renderFontList(){
 const LS_THEME_LOCAL='tp_theme_local'
 function getLocalTheme(){ return localStorage.getItem(LS_THEME_LOCAL)||'dark' }
 function setLocalTheme(t){ localStorage.setItem(LS_THEME_LOCAL,t) }
+// Tamaño de letra local (empleado/cliente) — independiente del config del Sheet
+const LS_FONTSIZE_LOCAL='tp_fontsize_local'
+function getLocalFontSize(){ return localStorage.getItem(LS_FONTSIZE_LOCAL)||'0' }
+function setLocalFontSize(v){ localStorage.setItem(LS_FONTSIZE_LOCAL,String(v)) }
 function toggleLocalTheme(){
   const next=getLocalTheme()==='dark'?'light':'dark'
   setLocalTheme(next)
