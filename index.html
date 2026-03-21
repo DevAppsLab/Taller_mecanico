@@ -3642,6 +3642,58 @@ function setLocalTheme(t){ localStorage.setItem(LS_THEME_LOCAL,t) }
 const LS_FONTSIZE_LOCAL='tp_fontsize_local'
 function getLocalFontSize(){ return localStorage.getItem(LS_FONTSIZE_LOCAL)||'0' }
 function setLocalFontSize(v){ localStorage.setItem(LS_FONTSIZE_LOCAL,String(v)) }
+function toggleKPassForm(){
+  const panel=document.getElementById('km-pass-panel')
+  const arrow=document.getElementById('km-pass-arrow')
+  if(!panel) return
+  const open=panel.style.display==='flex'
+  panel.style.display=open?'none':'flex'
+  if(arrow) arrow.style.transform=open?'':'rotate(90deg)'
+  if(!open){
+    // Limpiar campos al abrir
+    ;['km-pass-actual','km-pass-nueva','km-pass-confirmar'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value=''
+    })
+    document.getElementById('km-pass-error').style.display='none'
+  }
+}
+async function saveKPassword(){
+  const actual=document.getElementById('km-pass-actual').value.trim()
+  const nueva=document.getElementById('km-pass-nueva').value.trim()
+  const confirmar=document.getElementById('km-pass-confirmar').value.trim()
+  const errEl=document.getElementById('km-pass-error')
+  errEl.style.display='none'
+  if(!actual||!nueva||!confirmar){
+    errEl.textContent='⚠️ Completa todos los campos'; errEl.style.display='block'; return
+  }
+  if(nueva.length<4){
+    errEl.textContent='⚠️ Mínimo 4 caracteres'; errEl.style.display='block'; return
+  }
+  if(nueva!==confirmar){
+    errEl.textContent='⚠️ Las contraseñas no coinciden'; errEl.style.display='block'; return
+  }
+  if(!_session){ errEl.textContent='⚠️ Sin sesión activa'; errEl.style.display='block'; return }
+  // Buscar usuario en DB
+  const user=DB[SH_USR].find(u=>u.id===_session.id||
+    u.nombre.trim().toLowerCase()===(_session.nombre||'').trim().toLowerCase())
+  if(!user){ errEl.textContent='⚠️ Usuario no encontrado en base de datos'; errEl.style.display='block'; return }
+  // Verificar contraseña actual (soporta texto plano y hash)
+  const actualHash=await sha256(actual)
+  const passStored=String(user.password||'').trim()
+  if(actual!==passStored&&actualHash!==passStored){
+    errEl.textContent='❌ Contraseña actual incorrecta'; errEl.style.display='block'; return
+  }
+  // Guardar nueva contraseña hasheada
+  const nuevaHash=await sha256(nueva)
+  const updated={...user, password:nuevaHash}
+  gsUpdateBg(SH_USR, updated)
+  ;['km-pass-actual','km-pass-nueva','km-pass-confirmar'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value=''
+  })
+  toggleKPassForm()
+  closeKMenu()
+  showToast('✅ Contraseña actualizada','success')
+}
 function toggleKConfig(){
   const panel=document.getElementById('km-config-panel')
   const arrow=document.getElementById('km-config-arrow')
@@ -3815,6 +3867,27 @@ if(hasCached){
           <input type="range" id="km-fontsize-slider" min="-2" max="4" step="1" value="0"
             style="flex:1;accent-color:var(--orange)" oninput="applyKFontSize(this.value)">
           <span style="font-size:0.65rem;color:var(--text3)">+</span>
+        </div>
+      </div>
+      <!-- Cambiar contraseña -->
+      <div style="border-top:1px solid var(--border)">
+        <div class="km-item" style="padding-left:20px" onclick="toggleKPassForm()">
+          <div class="km-ico" style="width:28px;height:28px;font-size:0.9rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)">🔑</div>
+          <div style="flex:1;min-width:0">
+            <div class="km-lbl" style="font-size:0.75rem">Contraseña</div>
+            <div class="km-sub">Cambiar contraseña</div>
+          </div>
+          <div id="km-pass-arrow" style="color:var(--text3);font-size:0.7rem;transition:.2s">›</div>
+        </div>
+        <div id="km-pass-panel" style="display:none;flex-direction:column;gap:6px;padding:8px 12px 12px 20px;border-top:1px solid var(--border)">
+          <input type="password" id="km-pass-actual" placeholder="Contraseña actual"
+            style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;color:var(--text);font-size:15px;outline:none">
+          <input type="password" id="km-pass-nueva" placeholder="Nueva contraseña"
+            style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;color:var(--text);font-size:15px;outline:none">
+          <input type="password" id="km-pass-confirmar" placeholder="Confirmar nueva"
+            style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;color:var(--text);font-size:15px;outline:none">
+          <div id="km-pass-error" style="color:var(--red);font-size:12px;font-weight:600;display:none"></div>
+          <button onclick="saveKPassword()" style="background:var(--orange);color:#fff;border:none;border-radius:var(--r-sm);padding:8px;font-weight:700;cursor:pointer;font-size:0.8rem">✅ Guardar contraseña</button>
         </div>
       </div>
     </div>
