@@ -677,11 +677,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
           <div class="mc-info"><div class="mc-title">Clientes</div><div class="mc-desc">Ver estado y agregar abonos</div></div>
           <div class="mc-arr">›</div>
         </div>
-        <div class="mc" onclick="goTo('screen-inventario')">
-          <div class="mc-icon">📦</div>
-          <div class="mc-info"><div class="mc-title">Inventario</div><div class="mc-desc">Agregar o ajustar piezas</div></div>
-          <div class="mc-arr">›</div>
-        </div>
       </div>
     </div>
   </div>
@@ -724,19 +719,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
           </div>
         </div>
       </div>
-      <!-- Toggle modo: reparación directa o cotización -->
-      <div id="ingreso-modo-toggle" style="display:none;margin:0 0 4px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;background:var(--card);border-radius:var(--r-sm);border:1px solid var(--border);overflow:hidden">
-          <button id="modo-rep-btn" onclick="setIngresoModo('rep')"
-            style="padding:9px;border:none;font-weight:700;font-size:0.8rem;cursor:pointer;transition:.2s;background:var(--orange);color:#fff">
-            🔧 Reparación directa
-          </button>
-          <button id="modo-cot-btn" onclick="setIngresoModo('cot')"
-            style="padding:9px;border:none;font-weight:700;font-size:0.8rem;cursor:pointer;transition:.2s;background:transparent;color:var(--text3)">
-            📄 Cotización
-          </button>
-        </div>
-      </div>
       <div class="sec-card">
         <div class="sec-lbl">🔩 Reparación</div>
         <div class="field">
@@ -754,11 +736,11 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
           <div class="field" style="margin-bottom:0"><label>Material ($)</label>
             <input type="number" id="inp-mat" placeholder="0.00" min="0" step="0.01" oninput="calcT()" inputmode="decimal"></div>
         </div>
-        <div id="btn-registrar" onclick="regIngresoModo()" style="margin-top:10px;background:linear-gradient(135deg,var(--orange),var(--orange2));border-radius:var(--r);
+        <div onclick="regIngreso()" style="margin-top:10px;background:linear-gradient(135deg,var(--orange),var(--orange2));border-radius:var(--r);
           padding:14px 16px;display:flex;justify-content:space-between;align-items:center;
-          box-shadow:0 4px 14px var(--shadow-orange);cursor:pointer;user-select:none;transition:transform .1s"
+          box-shadow:0 4px 14px var(--shadow-orange);cursor:pointer;user-select:none;transition:transform .1s;active:scale(.98)"
           onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.98)'" ontouchend="this.style.transform=''">
-          <span id="btn-registrar-lbl" style="color:rgba(255,255,255,.85);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em">✅ Registrar · Total</span>
+          <span style="color:rgba(255,255,255,.85);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em">✅ Registrar · Total</span>
           <span id="t-total" style="color:#fff;font-size:1.4rem;font-weight:800;letter-spacing:.02em">$0.00</span>
         </div>
       </div>
@@ -912,7 +894,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     <!-- ══ INVENTARIO ══ -->
   <div id="screen-inventario" class="screen">
     <div class="topbar">
-      <div class="tb-back" onclick="goTo(isAdmin()?'screen-admin':'screen-home')">‹</div>
+      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
       <div class="tb-title">Inventario</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
         <div class="km-btn" onclick="openKMenu()">⋮</div>
@@ -1229,19 +1211,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       </div>
       <div class="totals-box" style="margin-bottom:14px">
         <div class="tr grand"><span>Total</span><span class="tv" id="t-modal">$0.00</span></div>
-      </div>
-      <!-- Piezas del inventario -->
-      <div id="modal-rep-inv" style="display:none;margin-bottom:14px">
-        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:6px">📦 Piezas usadas</div>
-        <div id="modal-rep-piezas" style="display:flex;flex-direction:column;gap:4px;margin-bottom:6px"></div>
-        <div style="display:flex;gap:6px">
-          <select id="modal-inv-sel" style="flex:2;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;color:var(--text);font-size:14px;outline:none">
-            <option value="">Seleccionar pieza...</option>
-          </select>
-          <input type="number" id="modal-inv-qty" placeholder="1" min="1" value="1"
-            style="width:56px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;color:var(--text);font-size:14px;outline:none">
-          <button onclick="addRepPieza()" style="background:var(--og);color:var(--orange);border:1px solid var(--icon-border);border-radius:var(--r-sm);padding:6px 10px;cursor:pointer;font-weight:700">+</button>
-        </div>
       </div>
       <button class="btn-reg" onclick="regDesdeModal()">✅ Guardar Reparación</button>
     </div>
@@ -1820,50 +1789,9 @@ window.addEventListener('popstate',e=>{
   if(target&&target!=='screen-login'&&target!=='__dummy') _showScreen(target)
   else _showScreen(homeScreen)
 })
-// ── Modo ingreso: 'rep' = reparación directa, 'cot' = cotización ──
-let _ingresoModo='rep'
-function setIngresoModo(modo){
-  _ingresoModo=modo
-  const repBtn=document.getElementById('modo-rep-btn')
-  const cotBtn=document.getElementById('modo-cot-btn')
-  if(repBtn){ repBtn.style.background=modo==='rep'?'var(--orange)':'transparent'; repBtn.style.color=modo==='rep'?'#fff':'var(--text3)' }
-  if(cotBtn){ cotBtn.style.background=modo==='cot'?'var(--orange)':'transparent'; cotBtn.style.color=modo==='cot'?'#fff':'var(--text3)' }
-  const lbl=document.getElementById('btn-registrar-lbl')
-  if(lbl) lbl.textContent=modo==='cot'?'📄 Guardar Cotización':'✅ Registrar · Total'
-}
-function regIngresoModo(){
-  if(_ingresoModo==='cot') regIngresoCotizacion()
-  else regIngreso()
-}
-function regIngresoCotizacion(){
-  const nombre=document.getElementById('inp-nombre')?.value.trim()
-  const vehiculo=document.getElementById('inp-vehiculo')?.value.trim()||
-    document.getElementById('inp-vehiculo-sel')?.value.trim()||''
-  const rep=document.getElementById('inp-rep')?.value.trim()
-  const mo=numF(document.getElementById('inp-mo')?.value)
-  const mat=numF(document.getElementById('inp-mat')?.value)
-  if(!nombre){showToast('⚠️ Ingresa el nombre del cliente','error');return}
-  if(!rep){showToast('⚠️ Ingresa la descripción','error');return}
-  const total=mo+mat
-  // Crear cotización directamente
-  const cot={
-    id:gid(),
-    cliente:nombre,
-    vehiculo,
-    fecha:new Date().toISOString().slice(0,10),
-    reps:[{desc:rep,total}],
-    status:'pending'
-  }
-  gsAppendBg(SH_COT,cot)
-  clearIngreso()
-  setIngresoModo('rep')
-  showToast('📄 Cotización creada — pendiente de aprobación','success')
-  goTo('screen-home')
-}
 function clearIngreso(){
   selCid=null
   ;['inp-nombre','inp-vehiculo','inp-rep','inp-mo','inp-mat'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''})
-  setIngresoModo('rep')
   calcT()
   document.getElementById('campo-vehiculo').style.display='block'
   const selV=document.getElementById('campo-vehiculo-sel');if(selV)selV.style.display='none'
@@ -1996,13 +1924,6 @@ function acSR(eid,lid,rep,mo,mat){
   }
 }
 function acS(eid,lid,val){document.getElementById(eid).value=val;document.getElementById(lid).classList.remove('open')}
-function selCotCliente(nombre){
-  document.getElementById('cot-cli-nombre').value=nombre
-  document.getElementById('ac-cot-cli').classList.remove('open')
-  // Auto-llenar vehículo del cliente más reciente
-  const cli=DB[SH_CLI].filter(c=>c.nombre.toLowerCase()===nombre.toLowerCase()).slice(-1)[0]
-  if(cli){ const vEl=document.getElementById('cot-cli-vehiculo'); if(vEl) vEl.value=cli.vehiculo||'' }
-}
 function acK(e,lid){
   const list=document.getElementById(lid);if(!list.classList.contains('open'))return
   const items=list.querySelectorAll('.ac-item'),foc=list.querySelector('.focused')
@@ -2291,7 +2212,6 @@ function buildClientCard(c,i){
               <span style="font-size:0.55rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Pendiente</span>
               <span style="font-size:0.72rem;font-weight:800;color:${saldo<=0?'var(--green)':'var(--red)'}">${saldo<=0?'Al día':f$(saldo)}</span>
             </div>
-            ${(DB[SH_COT]||[]).some(ct=>ct.cliente===c.nombre&&ct.status==='pending')?'<span style="font-size:0.6rem;font-weight:700;color:#f59e0b;margin-top:1px">\u{1F4C4} Cotizaci\xF3n pendiente</span>':''}
           </div>
         </div>
         <div class="s-btns">
@@ -2372,41 +2292,10 @@ function delAbo(aid,cid){
 }
 
 // ── Modal nueva rep ───────────────────────────────────────────────
-let _repPiezas=[]
-function addRepPieza(){
-  const sel=document.getElementById('modal-inv-sel')
-  const qtyEl=document.getElementById('modal-inv-qty')
-  if(!sel||!sel.value) return
-  const qty=Math.max(1,parseInt(qtyEl?.value)||1)
-  const item=DB[SH_INV].find(p=>p.id===sel.value); if(!item) return
-  const ex=_repPiezas.find(p=>p.id===sel.value)
-  if(ex) ex.qty+=qty
-  else _repPiezas.push({id:item.id,nombre:item.nombre,qty})
-  sel.value=''; if(qtyEl) qtyEl.value='1'
-  renderRepPiezas()
-}
-function renderRepPiezas(){
-  const list=document.getElementById('modal-rep-piezas'); if(!list) return
-  list.innerHTML=_repPiezas.map((p,i)=>
-    `<div style="display:flex;align-items:center;gap:8px;font-size:0.78rem;padding:3px 0">`+
-    `<span style="flex:1;color:var(--text2)">📦 ${p.nombre}</span>`+
-    `<span style="font-weight:700;color:var(--orange)">x${p.qty}</span>`+
-    `<button onclick="_repPiezas.splice(${i},1);renderRepPiezas()" style="background:transparent;border:none;color:var(--text3);cursor:pointer">✕</button>`+
-    `</div>`
-  ).join('')
-}
 function openRepModal(cid,nombre,vehiculo){
   document.getElementById('modal-cid').value=cid
   document.getElementById('modal-rep-title').textContent=`${nombre} · ${vehiculo}`
   ;['inp-mrep','inp-mmo','inp-mmat'].forEach(id=>document.getElementById(id).value='')
-  _repPiezas=[]
-  const inv=DB[SH_INV]||[]
-  const sel=document.getElementById('modal-inv-sel')
-  const invDiv=document.getElementById('modal-rep-inv')
-  if(sel) sel.innerHTML='<option value="">Seleccionar pieza...</option>'+
-    inv.filter(p=>p.cantidad>0).map(p=>`<option value="${p.id}">${p.nombre} (${p.cantidad})</option>`).join('')
-  if(invDiv) invDiv.style.display=inv.length?'block':'none'
-  renderRepPiezas()
   calcTM();openModal('modal-rep')
 }
 function regDesdeModal(){
@@ -2423,11 +2312,6 @@ function regDesdeModal(){
   gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
   gsAppendBg(SH_SES,newRep)
   sAC('db-reparaciones',rep,mo,mat)
-  _repPiezas.forEach(p=>{
-    const item=DB[SH_INV].find(x=>x.id===p.id)
-    if(item){ gsUpdateBg(SH_INV,{...item,cantidad:Math.max(0,(parseInt(item.cantidad)||0)-p.qty)}) }
-  })
-  _repPiezas=[]
   closeModal('modal-rep');scheduleRender()
   showToast('✅ Reparación guardada','success')
   setTimeout(()=>document.getElementById('cc-'+cid)?.classList.add('expanded'),50)
@@ -2788,27 +2672,26 @@ function renderInventario(){
   // Agrupar por categoría
   const cats={}
   items.forEach(p=>{ if(!cats[p.categoria||'General']) cats[p.categoria||'General']=[]; cats[p.categoria||'General'].push(p) })
-  list.innerHTML=Object.entries(cats).map(([cat,piezas])=>{
-    const ph=piezas.map(p=>{
-      const low=p.cantidad<=p.minimo
-      return '<div class="inv-item'+(low?' low-stock':'')+'" id="inv-'+p.id+'">'
-        +'<div style="flex:1;min-width:0">'
-        +'<div style="font-size:0.85rem;font-weight:700">'+p.nombre+'</div>'
-        +'<div style="font-size:0.68rem;color:var(--text3)">Costo: '+f$(p.costo||0)+' &middot; Min: '+(p.minimo||0)+'</div>'
-        +'</div>'
-        +'<span class="inv-badge '+(low?'low':'ok')+'">'+(low?'Bajo':'OK')+'</span>'
-        +'<div class="inv-adj">'
-        +'<button onclick="adjInv(\x27'+p.id+'\x27,-1)">-</button>'
-        +'<span style="font-size:0.9rem;font-weight:800;min-width:28px;text-align:center">'+p.cantidad+'</span>'
-        +'<button onclick="adjInv(\x27'+p.id+'\x27,+1)">+</button>'
-        +'</div>'
-        +'<button onclick="delInv(\x27'+p.id+'\x27)" style="background:transparent;border:none;color:var(--text3);cursor:pointer">X</button>'
-        +'</div>'
-    }).join('')
-    return '<div style="margin-bottom:16px">'
-      +'<div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text3);margin-bottom:6px">'+cat+'</div>'
-      +ph+'</div>'
-  }).join('')
+  list.innerHTML=Object.entries(cats).map(([cat,piezas])=>`
+    <div style="margin-bottom:16px">
+      <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px">${cat}</div>
+      ${piezas.map(p=>{
+        const low=p.cantidad<=p.minimo
+        return `<div class="inv-item${low?' low-stock':''}" id="inv-${p.id}">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:0.85rem;font-weight:700;color:var(--text)">${p.nombre}</div>
+            <div style="font-size:0.68rem;color:var(--text3)">Costo: ${f$(p.costo||0)} · Mín: ${p.minimo||0}</div>
+          </div>
+          <span class="inv-badge ${low?'low':'ok'}">${low?'⚠️ Bajo':'✅ OK'}</span>
+          <div class="inv-adj">
+            <button onclick="adjInv('${p.id}',-1)">−</button>
+            <span style="font-size:0.9rem;font-weight:800;min-width:28px;text-align:center">${p.cantidad}</span>
+            <button onclick="adjInv('${p.id}',+1)">+</button>
+          </div>
+          <button onclick="delInv('${p.id}')" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:0.8rem;padding:4px">🗑</button>
+        </div>`
+      }).join('')}
+    </div>`).join('')
 }
 function addInventario(){
   const nombre=document.getElementById('inv-nombre').value.trim()
@@ -2845,33 +2728,35 @@ function renderCotizaciones(){
     items.innerHTML='<div class="empty"><div class="ei">📄</div><div class="et">Sin cotizaciones</div><div class="es">Crea la primera cotización</div></div>'
     return
   }
-  const sLabel={pending:'⏳ Pendiente',accepted:'✅ Aceptada',rejected:'❌ Rechazada'}
-  const sClass={pending:'pend',accepted:'acep',rejected:'rech'}
+  const statusLabel={pending:'⏳ Pendiente',accepted:'✅ Aceptada',rejected:'❌ Rechazada'}
+  const statusClass={pending:'pend',accepted:'acep',rejected:'rech'}
   items.innerHTML=cots.map(c=>{
-    const total=c.reps?(c.reps.reduce((s,r)=>s+(parseFloat(r.total)||0),0)):0
-    const badge='<span class="cot-badge '+(sClass[c.status]||'pend')+'">'+(sLabel[c.status]||'⏳ Pendiente')+'</span>'
-    const editBtn=c.status==='pending'
-      ?'<button onclick="editCot(\x27'+c.id+'\x27)" style="background:var(--og);color:var(--orange);border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:0.72rem;font-weight:700">✏️</button>'
-      :''
-    const repsHTML=(c.reps||[]).map(r=>
-      '<div class="cot-rep-row"><span style="color:var(--text2)">'+r.desc+'</span><span style="font-weight:700">'+f$(r.total)+'</span></div>'
-    ).join('')
-    const actionBtns=c.status==='pending'
-      ?'<div style="display:flex;gap:8px;margin-top:10px">'
-        +'<button onclick="convertCotToRep(\x27'+c.id+'\x27)" style="flex:1;padding:9px;background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);font-weight:700;cursor:pointer;font-size:0.8rem">✅ Convertir en reparación</button>'
-        +'<button onclick="rechazarCot(\x27'+c.id+'\x27)" style="padding:9px 12px;background:var(--surface);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:var(--r-sm);font-weight:700;cursor:pointer;font-size:0.8rem">✕</button>'
-        +'</div>'
-      :''
-    return '<div class="cot-card" id="cot-'+c.id+'">'
-      +'<div class="cot-header">'
-      +'<div><div style="font-weight:800;font-size:0.9rem">'+c.cliente+'</div>'
-      +'<div style="font-size:0.68rem;color:var(--text3)">📅 '+fD(c.fecha)+' · '+(c.vehiculo||'')+'</div></div>'
-      +'<div style="display:flex;align-items:center;gap:6px">'+badge+editBtn+'</div>'
-      +'</div>'
-      +repsHTML
-      +'<div class="cot-total"><span>Total</span><span>'+f$(total)+'</span></div>'
-      +actionBtns
-      +'</div>'
+    const total=c.reps?c.reps.reduce((s,r)=>s+(parseFloat(r.total)||0),0):0
+    return `<div class="cot-card" id="cot-${c.id}">
+      <div class="cot-header">
+        <div>
+          <div style="font-weight:800;font-size:0.9rem">${c.cliente}</div>
+          <div style="font-size:0.68rem;color:var(--text3)">📅 ${fD(c.fecha)} · ${c.vehiculo||''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="cot-badge ${statusClass[c.status]||'pend'}">${statusLabel[c.status]||'⏳ Pendiente'}</span>
+          ${c.status==='pending'?`<button onclick="editCot('${c.id}')" style="background:var(--og);color:var(--orange);border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:0.72rem;font-weight:700">✏️</button>`:''}
+        </div>
+      </div>
+      ${(c.reps||[]).map(r=>`
+        <div class="cot-rep-row">
+          <span style="color:var(--text2)">${r.desc}</span>
+          <span style="font-weight:700">${f$(r.total)}</span>
+        </div>`).join('')}
+      <div class="cot-total">
+        <span>Total</span><span>${f$(total)}</span>
+      </div>
+      ${c.status==='pending'?`
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button onclick="convertCotToRep('${c.id}')" style="flex:1;padding:9px;background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);font-weight:700;cursor:pointer;font-size:0.8rem">✅ Convertir en reparación</button>
+          <button onclick="rechazarCot('${c.id}')" style="padding:9px 12px;background:var(--surface);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:var(--r-sm);font-weight:700;cursor:pointer;font-size:0.8rem">✕</button>
+        </div>`:''}
+    </div>`
   }).join('')
 }
 function openNuevaCot(){
@@ -2961,13 +2846,20 @@ function renderCliCotizaciones(){
   if(!banner||!list)return
   if(!cots.length){ banner.style.display='none'; return }
   banner.style.display='block'
-  list.innerHTML=cots.map(c=>
-    `<div style="display:flex;align-items:center;gap:10px;padding:5px 0">`+
-    `<span style="flex:1;font-size:0.82rem;color:var(--text2)">📄 Cotización · ${c.vehiculo||'Vehículo'}</span>`+
-    `<button onclick="clienteAceptarCot('${c.id}')" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-weight:700;cursor:pointer;font-size:0.8rem">✅</button>`+
-    `<button onclick="clienteRechazarCot('${c.id}')" style="background:var(--surface);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:5px 10px;font-weight:700;cursor:pointer;font-size:0.8rem">✕</button>`+
-    `</div>`
-  ).join('')
+  list.innerHTML=cots.map(c=>{
+    const total=c.reps?c.reps.reduce((s,r)=>s+(parseFloat(r.total)||0),0):0
+    return `<div style="background:var(--card);border-radius:var(--r-sm);padding:10px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-size:0.82rem;font-weight:700">${c.vehiculo||'Vehículo'}</div>
+        <div style="font-size:0.82rem;font-weight:800;color:var(--orange)">${f$(total)}</div>
+      </div>
+      ${(c.reps||[]).map(r=>`<div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text2);padding:2px 0"><span>${r.desc}</span><span>${f$(r.total)}</span></div>`).join('')}
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button onclick="clienteAceptarCot('${c.id}')" style="flex:1;padding:8px;background:var(--green);color:#fff;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:0.78rem">✅ Aceptar</button>
+        <button onclick="clienteRechazarCot('${c.id}')" style="padding:8px 12px;background:var(--surface);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:6px;font-weight:700;cursor:pointer;font-size:0.78rem">✕ Rechazar</button>
+      </div>
+    </div>`
+  }).join('')
 }
 function clienteAceptarCot(id){
   const c=DB[SH_COT].find(x=>x.id===id); if(!c)return
@@ -3655,9 +3547,6 @@ function applyRoleUI(){
   const homeEmp=document.getElementById('home-emp-btns')
   if(homeAdmin) homeAdmin.style.display=isAdmin()?'flex':'none'
   if(homeEmp) homeEmp.style.display=isEmpleado()?'flex':'none'
-  // Toggle modo solo visible para admin
-  const toggle=document.getElementById('ingreso-modo-toggle')
-  if(toggle) toggle.style.display=isAdmin()?'block':'none'
   const statsGrid=document.querySelector('.home-stats')
   if(statsGrid) statsGrid.style.gridTemplateColumns=isAdmin()?'repeat(5,1fr)':'repeat(2,1fr)'
   updateStats()
@@ -4386,39 +4275,25 @@ if(hasCached){
       <span class="mt">📄 Cotización</span>
       <div class="modal-close" onclick="closeModal('modal-cot')">✕</div>
     </div>
-    <div class="modal-body" style="overflow-y:auto;max-height:70vh">
-      <div class="field">
-        <label>Cliente</label>
-        <div class="ac-wrap">
-          <input type="text" id="cot-cli-nombre" placeholder="Nombre del cliente" autocomplete="off"
-            oninput="acI(this,'ac-cot-cli','db-clientes')" onfocus="acI(this,'ac-cot-cli','db-clientes')"
-            onkeydown="acK(event,'ac-cot-cli')">
-          <div class="ac-list" id="ac-cot-cli"></div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Vehículo</label>
-        <input type="text" id="cot-cli-vehiculo" placeholder="Marca / Modelo" autocomplete="off">
-      </div>
+    <div class="modal-body">
+      <div class="field"><label>Cliente</label>
+        <input type="text" id="cot-cli-nombre" placeholder="Nombre del cliente" autocomplete="off"></div>
+      <div class="field"><label>Vehículo</label>
+        <input type="text" id="cot-cli-vehiculo" placeholder="Marca / Modelo" autocomplete="off"></div>
       <div style="border:1px solid var(--border);border-radius:var(--r-sm);padding:10px;margin-bottom:12px">
         <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Reparaciones</div>
         <div id="cot-rep-list"></div>
-        <div class="ac-wrap" style="margin-top:8px">
-          <input type="text" id="cot-rep-desc" placeholder="Descripción de la reparación"
-            style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;color:var(--text);font-size:15px;outline:none;box-sizing:border-box"
-            oninput="acI(this,'ac-cot-rep','db-reparaciones')" onfocus="acI(this,'ac-cot-rep','db-reparaciones')"
-            onkeydown="acK(event,'ac-cot-rep')">
-          <div class="ac-list" id="ac-cot-rep"></div>
-        </div>
         <div style="display:flex;gap:6px;margin-top:8px">
-          <input type="number" id="cot-rep-total" placeholder="$ Total"
+          <input type="text" id="cot-rep-desc" placeholder="Descripción"
+            style="flex:2;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;color:var(--text);font-size:15px;outline:none">
+          <input type="number" id="cot-rep-total" placeholder="$"
             style="flex:1;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;color:var(--text);font-size:15px;outline:none" min="0" inputmode="decimal">
-          <button onclick="addCotRep()" style="background:var(--og);color:var(--orange);border:1px solid var(--icon-border);border-radius:var(--r-sm);padding:6px 14px;cursor:pointer;font-weight:700;white-space:nowrap">+ Agregar</button>
+          <button onclick="addCotRep()" style="background:var(--og);color:var(--orange);border:1px solid var(--icon-border);border-radius:var(--r-sm);padding:6px 10px;cursor:pointer;font-weight:700">+</button>
         </div>
         <div id="cot-total-label" style="text-align:right;font-weight:800;color:var(--orange);margin-top:8px;font-size:0.9rem"></div>
       </div>
       <div style="display:flex;gap:8px">
-        <button onclick="saveCot()" class="btn-reg" style="flex:2">✅ Guardar</button>
+        <button onclick="saveCot()" class="btn-reg" style="flex:2">✅ Guardar cotización</button>
         <button onclick="generarPDFCot(_cotActual?.id)" style="flex:1;padding:12px;background:var(--surface);color:var(--text2);border:1px solid var(--border);border-radius:var(--r-btn);font-weight:700;cursor:pointer;font-size:0.82rem">📄 PDF</button>
       </div>
     </div>
