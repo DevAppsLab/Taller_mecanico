@@ -2456,7 +2456,11 @@ async function confirmDeleteAll(){
   const pass=document.getElementById('inp-pass')
   const errEl=document.getElementById('pass-error')
   const currentPass=String(cfgGet('delete_pass','1505')).trim()
-  if(String(pass.value).trim()!==currentPass){errEl.style.display='block';pass.value='';pass.focus();return}
+  const inputHash=await sha256(pass.value.trim())
+  // Soportar contraseña en texto plano o hash (compatibilidad)
+  if(pass.value.trim()!==currentPass&&inputHash!==currentPass){
+    errEl.style.display='block';pass.value='';pass.focus();return
+  }
   errEl.style.display='none'
   const btn=document.querySelector('#modal-deleteall .btn-danger')
   if(btn){btn.disabled=true;btn.textContent='⏳ Borrando...'}
@@ -2543,15 +2547,20 @@ function saveCfgName(){
   applyConfig()
   showToast('✅ Nombre guardado','success')
 }
-function changePassword(){
+async function changePassword(){
   const actual=document.getElementById('pass-actual').value
   const nueva=document.getElementById('pass-nueva').value
   const confirmar=document.getElementById('pass-confirmar').value
-  const current=String(cfgGet('delete_pass','1505')).trim()
-  if(String(actual).trim()!==current){showToast('❌ Contraseña actual incorrecta','error');return}
+  const currentRaw=String(cfgGet('delete_pass','1505')).trim()
+  const actualHash=await sha256(actual.trim())
+  // Soportar contraseña actual en texto plano o hash (compatibilidad)
+  if(actual.trim()!==currentRaw&&actualHash!==currentRaw){
+    showToast('❌ Contraseña actual incorrecta','error');return
+  }
   if(!nueva||nueva.length<4){showToast('⚠️ La nueva contraseña debe tener al menos 4 caracteres','error');return}
   if(nueva!==confirmar){showToast('⚠️ Las contraseñas no coinciden','error');return}
-  cfgSet('delete_pass',nueva)
+  const nuevaHash=await sha256(nueva)
+  cfgSet('delete_pass',nuevaHash)
   ;['pass-actual','pass-nueva','pass-confirmar'].forEach(id=>document.getElementById(id).value='')
   togPassForm()
   showToast('✅ Contraseña actualizada','success')
@@ -2896,7 +2905,8 @@ async function doRegister(){
   if(DB[SH_USR].find(u=>u.nombre.trim().toLowerCase()===nombre.toLowerCase()&&u.rol==='cliente')){
     errEl.style.display='block';errEl.textContent='⚠️ Ya tienes una cuenta. Inicia sesión.';return
   }
-  const u={id:gid(),nombre:existe.nombre,password:pass,rol:'cliente'}
+  const passHash=await sha256(pass)
+  const u={id:gid(),nombre:existe.nombre,password:passHash,rol:'cliente'}
   gsAppendBg(SH_USR,u)
   _session={id:u.id,nombre:u.nombre,rol:'cliente'}
   localStorage.setItem(LS_SESSION,JSON.stringify(_session))
@@ -3018,6 +3028,12 @@ function renderClienteHist(){
   }).join('')
 }
 
+// ── Hash SHA-256 con Web Crypto API ──────────────────────────────
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str))
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')
+}
+
 // ── Login ─────────────────────────────────────────────────────────
 async function doLogin(){
   const nombre=document.getElementById('login-user').value.trim()
@@ -3027,18 +3043,19 @@ async function doLogin(){
   errEl.style.display='none'
   if(!nombre||!pass){errEl.style.display='block';errEl.textContent='⚠️ Ingresa usuario y contraseña';return}
   loadEl.style.display='block'
-  // Si no hay caché esperar carga inicial, si hay caché entrar directo
   if(!_ready){ await new Promise(r=>setTimeout(r,2000)) }
   loadEl.style.display='none'
-  // Buscar usuario en DB (caché local — ya sincronizado en fondo)
+  // Hashear contraseña antes de comparar
+  const passHash=await sha256(pass.trim())
   const user=DB[SH_USR].find(u=>
     String(u.nombre||'').trim().toLowerCase()===nombre.toLowerCase()&&
-    String(u.password||'').trim()===pass.trim()
+    (String(u.password||'').trim()===passHash||String(u.password||'').trim()===pass.trim())
+    // ↑ soporta hashes nuevos Y contraseñas viejas en texto plano (compatibilidad temporal)
   )
   if(!user){
-    // Fallback: si no hay usuarios creados, permitir admin con contraseña del config
-    const adminPass=String(cfgGet('admin_pass','admin123')).trim()
-    if(nombre.toLowerCase()==='admin'&&pass.trim()===adminPass){
+    const adminPassRaw=String(cfgGet('admin_pass','admin123')).trim()
+    const adminPassHash=await sha256(adminPassRaw)
+    if(nombre.toLowerCase()==='admin'&&(pass.trim()===adminPassRaw||passHash===adminPassHash)){
       _session={id:'admin',nombre:'Admin',rol:'admin'}
     } else {
       errEl.style.display='block';errEl.textContent='❌ Usuario o contraseña incorrectos';return
@@ -3136,18 +3153,18 @@ function togUsrEdit(i){
   document.querySelectorAll('[id^="usr-form-"]').forEach(f=>f.style.display='none')
   if(!open) form.style.display='flex'
 }
-function saveUsrEdit(i,uid){
+async function saveUsrEdit(i,uid){
   const newPass=document.getElementById('usr-np-'+i).value.trim()
   const newRol=document.getElementById('usr-nr-'+i).value
   const ui=DB[SH_USR].findIndex(u=>u.id===uid); if(ui===-1)return
   const updated={...DB[SH_USR][ui],rol:newRol}
-  if(newPass&&newPass.length>=4) updated.password=newPass
+  if(newPass&&newPass.length>=4) updated.password=await sha256(newPass)
   else if(newPass&&newPass.length<4){showToast('⚠️ Contraseña mínimo 4 caracteres','error');return}
   gsUpdateBg(SH_USR,updated)
   renderUsuarios()
   showToast('✅ Usuario actualizado','success')
 }
-function addUsuario(){
+async function addUsuario(){
   const nombre=document.getElementById('usr-nombre').value.trim()
   const pass=document.getElementById('usr-pass').value.trim()
   const rol=document.getElementById('usr-rol').value
@@ -3156,7 +3173,8 @@ function addUsuario(){
   if(DB[SH_USR].find(u=>u.nombre.toLowerCase()===nombre.toLowerCase())){
     showToast('⚠️ Ya existe un usuario con ese nombre','error');return
   }
-  const u={id:gid(),nombre,password:pass,rol}
+  const passHash=await sha256(pass)
+  const u={id:gid(),nombre,password:passHash,rol}
   gsAppendBg(SH_USR,u)
   document.getElementById('usr-nombre').value=''
   document.getElementById('usr-pass').value=''
