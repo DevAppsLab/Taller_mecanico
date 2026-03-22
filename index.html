@@ -517,16 +517,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .cc-rep-count{flex-shrink:0;font-size:0.65rem;color:var(--text3);white-space:nowrap}
 .cc-saldo-wrap{flex-shrink:0;margin-left:auto}
 .entregar-wrap{padding:0 0 10px}
-/* BREADCRUMB */
-.breadcrumb{display:flex;align-items:center;gap:0;padding:0 16px;height:26px;background:var(--bg);
-  border-bottom:1px solid var(--border);flex-shrink:0;overflow:hidden;white-space:nowrap}
-.bc-item{font-size:0.62rem;font-weight:600;color:var(--text3);cursor:pointer;
-  padding:2px 4px;border-radius:4px;transition:all .15s;flex-shrink:0;
-  max-width:130px;overflow:hidden;text-overflow:ellipsis;display:inline-block}
-.bc-item:hover{color:var(--orange);background:var(--og)}
-.bc-item.current{color:var(--text2);cursor:default;pointer-events:none}
-.bc-item.current:hover{color:var(--text2);background:transparent}
-.bc-sep{font-size:0.55rem;color:var(--text3);margin:0 1px;flex-shrink:0;opacity:.5}
 /* TOAST */
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(72px);
   background:var(--card);border:1px solid var(--border2);border-radius:11px;padding:11px 18px;
@@ -1244,9 +1234,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
 
 </div><!-- /app -->
-
-<!-- BREADCRUMB BAR — fuera del #app, posición fixed encima de todo -->
-<div class="breadcrumb" id="breadcrumb-bar" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:150"></div>
 
 <!-- MODALES (fuera del #app a propósito, posición fixed) -->
 
@@ -1996,7 +1983,6 @@ function _showScreen(id){
   const pf=document.getElementById('pass-form'); if(pf) pf.style.display='none'
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))
   document.getElementById(id)?.classList.add('active')
-  _renderBreadcrumb(id)
   rerenderActive()
   if(_queue.length) flushQueue()
 }
@@ -2022,85 +2008,44 @@ const _parentScreen={
   'screen-db-reparaciones':'screen-admin',
   'screen-db-cierre':      'screen-admin',
 }
-// Etiquetas legibles para el breadcrumb
-const _screenLabel={
-  'screen-login':           '🔐 Login',
-  'screen-home':            '🏠 Inicio',
-  'screen-home-cliente':    '🏠 Mi taller',
-  'screen-registro':        '📋 Nuevo ingreso',
-  'screen-clientes':        '👥 Clientes',
-  'screen-clientes-emp':    '👥 Clientes',
-  'screen-mensual':         '📅 Cierre mensual',
-  'screen-historial':       '🗃 Historial',
-  'screen-tabla':           '📊 Ver datos',
-  'screen-admin':           '⚙️ Admin',
-  'screen-cotizaciones':    '📄 Cotizaciones',
-  'screen-apariencia':      '🎨 Apariencia',
-  'screen-usuarios':        '👤 Usuarios',
-  'screen-inventario':      '📦 Inventario',
-  'screen-db-clientes':     '🗂 BD Clientes',
-  'screen-db-reparaciones': '🗂 BD Reparaciones',
-  'screen-db-cierre':       '🗂 BD Cierre',
-}
-// Construye el trail completo desde login hasta la pantalla actual
-function _buildTrail(screenId){
-  const trail=[]
-  let cur=screenId
-  const visited=new Set()
-  while(cur && !visited.has(cur)){
-    visited.add(cur)
-    trail.unshift(cur)
-    cur=_parentScreen[cur]
-  }
-  // Agregar home al inicio si no está
-  if(trail[0]&&trail[0]!=='screen-home'&&trail[0]!=='screen-home-cliente'&&trail[0]!=='screen-login'){
-    const homeScreen=(_session?.rol==='cliente')?'screen-home-cliente':'screen-home'
-    if(!trail.includes(homeScreen)) trail.unshift(homeScreen)
-  }
-  return trail
-}
-function _renderBreadcrumb(screenId){
-  const bar=document.getElementById('breadcrumb-bar')
-  if(!bar) return
-  // Ocultar en login y homes
-  const hideOn=['screen-login','screen-home','screen-home-cliente']
-  if(hideOn.includes(screenId)||!_session){
-    bar.style.display='none'
-    // Quitar padding inferior del app cuando no hay breadcrumb
-    document.getElementById('app').style.paddingBottom=''
-    return
-  }
-  const trail=_buildTrail(screenId)
-  if(trail.length<=1){ bar.style.display='none'; document.getElementById('app').style.paddingBottom=''; return }
-  bar.style.display='flex'
-  // Dar espacio inferior al app para que el breadcrumb no tape contenido
-  document.getElementById('app').style.paddingBottom='26px'
-  bar.innerHTML=trail.map((id,i)=>{
-    const isLast=i===trail.length-1
-    const label=_screenLabel[id]||id.replace('screen-','')
-    const sep=i<trail.length-1?'<span class="bc-sep">›</span>':''
-    if(isLast){
-      return `<span class="bc-item current">${label}</span>${sep}`
-    }
-    return `<span class="bc-item" onclick="goTo('${id}')" title="${label}">${label}</span>${sep}`
-  }).join('')
-}
-// ── Navegacion con gesto de atras ────────────────────────────────
-// Metodo: estado unico fijo. Cada popstate lo repone inmediatamente
-// y decide a donde ir segun la pantalla activa. Nunca falla sin importar
-// cuantos backs seguidos reciba el usuario.
-function _resetNavState(){
-  history.replaceState({nav:true},'','')
-}
-window.addEventListener('popstate',()=>{
-  history.pushState({nav:true},'','') // reponer estado de inmediato
+// ── Navegacion con gesto de swipe desde borde izquierdo ──────────
+// Funciona en iOS Safari, Android Chrome y cualquier WebApp sin depender
+// de popstate (que es poco fiable en apps instaladas en móvil).
+function _resetNavState(){ try{ history.replaceState({nav:true},'','') }catch(e){} }
+function _goBack(){
   const activeNow=document.querySelector('.screen.active')?.id||''
   if(!_session||activeNow==='screen-login') return
   const homeScreen=(_session.rol==='cliente')?'screen-home-cliente':'screen-home'
-  if(activeNow===homeScreen){ logout(); return }
+  if(activeNow===homeScreen||activeNow===''){ logout(); return }
   const parent=_parentScreen[activeNow]||homeScreen
   _showScreen(parent)
+}
+// popstate como respaldo (botón físico Android / browser back)
+window.addEventListener('popstate',()=>{
+  try{ history.pushState({nav:true},'','') }catch(e){}
+  _goBack()
 })
+// Swipe desde borde izquierdo — zona de 28px
+;(()=>{
+  let _sx=0,_sy=0,_active=false,_locked=false
+  const EDGE=28, MIN_X=60, MAX_Y=80, COOLDOWN=400
+  document.addEventListener('touchstart',e=>{
+    const t=e.touches[0]
+    _sx=t.clientX; _sy=t.clientY
+    _active=_sx<=EDGE
+  },{passive:true})
+  document.addEventListener('touchmove',e=>{
+    if(!_active||_locked) return
+    const t=e.touches[0]
+    const dx=t.clientX-_sx, dy=Math.abs(t.clientY-_sy)
+    if(dx>MIN_X&&dy<MAX_Y){
+      _locked=true; _active=false
+      _goBack()
+      setTimeout(()=>{ _locked=false },COOLDOWN)
+    }
+  },{passive:true})
+  document.addEventListener('touchend',()=>{ _active=false },{passive:true})
+})()
 function clearIngreso(){
   selCid=null
   ;['inp-nombre','inp-vehiculo','inp-rep','inp-mo','inp-mat'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''})
