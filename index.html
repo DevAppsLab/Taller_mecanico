@@ -629,7 +629,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
           <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
-            <span style="font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;margin-bottom:1px">v1.1.3</span>
+            <span style="font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;margin-bottom:1px">v1.1.5</span>
             <div class="km-btn" onclick="openKMenu()">⋮</div>
             <div class="sync-chip" style="border:none;background:transparent;padding:0">
               <div class="sync-dot pending" id="sd-home"></div>
@@ -861,7 +861,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="topbar">
       <div class="tb-back" onclick="goTo('screen-home')">‹</div>
       <div class="tb-title">Cortes</div>
-      <div class="tb-badge" id="badge-cortes">0</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-cortes"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
@@ -883,8 +882,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     <div id="cortes-vista-sem" style="flex:1;overflow-y:auto;padding:0 12px 40px;display:none"></div>
     <div id="cortes-vista-mes" style="flex:1;overflow-y:auto;padding:0 12px 40px;display:none"></div>
   </div>
-
-</div><!-- /app -->
 
   <!-- ══ HISTORIAL — accesible desde Admin ══ -->
   <div id="screen-historial" class="screen">
@@ -2123,7 +2120,16 @@ function rerenderActive(){
     if(id==='screen-apariencia')     openApariencia()
   }catch(err){
     console.error('rerenderActive error in '+id+':', err)
-    showToast('❌ Error al cargar: '+err.message,'error')
+    // Mostrar error visible en la pantalla activa
+    const scr=document.getElementById(id)
+    if(scr){
+      const errDiv=scr.querySelector('.scrollbody,.fit-screen,[style*="overflow"]')
+      if(errDiv) errDiv.innerHTML=`<div style="padding:20px;color:var(--red);font-size:0.8rem;font-weight:600;background:rgba(239,68,68,.08);border-radius:var(--r);margin:12px">
+        ❌ <strong>Error en ${id}:</strong><br>${err.message}<br><br>
+        <span style="color:var(--text3);font-weight:400">${err.stack?.split('\n').slice(0,3).join('<br>')||''}</span>
+      </div>`
+    }
+    showToast('❌ '+err.message,'error')
   }
   openMonths.forEach(id=>document.getElementById(id)?.classList.add('open'))
   openCards.forEach(id=>document.getElementById(id)?.classList.add('expanded'))
