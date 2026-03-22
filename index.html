@@ -692,6 +692,68 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       </div>
     </div>
     <div class="scrollbody" style="padding-bottom:20px">
+      <!-- Selector tipo ingreso -->
+      <div class="sec-card" style="padding:10px 12px">
+        <div style="display:flex;gap:8px">
+          <button id="tipo-rep-btn" onclick="setTipoIngreso('rep')"
+            style="flex:1;padding:10px;border-radius:var(--r-sm);border:1.5px solid var(--orange);background:var(--og);color:var(--orange);font-family:var(--font);font-size:0.82rem;font-weight:700;cursor:pointer;transition:all .2s">🔧 Reparación</button>
+          <button id="tipo-cot-btn" onclick="setTipoIngreso('cot')"
+            style="flex:1;padding:10px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:transparent;color:var(--text3);font-family:var(--font);font-size:0.82rem;font-weight:700;cursor:pointer;transition:all .2s">📄 Cotización</button>
+        </div>
+      </div>
+      <!-- Formulario cotización inline (oculto por defecto) -->
+      <div id="ing-cot-section" style="display:none">
+        <div class="sec-card">
+          <div class="sec-lbl" style="color:var(--purple)">🧑 Cliente</div>
+          <div class="cost-row" style="align-items:end">
+            <div class="field" style="margin-bottom:0">
+              <label>👤 Nombre</label>
+              <div class="ac-wrap">
+                <input type="text" id="cot-ing-nombre" placeholder="Nombre o seleccionar…" autocomplete="off"
+                  oninput="acCotIng(this)" onfocus="acCotIng(this)" onkeydown="acK(event,'ac-cot-ing')"
+                  style="font-weight:600;font-size:0.95rem">
+                <div class="ac-list" id="ac-cot-ing"></div>
+              </div>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label>Vehículo</label>
+              <div class="ac-wrap">
+                <input type="text" id="cot-ing-vehiculo" placeholder="Marca / Modelo" autocomplete="off"
+                  oninput="acI(this,'ac-cot-v','db-vehiculos')" onfocus="acI(this,'ac-cot-v','db-vehiculos')" onkeydown="acK(event,'ac-cot-v')">
+                <div class="ac-list" id="ac-cot-v"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sec-card">
+          <div class="sec-lbl" style="color:var(--purple)">📄 Partidas</div>
+          <div id="cot-ing-partidas-list"></div>
+          <div class="field">
+            <label>Descripción del servicio</label>
+            <div class="ac-wrap">
+              <input type="text" id="cot-ing-desc" placeholder="Ej: Cambio de aceite" autocomplete="off"
+                oninput="acCotIngRep(this)" onfocus="acCotIngRep(this)" onkeydown="acK(event,'ac-cot-r')">
+              <div class="ac-list" id="ac-cot-r"></div>
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:10px">
+            <label>Precio ($)</label>
+            <input type="number" id="cot-ing-precio" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <button onclick="addCotIngPartida()"
+            style="width:100%;padding:9px;border-radius:var(--r-sm);border:1.5px solid var(--purple);background:rgba(139,92,246,0.1);color:var(--purple);font-family:var(--font);font-size:0.82rem;font-weight:700;cursor:pointer;margin-bottom:10px">+ Agregar partida</button>
+          <div id="cot-ing-total-row" style="display:none;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border);margin-bottom:10px">
+            <span style="font-size:0.78rem;color:var(--text2)">Total cotización</span>
+            <span id="cot-ing-total-lbl" style="font-size:1rem;font-weight:800;color:var(--purple)">$0</span>
+          </div>
+          <button onclick="regCotIngreso()"
+            style="width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--purple2));border:none;border-radius:var(--r);color:#fff;font-family:var(--font-title);font-size:1rem;font-weight:800;letter-spacing:.06em;cursor:pointer;box-shadow:0 4px 14px var(--shadow-purple)">
+            📄 Guardar cotización
+          </button>
+        </div>
+      </div>
+      <!-- Formulario reparación (visible por defecto) -->
+      <div id="ing-rep-section">
       <div class="sec-card">
         <div class="sec-lbl">🧑 Cliente</div>
         <div class="cost-row" style="align-items:end">
@@ -744,6 +806,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
           <span id="t-total" style="color:#fff;font-size:1.4rem;font-weight:800;letter-spacing:.02em">$0.00</span>
         </div>
       </div>
+      </div><!-- /ing-rep-section -->
     </div>
   </div>
 
@@ -825,7 +888,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-admin"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
       </div>
     </div>
-    <div class="fit-screen" style="gap:clamp(6px,0.8vw,10px);padding:clamp(10px,1.5vw,16px) 20px 20px">
+    <div class="scrollbody" style="padding:12px 20px 40px;display:flex;flex-direction:column;gap:10px">
       <div class="admin-section-title">Apariencia</div>
       <!-- Todo en un solo flex container para altura uniforme -->
       <div style="display:flex;flex-direction:column;flex:1;gap:clamp(3px,0.5vw,7px)">
@@ -1286,8 +1349,9 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 <div class="toast" id="toast"></div>
 <script>
 window.onerror=function(msg,src,line,col,err){
-  document.body.innerHTML='<div style="padding:20px;color:#ff6b6b;font-family:monospace;background:#0f1117;min-height:100vh"><h2>Error de JavaScript</h2><p>'+msg+'</p><p>Línea: '+line+'</p><p>'+(err?.stack||'')+'</p></div>'
-  return false
+  console.error('JS Error:',msg,'línea:',line,err?.stack||'')
+  if(typeof showToast==='function') showToast('❌ '+String(msg).slice(0,60),'error')
+  return true
 }
 window.addEventListener('unhandledrejection',function(e){
   console.error('Unhandled promise rejection:',e.reason)
@@ -1697,6 +1761,175 @@ function smartUpdate(prev){
 
   // ── Resto: re-render completo de la pantalla activa ──────────
   rerenderActive()
+}
+
+// ── Tipo de ingreso en pantalla registro ─────────────────────────
+let _cotIngPartidas = []
+function setTipoIngreso(tipo){
+  const isRep = tipo === 'rep'
+  const repBtn = document.getElementById('tipo-rep-btn')
+  const cotBtn = document.getElementById('tipo-cot-btn')
+  const repSec = document.getElementById('ing-rep-section')
+  const cotSec = document.getElementById('ing-cot-section')
+  if(repBtn){
+    repBtn.style.borderColor = isRep ? 'var(--orange)' : 'var(--border)'
+    repBtn.style.background  = isRep ? 'var(--og)' : 'transparent'
+    repBtn.style.color       = isRep ? 'var(--orange)' : 'var(--text3)'
+  }
+  if(cotBtn){
+    cotBtn.style.borderColor = !isRep ? 'var(--purple)' : 'var(--border)'
+    cotBtn.style.background  = !isRep ? 'rgba(139,92,246,0.14)' : 'transparent'
+    cotBtn.style.color       = !isRep ? 'var(--purple)' : 'var(--text3)'
+  }
+  if(repSec) repSec.style.display = isRep  ? 'block' : 'none'
+  if(cotSec) cotSec.style.display = !isRep ? 'block' : 'none'
+  if(!isRep){ _cotIngPartidas=[]; renderCotIngPartidas() }
+}
+
+// Autocomplete cliente en formulario cotización de ingreso
+function acCotIng(el){
+  const q = el.value.trim().toLowerCase()
+  const list = document.getElementById('ac-cot-ing')
+  const cl = DB[SH_CLI]
+  if(!cl.length){ list.classList.remove('open'); return }
+  const fil = q
+    ? cl.filter(c => c.nombre.toLowerCase().includes(q) || c.vehiculo.toLowerCase().includes(q)).slice(0,10)
+    : cl.slice(-10).reverse()
+  if(!fil.length){ list.classList.remove('open'); return }
+  list.innerHTML = fil.map((c,i) => `<div class="ac-item" data-i="${i}"
+    onclick="selCotIngCli('${c.id}','${escQ(c.nombre)}','${escQ(c.vehiculo)}')">
+    <span class="ac-ico">🧑</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600">${c.nombre}</div>
+      <div style="font-size:0.68rem;color:var(--text3)">🚗 ${c.vehiculo}</div>
+    </div></div>`).join('')
+  closeOtherAC('ac-cot-ing')
+  list.classList.add('open')
+}
+function selCotIngCli(id, nombre, vehiculo){
+  document.getElementById('cot-ing-nombre').value = nombre
+  document.getElementById('cot-ing-vehiculo').value = vehiculo
+  document.getElementById('ac-cot-ing').classList.remove('open')
+}
+
+// Autocomplete reparaciones en formulario cotización de ingreso
+function acCotIngRep(el){
+  const q = el.value.trim().toLowerCase()
+  const list = document.getElementById('ac-cot-r')
+  const raw = DB[SH_CAT_REP]
+  const fil = (q ? raw.filter(i => i.reparacion && i.reparacion.toLowerCase().includes(q)) : raw.slice(-8).reverse()).slice(0,8)
+  if(!fil.length){ list.classList.remove('open'); return }
+  list.innerHTML = fil.map((item,i) => `<div class="ac-item" data-i="${i}"
+    onclick="selCotIngRep('${escQ(item.reparacion)}',${numF(item.manoObra)+numF(item.material)})">
+    <span class="ac-ico">🔧</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600">${item.reparacion}</div>
+      <div style="font-size:11px;color:var(--text3)">Precio sugerido: ${f$(numF(item.manoObra)+numF(item.material))}</div>
+    </div></div>`).join('')
+  closeOtherAC('ac-cot-r')
+  list.classList.add('open')
+}
+function selCotIngRep(desc, precio){
+  document.getElementById('cot-ing-desc').value = desc
+  document.getElementById('cot-ing-precio').value = precio
+  document.getElementById('ac-cot-r').classList.remove('open')
+}
+
+// Agregar/renderizar partidas en cotización de ingreso
+function addCotIngPartida(){
+  const desc   = document.getElementById('cot-ing-desc').value.trim()
+  const precio = parseFloat(document.getElementById('cot-ing-precio').value) || 0
+  if(!desc){ showToast('⚠️ Ingresa la descripción','error'); return }
+  _cotIngPartidas.push({ desc, total: precio })
+  document.getElementById('cot-ing-desc').value  = ''
+  document.getElementById('cot-ing-precio').value = ''
+  renderCotIngPartidas()
+}
+function renderCotIngPartidas(){
+  const list     = document.getElementById('cot-ing-partidas-list')
+  const totalRow = document.getElementById('cot-ing-total-row')
+  const totalLbl = document.getElementById('cot-ing-total-lbl')
+  if(!list) return
+  if(!_cotIngPartidas.length){ list.innerHTML = ''; if(totalRow) totalRow.style.display='none'; return }
+  list.innerHTML = _cotIngPartidas.map((p,i) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1;font-size:0.82rem;color:var(--text)">${p.desc}</div>
+      <div style="font-weight:700;color:var(--purple);font-size:0.82rem;white-space:nowrap">${f$(p.total)}</div>
+      <button onclick="_cotIngPartidas.splice(${i},1);renderCotIngPartidas()"
+        style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:0.85rem;padding:2px 4px">✕</button>
+    </div>`).join('')
+  const tot = _cotIngPartidas.reduce((s,p) => s+p.total, 0)
+  if(totalRow) totalRow.style.display = 'flex'
+  if(totalLbl) totalLbl.textContent   = f$(tot)
+}
+
+// Guardar cotización desde pantalla de ingreso
+function regCotIngreso(){
+  const nombre   = toTitle(document.getElementById('cot-ing-nombre').value.trim())
+  const vehiculo = toTitle(document.getElementById('cot-ing-vehiculo').value.trim())
+  if(!nombre)  { showToast('⚠️ Ingresa el nombre del cliente','error'); return }
+  if(!vehiculo){ showToast('⚠️ Ingresa el vehículo','error'); return }
+  if(!_cotIngPartidas.length){ showToast('⚠️ Agrega al menos una partida','error'); return }
+  const cot = { id:gid(), cliente:nombre, vehiculo, fecha:new Date().toISOString().slice(0,10), reps:[..._cotIngPartidas], status:'pending' }
+  gsAppendBg(SH_COT, cot)
+  sAC('db-nombres', nombre, vehiculo)
+  // limpiar
+  document.getElementById('cot-ing-nombre').value  = ''
+  document.getElementById('cot-ing-vehiculo').value = ''
+  _cotIngPartidas = []
+  renderCotIngPartidas()
+  setTipoIngreso('rep')
+  showToast('📄 Cotización guardada','success')
+  goTo('screen-cotizaciones')
+}
+
+// Autocomplete cliente en MODAL de cotizaciones (screen-cotizaciones)
+function acModalCotCli(el){
+  const q    = el.value.trim().toLowerCase()
+  const list = document.getElementById('ac-mcot-cli')
+  const cl   = DB[SH_CLI]
+  if(!cl.length){ list.classList.remove('open'); return }
+  const fil = q
+    ? cl.filter(c => c.nombre.toLowerCase().includes(q) || c.vehiculo.toLowerCase().includes(q)).slice(0,10)
+    : cl.slice(-10).reverse()
+  if(!fil.length){ list.classList.remove('open'); return }
+  list.innerHTML = fil.map((c,i) => `<div class="ac-item" data-i="${i}"
+    onclick="selModalCotCli('${escQ(c.nombre)}','${escQ(c.vehiculo)}')">
+    <span class="ac-ico">🧑</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600">${c.nombre}</div>
+      <div style="font-size:0.68rem;color:var(--text3)">🚗 ${c.vehiculo}</div>
+    </div></div>`).join('')
+  closeOtherAC('ac-mcot-cli')
+  list.classList.add('open')
+}
+function selModalCotCli(nombre, vehiculo){
+  document.getElementById('cot-cli-nombre').value   = nombre
+  document.getElementById('cot-cli-vehiculo').value = vehiculo
+  document.getElementById('ac-mcot-cli').classList.remove('open')
+}
+
+// Autocomplete reparaciones en MODAL de cotizaciones
+function acModalCotRep(el){
+  const q    = el.value.trim().toLowerCase()
+  const list = document.getElementById('ac-mcot-r')
+  const raw  = DB[SH_CAT_REP]
+  const fil  = (q ? raw.filter(i => i.reparacion && i.reparacion.toLowerCase().includes(q)) : raw.slice(-8).reverse()).slice(0,8)
+  if(!fil.length){ list.classList.remove('open'); return }
+  list.innerHTML = fil.map((item,i) => `<div class="ac-item" data-i="${i}"
+    onclick="selModalCotRep('${escQ(item.reparacion)}',${numF(item.manoObra)+numF(item.material)})">
+    <span class="ac-ico">🔧</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600">${item.reparacion}</div>
+      <div style="font-size:11px;color:var(--text3)">Precio sugerido: ${f$(numF(item.manoObra)+numF(item.material))}</div>
+    </div></div>`).join('')
+  closeOtherAC('ac-mcot-r')
+  list.classList.add('open')
+}
+function selModalCotRep(desc, precio){
+  document.getElementById('cot-rep-desc').value  = desc
+  document.getElementById('cot-rep-total').value = precio
+  document.getElementById('ac-mcot-r').classList.remove('open')
 }
 
 function startAutoSync(){
@@ -4277,15 +4510,27 @@ if(hasCached){
     </div>
     <div class="modal-body">
       <div class="field"><label>Cliente</label>
-        <input type="text" id="cot-cli-nombre" placeholder="Nombre del cliente" autocomplete="off"></div>
+        <div class="ac-wrap">
+          <input type="text" id="cot-cli-nombre" placeholder="Nombre o seleccionar…" autocomplete="off"
+            oninput="acModalCotCli(this)" onfocus="acModalCotCli(this)" onkeydown="acK(event,'ac-mcot-cli')">
+          <div class="ac-list" id="ac-mcot-cli"></div>
+        </div></div>
       <div class="field"><label>Vehículo</label>
-        <input type="text" id="cot-cli-vehiculo" placeholder="Marca / Modelo" autocomplete="off"></div>
+        <div class="ac-wrap">
+          <input type="text" id="cot-cli-vehiculo" placeholder="Marca / Modelo" autocomplete="off"
+            oninput="acI(this,'ac-mcot-v','db-vehiculos')" onfocus="acI(this,'ac-mcot-v','db-vehiculos')" onkeydown="acK(event,'ac-mcot-v')">
+          <div class="ac-list" id="ac-mcot-v"></div>
+        </div></div>
       <div style="border:1px solid var(--border);border-radius:var(--r-sm);padding:10px;margin-bottom:12px">
         <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Reparaciones</div>
         <div id="cot-rep-list"></div>
         <div style="display:flex;gap:6px;margin-top:8px">
-          <input type="text" id="cot-rep-desc" placeholder="Descripción"
-            style="flex:2;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;color:var(--text);font-size:15px;outline:none">
+          <div class="ac-wrap" style="flex:2">
+            <input type="text" id="cot-rep-desc" placeholder="Descripción" autocomplete="off"
+              oninput="acModalCotRep(this)" onfocus="acModalCotRep(this)" onkeydown="acK(event,'ac-mcot-r')"
+              style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;color:var(--text);font-size:15px;outline:none">
+            <div class="ac-list" id="ac-mcot-r"></div>
+          </div>
           <input type="number" id="cot-rep-total" placeholder="$"
             style="flex:1;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;color:var(--text);font-size:15px;outline:none" min="0" inputmode="decimal">
           <button onclick="addCotRep()" style="background:var(--og);color:var(--orange);border:1px solid var(--icon-border);border-radius:var(--r-sm);padding:6px 10px;cursor:pointer;font-weight:700">+</button>
