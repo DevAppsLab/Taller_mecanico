@@ -11,8 +11,8 @@
 <title>Taller Mecánico</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
+
   /* ── COLORES BASE ───────────────────────────── */
   --bg:#0f1117;          /* fondo principal */
   --surface:#171b26;     /* fondo secundario (topbar, cards externas) */
@@ -59,16 +59,27 @@
   --comp-bright:#7cc7e8;  /* texto badges, etiquetas destacadas */
   --comp-muted:#3e6374;   /* fondo de iconos/emojis */
   --comp-dark:#162126;    /* fondo cards con acento */
+
+--font-offset:0px;--icon-border:rgba(255,107,43,0.25)
+
+  --stat-min-h:60px;
+  --stat-radius:clamp(9px,1.2vw,14px);
+  --stat-pad:clamp(8px,1.2vw,14px) clamp(8px,1.2vw,12px);
+  --stat-val-size:clamp(1.3rem,3.2vw,1.9rem);
+  --stat-lbl-size:clamp(0.6rem,1vw,0.75rem);
+
 }
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
 html{font-size:clamp(19px, 2.3vw, 23px)}
-:root{--font-offset:0px;--icon-border:rgba(255,107,43,0.25)}
+
 /* Íconos/emojis: fondo suave del acento (og) — visible y con carácter */
 .mc-icon,.cc-av,.db-item-ico,.mci-av,.arb-ico{background:var(--og);border:1px solid var(--icon-border)}
 /* Badges/etiquetas: fondo og, texto acento */
 .tb-badge,.cc-count{background:var(--og);color:var(--orange);border:1px solid var(--icon-border)}
 /* Totales */
 /* Stat números */
-.stat .sv{color:var(--orange)}
 html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(--text);
   font-family:var(--font);font-size:var(--font-size);-webkit-font-smoothing:antialiased}
 #app{height:100%;display:flex;flex-direction:column;overflow:hidden}
@@ -107,7 +118,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .tb-title{font-family:var(--font-title);font-size:clamp(1.6rem,4vw,2.4rem) !important;font-weight:800;letter-spacing:.03em;flex:1;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb-badge{background:var(--og);color:var(--orange);border:1px solid rgba(255,107,43,.3);
-  border-radius:20px;font-size:0.68rem;font-weight:700;padding:3px 10px;letter-spacing:.05em;flex-shrink:0}
+  border-radius:20px;font-size:0.68rem !important;font-weight:700;padding:3px 10px;letter-spacing:.05em;flex-shrink:0}
 /* Sync wrapper — botón arriba, estado abajo */
 .sync-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
 .sync-chip{display:flex;align-items:center;gap:4px;font-size:clamp(0.5rem,0.9vw,0.65rem);color:var(--text3);white-space:nowrap}
@@ -125,13 +136,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .logo-text span{color:var(--orange)}
 .home-sub{color:var(--text2);font-size:0.75rem;margin-top:2px}
 /* ── STAT CARDS — editar aquí para cambiar todas a la vez ── */
-:root{
-  --stat-min-h:60px;
-  --stat-radius:clamp(9px,1.2vw,14px);
-  --stat-pad:clamp(8px,1.2vw,14px) clamp(8px,1.2vw,12px);
-  --stat-val-size:clamp(1.3rem,3.2vw,1.9rem);
-  --stat-lbl-size:clamp(0.6rem,1vw,0.75rem);
-}
+
 .home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(4px,0.8vw,8px);padding:clamp(8px,1.5vw,16px) 12px;scrollbar-width:none}
 .home-stats::-webkit-scrollbar{display:none}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--stat-radius);padding:var(--stat-pad);min-width:0;overflow:hidden;min-height:var(--stat-min-h);display:flex;flex-direction:column;justify-content:center}
@@ -151,8 +156,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .mc-arr{font-size:1.1rem;color:var(--text3)}
 
 /* REGISTRO */
-.tabs-row{display:flex;background:var(--card);border:1px solid var(--border);border-radius:11px;
-  padding:4px;margin-bottom:18px;gap:3px}
+.tabs-row{display:flex;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:4px;margin:8px 12px 0;gap:3px;flex-shrink:0}
 .tab-btn{flex:1;padding:9px;border-radius:8px;border:none;background:transparent;color:var(--text2);
   font-family:var(--font);font-size:0.8rem;font-weight:600;cursor:pointer;transition:all .2s}
 .tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3)}
@@ -534,6 +538,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .ani{animation:fadein .28s ease both}
 
 .tb-sync-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;font-size:0px}
+.tb-version{font-size:0.48rem !important;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;display:block;text-align:center}
 .sync-chip-bare{display:flex;align-items:center;gap:4px;border:none;background:transparent;padding:0}
 .sync-chip-label{font-size:9px !important;color:var(--text3);line-height:1}
 .mc-title-sm{font-size:clamp(0.72rem,1.2vw,0.85rem)}
@@ -597,13 +602,12 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="home-header">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <div class="tb-sync-wrap">
-            <div class="km-btn" onclick="openKMenu()">⋮</div>
-            <div class="sync-chip-bare">
-              <div class="sync-dot pending" id="sd-home-cli"></div>
-              <span class="sync-chip-label" >Cargando...</span>
-            </div>
+        <div class="tb-sync-wrap">
+          <span class="tb-version">v1.2.7</span>
+          <div class="km-btn" onclick="openKMenu()">⋮</div>
+          <div class="sync-chip-bare">
+            <div class="sync-dot pending" id="sd-home-cli"></div>
+            <span class="sync-chip-label">Cargando...</span>
           </div>
         </div>
       </div>
@@ -629,14 +633,12 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="home-header">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <div class="tb-sync-wrap">
-            <span style="font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;margin-bottom:1px">v1.2.5</span>
-            <div class="km-btn" onclick="openKMenu()">⋮</div>
-            <div class="sync-chip-bare">
-              <div class="sync-dot pending" id="sd-home"></div>
-              <span id="sync-label" >Cargando...</span>
-            </div>
+        <div class="tb-sync-wrap">
+          <span class="tb-version">v1.2.7</span>
+          <div class="km-btn" onclick="openKMenu()">⋮</div>
+          <div class="sync-chip-bare">
+            <div class="sync-dot pending" id="sd-home"></div>
+            <span class="sync-chip-label" id="sync-label">Cargando...</span>
           </div>
         </div>
       </div>
@@ -692,13 +694,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
   </div>
   <div id="screen-registro" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
-      <div class="tb-title">Nuevo Ingreso</div>
-            <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-registro"></div><span class="sync-chip-label" >Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Nuevo Ingreso" data-dot="sd-registro" data-badge=""></div>
+    </div>
     </div>
     <div class="scrollbody" style="padding-bottom:20px">
       <div class="sec-card" style="padding:10px 12px">
@@ -815,14 +812,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
   </div>
   <div id="screen-clientes-emp" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
-      <div class="tb-title">Clientes</div>
-      <div class="tb-badge" id="badge-cli-emp">0</div>
-      <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-clientes-emp"></div><span class="sync-chip-label" >Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Clientes" data-dot="sd-clientes-emp" data-badge="badge-cli-emp"></div>
+    </div>
     </div>
     <div class="search-bar">
       <div class="si-wrap">
@@ -833,14 +824,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="scrollbody" id="clients-list-emp" style="padding-left:20px;padding-right:20px"></div>
   </div>
   <div id="screen-clientes" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
-      <div class="tb-title">Clientes</div>
-      <div class="tb-badge" id="badge-cli">0</div>
-            <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-clientes"></div><span class="sync-chip-label" >Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Clientes" data-dot="sd-clientes" data-badge="badge-cli"></div>
+    </div>
     </div>
     <div class="search-bar">
       <div class="si-wrap">
@@ -851,15 +836,10 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="clients-list" id="clients-list"></div>
   </div>
   <div id="screen-cortes" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
-      <div class="tb-title">Cortes</div>
-      <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-cortes"></div><span class="sync-chip-label" >Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Cortes" data-dot="sd-cortes" data-badge=""></div>
     </div>
-    <div class="tabs-row" style="margin:8px 12px 0;flex-shrink:0">
+    </div>
+    <div class="tabs-row">
       <button class="tab-btn active" id="cortes-tab-dia"  onclick="showCortesTab('dia')">📅 Día</button>
       <button class="tab-btn"        id="cortes-tab-sem"  onclick="showCortesTab('sem')">📆 Semana</button>
       <button class="tab-btn"        id="cortes-tab-mes"  onclick="showCortesTab('mes')">🗓 Mes</button>
@@ -874,13 +854,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
   <!-- screen-historial removed — now inside screen-datos -->
   <div id="screen-admin" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
-      <div class="tb-title">Administración</div>
-            <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-admin"></div><span class="sync-chip-label" >Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Administración" data-dot="sd-admin" data-badge=""></div>
+    </div>
     </div>
     <div class="scrollbody" style="padding:12px 20px 40px;display:flex;flex-direction:column;gap:8px">
       <div class="admin-section-title">Apariencia</div>
@@ -921,13 +896,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
   </div>
   <div id="screen-inventario" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
-      <div class="tb-title">Inventario</div>
-      <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-inventario"></div><span class="sync-chip-label" >Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Inventario" data-dot="sd-inventario" data-badge=""></div>
+    </div>
     </div>
     <div class="sec-card" style="margin:12px 16px 0;flex-shrink:0">
       <div class="sec-lbl">➕ Nueva pieza</div>
@@ -948,13 +918,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="scrollbody" id="inv-list" style="padding:12px 16px 80px"></div>
   </div>
   <div id="screen-cotizaciones" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
-      <div class="tb-title">Cotizaciones</div>
-      <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-cotizaciones"></div><span class="sync-chip-label" >Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Cotizaciones" data-dot="sd-cotizaciones" data-badge=""></div>
+    </div>
     </div>
     <div class="scrollbody" id="cot-list" style="padding:12px 16px 80px">
       <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
@@ -964,13 +929,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
   </div>
   <div id="screen-apariencia" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
-      <div class="tb-title">Personalizar App</div>
-            <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-apariencia"></div><span class="sync-chip-label" >Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Personalizar App" data-dot="sd-apariencia" data-badge=""></div>
+    </div>
     </div>
     <div class="scrollbody" style="padding-bottom:40px">
       <!-- Nombre + Contacto -->
@@ -1068,15 +1028,10 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
   <!-- ══ DATOS E HISTORIAL ══ -->
   <div id="screen-datos" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="_goBack()">‹</div>
-      <div class="tb-title">Datos e Historial</div>
-      <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-datos"></div><span class="sync-chip-label">Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Datos e Historial" data-dot="sd-datos" data-badge=""></div>
     </div>
-    <div class="tabs-row" style="margin:8px 12px 0;flex-shrink:0">
+    </div>
+    <div class="tabs-row">
       <button class="tab-btn active" id="datos-tab-tabla" onclick="showDatosTab('tabla')">📊 Ver Datos</button>
       <button class="tab-btn" id="datos-tab-hist" onclick="showDatosTab('hist')">📋 Historial</button>
     </div>
@@ -1119,15 +1074,10 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
   <!-- ══ BASES Y USUARIOS ══ -->
   <div id="screen-bases" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="_goBack()">‹</div>
-      <div class="tb-title">Bases y Usuarios</div>
-      <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-bases"></div><span class="sync-chip-label">Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Bases y Usuarios" data-dot="sd-bases" data-badge=""></div>
     </div>
-    <div class="tabs-row" style="margin:8px 12px 0;flex-shrink:0">
+    </div>
+    <div class="tabs-row">
       <button class="tab-btn active" id="bases-tab-cli" onclick="showBasesTab('cli')">👥 Clientes</button>
       <button class="tab-btn" id="bases-tab-rep" onclick="showBasesTab('rep')">🔩 Reparaciones</button>
       <button class="tab-btn" id="bases-tab-usr" onclick="showBasesTab('usr')">👤 Usuarios</button>
@@ -1156,15 +1106,10 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
   <!-- ══ FINANZAS ══ -->
   <div id="screen-finanzas" class="screen">
-    <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
-      <div class="tb-title">Finanzas</div>
-      <div class="tb-sync-wrap">
-        <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-finanzas"></div><span class="sync-chip-label">Sincronizado</span></div>
-      </div>
+        <div class="topbar" data-title="Finanzas" data-dot="sd-finanzas" data-badge=""></div>
     </div>
-    <div class="tabs-row" style="margin:8px 12px 0;flex-shrink:0">
+    </div>
+    <div class="tabs-row">
       <button class="tab-btn active" id="fin-tab-reg" onclick="showFinTab('reg')">📝 Registrar</button>
       <button class="tab-btn" id="fin-tab-cortes" onclick="showFinTab('cortes')">📊 Cortes</button>
     </div>
@@ -1206,7 +1151,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
     <!-- TAB CORTES -->
     <div id="fin-vista-cortes" style="flex:1;overflow:hidden;display:none;flex-direction:column">
-      <div class="tabs-row" style="margin:8px 12px 0;flex-shrink:0">
+      <div class="tabs-row">
         <button class="tab-btn active" id="fin-corte-tab-dia" onclick="showFinCorteTab('dia')">📅 Día</button>
         <button class="tab-btn" id="fin-corte-tab-sem" onclick="showFinCorteTab('sem')">📆 Semana</button>
         <button class="tab-btn" id="fin-corte-tab-mes" onclick="showFinCorteTab('mes')">🗓 Mes</button>
@@ -1344,6 +1289,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 
 <div class="toast" id="toast"></div>
 <script>
+// ── Versión — cambiar aquí actualiza todos los headers ───────────
+const APP_VERSION='v1.2.7'
 // ── Helpers globales ─────────────────────────────────────────────
 const $id=id=>document.getElementById(id)
 const $qs=(sel,ctx=document)=>ctx.querySelector(sel)
@@ -1352,6 +1299,27 @@ function $set(id,val){const el=$id(id);if(el)el.textContent=val}
 function $show(id,show=true){const el=$id(id);if(el)el.style.display=show?'':'none'}
 const $clsRm=(sel,cls)=>$all(sel).forEach(el=>el.classList.remove(cls))
 const $clsAdd=(sel,cls)=>$all(sel).forEach(el=>el.classList.add(cls))
+
+// ── Topbar unificado — construye todos los headers desde plantilla ─
+function _buildTopbars(){
+  $all('.topbar[data-title]').forEach(tb=>{
+    const title=tb.dataset.title||''
+    const dot=tb.dataset.dot||''
+    const badge=tb.dataset.badge||''
+    const badgeHTML=badge?'<div class="tb-badge" id="'+badge+'">0</div>':''
+    tb.innerHTML=
+      '<div class="tb-back" onclick="_goBack()">‹</div>'+
+      '<div class="tb-title">'+title+'</div>'+
+      badgeHTML+
+      '<div class="tb-sync-wrap">'+
+        '<div class="km-btn" onclick="openKMenu()">⋮</div>'+
+        '<div class="sync-chip-bare">'+
+          '<div class="sync-dot pending" id="'+dot+'"></div>'+
+          '<span class="sync-chip-label">Sincronizado</span>'+
+        '</div>'+
+      '</div>'
+  })
+}
 window.onerror=function(msg,src,line,col,err){
   console.error('JS Error:',msg,'línea:',line,err?.stack||'')
   if(typeof showToast==='function') showToast('❌ '+String(msg).slice(0,60),'error')
@@ -4903,6 +4871,7 @@ function updateKMenu(){
 // _resetNavState() recarga las 50 al hacer login/logout.
 history.replaceState({nav:0},'','')
 for(let i=1;i<=50;i++) history.pushState({nav:i},'','')
+_buildTopbars()
 const hasCached=lsLoad()
 // Recuperar sesión guardada
 const savedSession=localStorage.getItem(LS_SESSION)
