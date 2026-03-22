@@ -3804,8 +3804,9 @@ function enterApp(){
     applyRoleUI()
     _showScreen('screen-home')
   }
-  // Solo marcar la pantalla actual — los 50 dummies del inicio del script
-  // ya están en el stack y persisten durante toda la sesión
+  // Reponer dummies — cada vez que se entra al home (incluso desde cache)
+  // el stack puede estar vacio, asi que lo llenamos de nuevo
+  for(let _i=0;_i<50;_i++) history.pushState({screen:'__dummy'},'','')
   history.pushState({screen:homeScreen},'','')
 }
 function applyRoleUI(){
