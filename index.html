@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Taller">
 <meta name="theme-color" content="#0f1117">
 <meta name="application-name" content="Taller Mecánico">
-<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Taller%20Mec%C3%A1nico&quot;,&quot;short_name&quot;:&quot;Taller&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;background_color&quot;:&quot;%230f1117&quot;,&quot;theme_color&quot;:&quot;%230f1117&quot;}">
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Taller%20Mec%C3%A1nico&quot;,&quot;short_name&quot;:&quot;Taller&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;display_override&quot;:[&quot;standalone&quot;,&quot;minimal-ui&quot;],&quot;start_url&quot;:&quot;.&quot;,&quot;scope&quot;:&quot;.&quot;,&quot;background_color&quot;:&quot;%230f1117&quot;,&quot;theme_color&quot;:&quot;%230f1117&quot;,&quot;orientation&quot;:&quot;portrait-primary&quot;}">
 <title>Taller Mecánico</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -908,6 +908,15 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
             </label>
           </div>
         </div>
+        <div class="admin-section-title" style="flex-shrink:0">App</div>
+        <div id="btn-instalar-pwa" class="mc mc-compact" onclick="instalarPWA()" style="align-items:center;gap:8px;display:none">
+          <div class="mc-icon">📲</div>
+          <div class="mc-info"><div class="mc-title mc-title-sm">Instalar App</div><div class="mc-sub">Sin pestañas nuevas cada vez</div></div>
+        </div>
+        <div class="mc mc-compact" onclick="instalarPWA()" style="align-items:center;gap:8px" id="btn-instalar-pwa-info">
+          <div class="mc-icon">📲</div>
+          <div class="mc-info"><div class="mc-title mc-title-sm">Instalar App</div><div class="mc-sub">Agregar a pantalla de inicio</div></div>
+        </div>
         <div class="admin-section-title" style="flex-shrink:0">Bases de datos</div>
         <div class="mc mc-compact" onclick="goToFrom('screen-datos','screen-admin')" style="align-items:center;gap:8px">
           <div class="mc-icon">📊</div>
@@ -1090,11 +1099,11 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     <!-- Ver Datos -->
     <div id="datos-vista-tabla" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
       <div style="padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:center">
-        <button id="btn-open-sheet" onclick="window.open('https://docs.google.com/spreadsheets/d/1EcAw_xr37TSj0RJdA46RLQmn6x_Be0eZMPvQUWqkx3E/edit?usp=sharing','taller-sheet')"
+        <a id="btn-open-sheet" href="#" target="_blank"
           style="display:flex;align-items:center;gap:5px;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-sm);
-          padding:6px 10px;color:var(--text2);font-size:0.75rem;font-weight:600;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:var(--font)">
+          padding:6px 10px;text-decoration:none;color:var(--text2);font-size:0.75rem;font-weight:600;white-space:nowrap;flex-shrink:0">
           <span>📋</span> Sheet
-        </button>
+        </a>
         <div class="si-wrap" style="flex:1">
           <span class="si-ico">🔍</span>
           <input type="text" id="tabla-search" placeholder="Filtrar…" autocomplete="off"
@@ -3696,7 +3705,7 @@ function _invalidateRenderCache(){ _cacheHistorial.hash=''; _cacheTabla.hash='';
 function renderTabla(){
   // Apuntar el botón al spreadsheet (extraer el ID del URL del Apps Script si es posible)
   const btn=$id('btn-open-sheet')
-  // btn-open-sheet ya tiene la URL en su onclick
+  if(btn) btn.href='https://docs.google.com/spreadsheets/d/1EcAw_xr37TSj0RJdA46RLQmn6x_Be0eZMPvQUWqkx3E/edit?usp=sharing'
   const q=($id('tabla-search')?.value||'').toLowerCase()
   const cmap=Object.fromEntries(DB[SH_CLI].map(c=>[c.id,c]))
   // Combinar activos + cierre
@@ -3966,9 +3975,10 @@ function showToast(msg,type='success'){
 if('serviceWorker' in navigator){
   const swCode=`
 const CACHE='tallerpro-v7'
-self.addEventListener('install',e=>e.waitUntil(
+self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(
   caches.open(CACHE).then(c=>c.addAll([location.pathname]))
-))
+)})
+self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())})
 self.addEventListener('fetch',e=>{
   if(e.request.url.includes('script.google.com')) return
   e.respondWith(
@@ -3980,10 +3990,38 @@ self.addEventListener('fetch',e=>{
       return cached||fresh
     })
   )
+})
+// Reutilizar pestaña existente: si ya hay una abierta, enfócarla en vez de abrir nueva
+self.addEventListener('message',e=>{
+  if(e.data==='focusOrOpen'){
+    self.clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{
+      if(list.length){list[0].focus()}
+      else{self.clients.openWindow('/')}
+    })
+  }
 })`
   const blob=new Blob([swCode],{type:'application/javascript'})
   const swUrl=URL.createObjectURL(blob)
   navigator.serviceWorker.register(swUrl).catch(()=>{})
+}
+
+// ── PWA Install prompt ───────────────────────────────────────────
+let _pwaPrompt=null
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault()
+  _pwaPrompt=e
+  const btn=$id('btn-instalar-pwa')
+  if(btn) btn.style.display='flex'
+})
+window.addEventListener('appinstalled',()=>{
+  _pwaPrompt=null
+  const btn=$id('btn-instalar-pwa')
+  if(btn) btn.style.display='none'
+  showToast('✅ App instalada correctamente','ok')
+})
+function instalarPWA(){
+  if(_pwaPrompt){ _pwaPrompt.prompt(); _pwaPrompt.userChoice.then(()=>{_pwaPrompt=null}) }
+  else { showToast('ℹ️ Usa el menú del navegador → "Instalar app" o "Agregar a pantalla de inicio"','info',4000) }
 }
 
 // ── Login tabs ────────────────────────────────────────────────────
