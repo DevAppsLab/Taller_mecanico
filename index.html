@@ -664,6 +664,11 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
           <div class="mc-info"><div class="mc-title">Cierre Mensual</div><div class="mc-desc">Clientes liquidados agrupados por mes</div></div>
           <div class="mc-arr">›</div>
         </div>
+        <div class="mc" onclick="goTo('screen-cotizaciones')">
+          <div class="mc-icon">📄</div>
+          <div class="mc-info"><div class="mc-title">Cotizaciones</div><div class="mc-desc">Crear y gestionar cotizaciones</div></div>
+          <div class="mc-arr">›</div>
+        </div>
         <div class="mc" onclick="goTo('screen-admin')">
           <div class="mc-icon">⚙️</div>
           <div class="mc-info"><div class="mc-title">Administración</div><div class="mc-desc">Historial, bases de datos y ajustes</div></div>
@@ -987,7 +992,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   <!-- ══ COTIZACIONES ══ -->
   <div id="screen-cotizaciones" class="screen">
     <div class="topbar">
-      <div class="tb-back" onclick="goTo('screen-admin')">‹</div>
+      <div class="tb-back" onclick="goTo('screen-home')">‹</div>
       <div class="tb-title">Cotizaciones</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
         <div class="km-btn" onclick="openKMenu()">⋮</div>
@@ -2014,7 +2019,7 @@ const _parentScreen={
   'screen-historial':      'screen-admin',
   'screen-tabla':          'screen-admin',
   'screen-admin':          'screen-home',
-  'screen-cotizaciones':   'screen-admin',
+  'screen-cotizaciones':   'screen-home',
   'screen-clientes-emp':   'screen-home',
   'screen-apariencia':     'screen-admin',
   'screen-usuarios':       'screen-admin',
