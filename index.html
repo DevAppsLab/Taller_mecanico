@@ -1989,7 +1989,6 @@ function _showScreen(id){
 function goTo(id){
   const prev=document.querySelector('.screen.active')?.id
   if(prev===id) return
-  _pushDouble(id)
   _showScreen(id)
 }
 // Mapa de pantalla → menú padre
@@ -2009,30 +2008,20 @@ const _parentScreen={
   'screen-db-reparaciones':'screen-admin',
   'screen-db-cierre':      'screen-admin',
 }
-// Manejar gesto de atras
-// Estrategia: al navegar al padre siempre empujar 2 estados (seguridad + actual)
-// asi el stack nunca se agota sin importar cuantos backs reciba el usuario
-function _pushDouble(screen){
-  history.pushState({screen:'__guard'},'','')
-  history.pushState({screen},'','')
+// ── Navegacion con gesto de atras ────────────────────────────────
+// Metodo: estado unico fijo. Cada popstate lo repone inmediatamente
+// y decide a donde ir segun la pantalla activa. Nunca falla sin importar
+// cuantos backs seguidos reciba el usuario.
+function _resetNavState(){
+  history.replaceState({nav:true},'','')
 }
-window.addEventListener('popstate',e=>{
+window.addEventListener('popstate',()=>{
+  history.pushState({nav:true},'','') // reponer estado de inmediato
   const activeNow=document.querySelector('.screen.active')?.id||''
-  // Sin sesion o en login
-  if(!_session||activeNow==='screen-login'){
-    _pushDouble('screen-login')
-    return
-  }
+  if(!_session||activeNow==='screen-login') return
   const homeScreen=(_session.rol==='cliente')?'screen-home-cliente':'screen-home'
-  // En home: logout
-  if(activeNow===homeScreen){
-    _pushDouble(homeScreen)
-    logout()
-    return
-  }
-  // En pantalla secundaria: ir al padre
+  if(activeNow===homeScreen){ logout(); return }
   const parent=_parentScreen[activeNow]||homeScreen
-  _pushDouble(parent)
   _showScreen(parent)
 })
 function clearIngreso(){
@@ -3772,7 +3761,7 @@ function logout(){
   document.getElementById('login-error').style.display='none'
   showLoginTab('login')
   _showScreen('screen-login')
-  _pushDouble('screen-login')
+  _resetNavState()
 }
 function enterApp(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))
@@ -3790,7 +3779,7 @@ function enterApp(){
     applyRoleUI()
     _showScreen('screen-home')
   }
-  _pushDouble(homeScreen)
+  _resetNavState()
 }
 function applyRoleUI(){
   const homeAdmin=document.getElementById('home-admin-btns')
@@ -4445,10 +4434,9 @@ function updateKMenu(){
 // Asegurar que siempre haya un estado en el stack al arrancar
 // El popstate handler se encarga de reponer el estado despues de cada back
 // asi la app nunca se cierra sin importar cuantas veces se presione atras
-history.replaceState({screen:'__guard'},'','')
-history.pushState({screen:'screen-login'},'','')
-history.pushState({screen:'__guard'},'','')
-history.pushState({screen:'screen-login'},'','')
+// Estado inicial fijo — el popstate handler lo repone siempre tras cada back
+history.replaceState({nav:true},'','')
+history.pushState({nav:true},'','')
 const hasCached=lsLoad()
 // Recuperar sesión guardada
 const savedSession=localStorage.getItem(LS_SESSION)
