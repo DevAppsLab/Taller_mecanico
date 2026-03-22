@@ -712,7 +712,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
           <div class="sec-lbl" style="color:var(--purple)">🧑 Cliente</div>
           <div class="cost-row" style="align-items:end">
             <div class="field" style="margin-bottom:0">
-              <label>👤 Nombre</label>
+              <label style="color:var(--purple)">👤 Nombre</label>
               <div class="ac-wrap">
                 <input type="text" id="cot-ing-nombre" placeholder="Nombre o seleccionar…" autocomplete="off"
                   oninput="acCotIng(this)" onfocus="acCotIng(this)" onkeydown="acK(event,'ac-cot-ing')"
@@ -731,30 +731,29 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
           </div>
         </div>
         <div class="sec-card">
-          <div class="sec-lbl" style="color:var(--purple)">📄 Partidas</div>
-          <div id="cot-ing-partidas-list"></div>
+          <div class="sec-lbl" style="color:var(--purple)">📄 Cotización</div>
           <div class="field">
-            <label>Descripción del servicio</label>
+            <label>Descripción</label>
             <div class="ac-wrap">
-              <input type="text" id="cot-ing-desc" placeholder="Ej: Cambio de aceite" autocomplete="off"
-                oninput="acCotIngRep(this)" onfocus="acCotIngRep(this)" onkeydown="acK(event,'ac-cot-r')">
+              <textarea id="cot-ing-desc" placeholder="Ej: Cambio de frenos delanteros" autocomplete="off"
+                oninput="acCotIngRep(this)" onfocus="acCotIngRep(this)" onkeydown="acK(event,'ac-cot-r')"
+                style="height:52px"></textarea>
               <div class="ac-list" id="ac-cot-r"></div>
             </div>
           </div>
-          <div class="field" style="margin-bottom:10px">
-            <label>Precio ($)</label>
-            <input type="number" id="cot-ing-precio" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
+          <div class="cost-row">
+            <div class="field" style="margin-bottom:0"><label>Mano de obra ($)</label>
+              <input type="number" id="cot-ing-mo" placeholder="0.00" min="0" step="0.01" oninput="calcTCot()" inputmode="decimal"></div>
+            <div class="field" style="margin-bottom:0"><label>Material ($)</label>
+              <input type="number" id="cot-ing-mat" placeholder="0.00" min="0" step="0.01" oninput="calcTCot()" inputmode="decimal"></div>
           </div>
-          <button onclick="addCotIngPartida()"
-            style="width:100%;padding:9px;border-radius:var(--r-sm);border:1.5px solid var(--purple);background:rgba(139,92,246,0.1);color:var(--purple);font-family:var(--font);font-size:0.82rem;font-weight:700;cursor:pointer;margin-bottom:10px">+ Agregar partida</button>
-          <div id="cot-ing-total-row" style="display:none;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border);margin-bottom:10px">
-            <span style="font-size:0.78rem;color:var(--text2)">Total cotización</span>
-            <span id="cot-ing-total-lbl" style="font-size:1rem;font-weight:800;color:var(--purple)">$0</span>
+          <div onclick="regCotIngreso()" style="margin-top:10px;background:linear-gradient(135deg,var(--purple),var(--purple2));border-radius:var(--r);
+            padding:14px 16px;display:flex;justify-content:space-between;align-items:center;
+            box-shadow:0 4px 14px var(--shadow-purple);cursor:pointer;user-select:none;transition:transform .1s"
+            onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.98)'" ontouchend="this.style.transform=''">
+            <span style="color:rgba(255,255,255,.85);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em">📄 Cotizar · Total</span>
+            <span id="t-total-cot" style="color:#fff;font-size:1.4rem;font-weight:800;letter-spacing:.02em">$0.00</span>
           </div>
-          <button onclick="regCotIngreso()"
-            style="width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--purple2));border:none;border-radius:var(--r);color:#fff;font-family:var(--font-title);font-size:1rem;font-weight:800;letter-spacing:.06em;cursor:pointer;box-shadow:0 4px 14px var(--shadow-purple)">
-            📄 Guardar cotización
-          </button>
         </div>
       </div>
       <!-- Formulario reparación (visible por defecto) -->
@@ -1783,7 +1782,7 @@ function setTipoIngreso(tipo){
   }
   if(repSec) repSec.style.display = isRep  ? 'block' : 'none'
   if(cotSec) cotSec.style.display = !isRep ? 'block' : 'none'
-  if(!isRep){ _cotIngPartidas=[]; renderCotIngPartidas() }
+  if(!isRep){ calcTCot() }
 }
 
 // Autocomplete cliente en formulario cotización de ingreso
@@ -1820,7 +1819,7 @@ function acCotIngRep(el){
   const fil = (q ? raw.filter(i => i.reparacion && i.reparacion.toLowerCase().includes(q)) : raw.slice(-8).reverse()).slice(0,8)
   if(!fil.length){ list.classList.remove('open'); return }
   list.innerHTML = fil.map((item,i) => `<div class="ac-item" data-i="${i}"
-    onclick="selCotIngRep('${escQ(item.reparacion)}',${numF(item.manoObra)+numF(item.material)})">
+    onclick="selCotIngRep('${escQ(item.reparacion)}',${numF(item.manoObra)},${numF(item.material)})">
     <span class="ac-ico">🔧</span>
     <div style="flex:1;min-width:0">
       <div style="font-weight:600">${item.reparacion}</div>
@@ -1829,55 +1828,42 @@ function acCotIngRep(el){
   closeOtherAC('ac-cot-r')
   list.classList.add('open')
 }
-function selCotIngRep(desc, precio){
+function selCotIngRep(desc, mo, mat){
   document.getElementById('cot-ing-desc').value = desc
-  document.getElementById('cot-ing-precio').value = precio
+  document.getElementById('cot-ing-mo').value   = mo||''
+  document.getElementById('cot-ing-mat').value  = mat||''
   document.getElementById('ac-cot-r').classList.remove('open')
+  calcTCot()
 }
-
-// Agregar/renderizar partidas en cotización de ingreso
-function addCotIngPartida(){
-  const desc   = document.getElementById('cot-ing-desc').value.trim()
-  const precio = parseFloat(document.getElementById('cot-ing-precio').value) || 0
-  if(!desc){ showToast('⚠️ Ingresa la descripción','error'); return }
-  _cotIngPartidas.push({ desc, total: precio })
-  document.getElementById('cot-ing-desc').value  = ''
-  document.getElementById('cot-ing-precio').value = ''
-  renderCotIngPartidas()
-}
-function renderCotIngPartidas(){
-  const list     = document.getElementById('cot-ing-partidas-list')
-  const totalRow = document.getElementById('cot-ing-total-row')
-  const totalLbl = document.getElementById('cot-ing-total-lbl')
-  if(!list) return
-  if(!_cotIngPartidas.length){ list.innerHTML = ''; if(totalRow) totalRow.style.display='none'; return }
-  list.innerHTML = _cotIngPartidas.map((p,i) => `
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-      <div style="flex:1;font-size:0.82rem;color:var(--text)">${p.desc}</div>
-      <div style="font-weight:700;color:var(--purple);font-size:0.82rem;white-space:nowrap">${f$(p.total)}</div>
-      <button onclick="_cotIngPartidas.splice(${i},1);renderCotIngPartidas()"
-        style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:0.85rem;padding:2px 4px">✕</button>
-    </div>`).join('')
-  const tot = _cotIngPartidas.reduce((s,p) => s+p.total, 0)
-  if(totalRow) totalRow.style.display = 'flex'
-  if(totalLbl) totalLbl.textContent   = f$(tot)
+function calcTCot(){
+  const mo  = parseFloat(document.getElementById('cot-ing-mo')?.value)||0
+  const mat = parseFloat(document.getElementById('cot-ing-mat')?.value)||0
+  const el  = document.getElementById('t-total-cot')
+  if(el) el.textContent = f$(mo+mat)
 }
 
 // Guardar cotización desde pantalla de ingreso
 function regCotIngreso(){
   const nombre   = toTitle(document.getElementById('cot-ing-nombre').value.trim())
   const vehiculo = toTitle(document.getElementById('cot-ing-vehiculo').value.trim())
+  const desc     = document.getElementById('cot-ing-desc').value.trim()
+  const mo       = parseFloat(document.getElementById('cot-ing-mo').value)||0
+  const mat      = parseFloat(document.getElementById('cot-ing-mat').value)||0
+  const total    = mo + mat
   if(!nombre)  { showToast('⚠️ Ingresa el nombre del cliente','error'); return }
   if(!vehiculo){ showToast('⚠️ Ingresa el vehículo','error'); return }
-  if(!_cotIngPartidas.length){ showToast('⚠️ Agrega al menos una partida','error'); return }
-  const cot = { id:gid(), cliente:nombre, vehiculo, fecha:new Date().toISOString().slice(0,10), reps:[..._cotIngPartidas], status:'pending' }
+  if(!desc)    { showToast('⚠️ Ingresa la descripción','error'); return }
+  const cot = { id:gid(), cliente:nombre, vehiculo, fecha:new Date().toISOString().slice(0,10),
+    reps:[{desc, total}], status:'pending' }
   gsAppendBg(SH_COT, cot)
   sAC('db-nombres', nombre, vehiculo)
   // limpiar
   document.getElementById('cot-ing-nombre').value  = ''
   document.getElementById('cot-ing-vehiculo').value = ''
-  _cotIngPartidas = []
-  renderCotIngPartidas()
+  document.getElementById('cot-ing-desc').value     = ''
+  document.getElementById('cot-ing-mo').value       = ''
+  document.getElementById('cot-ing-mat').value      = ''
+  calcTCot()
   setTipoIngreso('rep')
   showToast('📄 Cotización guardada','success')
   goTo('screen-cotizaciones')
