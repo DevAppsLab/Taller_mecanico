@@ -629,7 +629,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
           <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
-            <span style="font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;margin-bottom:1px">v1.1.0</span>
+            <span style="font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;margin-bottom:1px">v1.1.1</span>
             <div class="km-btn" onclick="openKMenu()">⋮</div>
             <div class="sync-chip" style="border:none;background:transparent;padding:0">
               <div class="sync-dot pending" id="sd-home"></div>
@@ -2140,7 +2140,8 @@ function rerenderActive(){
     if(id==='screen-db-cierre')      renderDbCierre()
     if(id==='screen-tabla')          renderTabla()
     if(id==='screen-inventario')     renderInventario()
-    if(id==='screen-cortes')          renderCortes()
+    if(id==='screen-cotizaciones')   renderCotizaciones()
+    if(id==='screen-cortes')         renderCortes()
     if(id==='screen-apariencia')     openApariencia()
   }catch(err){
     console.error('rerenderActive error in '+id+':', err)
@@ -2762,56 +2763,74 @@ function renderCortes(){
 
 function _renderCortesDia(now, hoy){
   const cont=document.getElementById('cortes-vista-dia')
-  // Días del mes actual
   const year=now.getFullYear(), month=now.getMonth()
   const daysInMonth=new Date(year,month+1,0).getDate()
-  // Construir todos los días del mes
-  const dias=[]
-  for(let d=daysInMonth;d>=1;d--){
-    const key=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`
-    const rows=_rowsForRange(key,key)
-    const total=rows.reduce((s,r)=>s+numF(r.total),0)
-    const label=new Date(key+'T12:00:00').toLocaleDateString('es-MX',{weekday:'short',day:'numeric'})
-      .replace(/^\w/,ch=>ch.toUpperCase())
-    dias.push({key,label,rows,total,esHoy:key===hoy})
+  // Total hoy
+  const rowsHoy=_rowsForRange(hoy,hoy)
+  _setCortesTotal(rowsHoy.reduce((s,r)=>s+numF(r.total),0),'Hoy')
+  document.getElementById('badge-cortes').textContent=rowsHoy.length
+  // Calcular primer lunes de la cuadrícula
+  const firstDay=new Date(year,month,1)
+  let calStart=new Date(firstDay)
+  calStart.setDate(calStart.getDate()-((calStart.getDay()+6)%7))
+  // Generar semanas completas
+  const semanas=[]
+  let cur=new Date(calStart)
+  while(cur.getMonth()<=month&&cur.getFullYear()<=year){
+    if(cur>new Date(year,month,daysInMonth)&&cur.getDay()===1) break
+    const sem=[]
+    for(let d=0;d<7;d++){
+      const key=cur.toISOString().slice(0,10)
+      const inMonth=cur.getMonth()===month&&cur.getFullYear()===year
+      const rows=inMonth?_rowsForRange(key,key):[]
+      sem.push({key,day:cur.getDate(),inMonth,esHoy:key===hoy,rows,total:rows.reduce((s,r)=>s+numF(r.total),0)})
+      cur.setDate(cur.getDate()+1)
+    }
+    semanas.push(sem)
+    if(cur.getMonth()!==month||cur.getFullYear()!==year) break
   }
-  const totalHoy=dias.find(d=>d.esHoy)?.total||0
-  _setCortesTotal(totalHoy,'Hoy')
-  document.getElementById('badge-cortes').textContent=dias.filter(d=>d.rows.length).length
-
-  cont.innerHTML=dias.map((d,i)=>{
-    const id=`cd-${d.key}`
-    const hasData=d.rows.length>0
-    const openClass=d.esHoy?'open':''
-    return `<div class="ccard" style="margin-bottom:6px" id="${id}">
-      <div style="display:flex;align-items:center;padding:9px 14px;cursor:${hasData?'pointer':'default'};gap:10px"
-        onclick="${hasData?`togCorteCard('${id}')`:''}">
-        <div style="flex:1;display:flex;align-items:center;gap:8px">
-          <span style="font-size:0.85rem;font-weight:${d.esHoy?'800':'600'};color:${d.esHoy?'var(--orange)':'var(--text)'}">${d.label}</span>
-          ${d.esHoy?'<span style="font-size:0.6rem;background:var(--og);color:var(--orange);border:1px solid var(--icon-border);border-radius:20px;padding:1px 7px;font-weight:700">Hoy</span>':''}
-          ${hasData?`<span style="font-size:0.62rem;color:var(--text3)">${d.rows.length} rep.</span>`:'<span style="font-size:0.62rem;color:var(--text3)">Sin registros</span>'}
-        </div>
-        ${hasData?`<span style="font-size:0.88rem;font-weight:800;color:var(--orange)">${f$(d.total)}</span>`:''}
+  const DIAS=['L','M','M','J','V','S','D']
+  let selKey=hoy
+  cont.innerHTML=`
+    <div style="margin-bottom:6px">
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px">
+        ${DIAS.map(d=>`<div style="text-align:center;font-size:0.55rem;font-weight:700;color:var(--text3);padding:2px 0">${d}</div>`).join('')}
       </div>
-      <div class="corte-detail ${openClass}" id="det-${id}" style="${d.esHoy&&hasData?'':'display:none'}">
-        <div style="padding:0 8px 10px">${_corteTablaHTML(d.rows,false)}</div>
-      </div>
+      ${semanas.map(sem=>`
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px">
+          ${sem.map(d=>{
+            if(!d.inMonth) return `<div style="height:38px"></div>`
+            const bg=d.esHoy?'var(--orange)':d.rows.length?'var(--og)':'var(--card)'
+            const col=d.esHoy?'#fff':d.rows.length?'var(--orange)':'var(--text3)'
+            const bor=d.esHoy?'none':`1px solid ${d.rows.length?'var(--icon-border)':'var(--border)'}`
+            return `<div onclick="calDiaClick('${d.key}')" style="height:38px;border-radius:var(--r-sm);background:${bg};border:${bor};display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:${d.rows.length?'pointer':'default'};transition:background .15s">
+              <span style="font-size:0.7rem;font-weight:${d.esHoy?800:600};color:${col};line-height:1">${d.day}</span>
+              ${d.rows.length?`<span style="font-size:0.42rem;font-weight:700;color:${d.esHoy?'rgba(255,255,255,.85)':'var(--orange)'};line-height:1.2">$${d.total.toLocaleString('es-MX',{maximumFractionDigits:0})}</span>`:''}
+            </div>`
+          }).join('')}
+        </div>`).join('')}
+    </div>
+    <div id="cal-dia-det" style="margin-top:2px">
+      ${rowsHoy.length?_corteTablaHTML(rowsHoy,false):`<div class="empty" style="padding:20px"><div class="ei" style="font-size:26px">📅</div><div class="et">Sin registros hoy</div></div>`}
     </div>`
-  }).join('')
+  window.calDiaClick=function(key){
+    const rows=_rowsForRange(key,key)
+    if(!rows.length) return
+    const det=document.getElementById('cal-dia-det')
+    if(det) det.innerHTML=_corteTablaHTML(rows,false)
+    _setCortesTotal(rows.reduce((s,r)=>s+numF(r.total),0),
+      new Date(key+'T12:00:00').toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'}))
+  }
 }
 
 function _renderCortesSem(now, hoy){
   const cont=document.getElementById('cortes-vista-sem')
   const year=now.getFullYear(), month=now.getMonth()
-  // 4 semanas del mes, semana = lunes a domingo
-  // Calcular semanas del mes actual
   const firstDay=new Date(year,month,1)
   const lastDay=new Date(year,month+1,0)
-  // Generar semanas: grupos de 7 días empezando el lunes de la primera semana
-  const semanas=[]
   let cur=new Date(firstDay)
-  // Retroceder al lunes anterior si no empieza en lunes
   cur.setDate(cur.getDate()-((cur.getDay()+6)%7))
+  const semanas=[]
   let semNum=1
   while(cur<=lastDay){
     const desde=cur.toISOString().slice(0,10)
@@ -2820,73 +2839,73 @@ function _renderCortesSem(now, hoy){
     const rows=_rowsForRange(desde,hasta)
     const total=rows.reduce((s,r)=>s+numF(r.total),0)
     const esSemActual=hoy>=desde&&hoy<=hasta
-    semanas.push({semNum,desde,hasta,rows,total,esSemActual})
+    const dFmt=new Date(desde+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'})
+    const hFmt=new Date(hasta+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'})
+    semanas.push({semNum,desde,hasta,dFmt,hFmt,rows,total,esSemActual,hasData:rows.length>0})
     cur.setDate(cur.getDate()+7)
     semNum++
   }
-  const totalSem=semanas.find(s=>s.esSemActual)?.total||0
-  _setCortesTotal(totalSem,'Esta semana')
-  document.getElementById('badge-cortes').textContent=semanas.filter(s=>s.rows.length).length
-
-  cont.innerHTML=semanas.map((s,i)=>{
-    const id=`cs-${s.desde}`
-    const hasData=s.rows.length>0
-    const desdeFmt=new Date(s.desde+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'})
-    const hastaFmt=new Date(s.hasta+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'})
-    return `<div class="ccard" style="margin-bottom:6px" id="${id}">
-      <div style="display:flex;align-items:center;padding:9px 14px;cursor:${hasData?'pointer':'default'};gap:10px"
-        onclick="${hasData?`togCorteCard('${id}')`:''}">
-        <div style="flex:1;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:0.85rem;font-weight:${s.esSemActual?'800':'600'};color:${s.esSemActual?'var(--orange)':'var(--text)'}">Sem ${s.semNum}</span>
-          <span style="font-size:0.68rem;color:var(--text3)">${desdeFmt} – ${hastaFmt}</span>
-          ${s.esSemActual?'<span style="font-size:0.6rem;background:var(--og);color:var(--orange);border:1px solid var(--icon-border);border-radius:20px;padding:1px 7px;font-weight:700">Actual</span>':''}
-          ${hasData?`<span style="font-size:0.62rem;color:var(--text3)">${s.rows.length} rep.</span>`:'<span style="font-size:0.62rem;color:var(--text3)">Sin registros</span>'}
-        </div>
-        ${hasData?`<span style="font-size:0.88rem;font-weight:800;color:var(--orange)">${f$(s.total)}</span>`:''}
-      </div>
-      <div class="corte-detail" id="det-${id}" style="${s.esSemActual&&hasData?'':'display:none'}">
-        <div style="padding:0 8px 10px">${_corteTablaHTML(s.rows,true)}</div>
-      </div>
+  const semActual=semanas.find(s=>s.esSemActual)
+  _setCortesTotal(semActual?.total||0,'Esta semana')
+  document.getElementById('badge-cortes').textContent=semanas.filter(s=>s.hasData).length
+  cont.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(${semanas.length},1fr);gap:4px;margin-bottom:8px">
+      ${semanas.map(s=>{
+        const bg=s.esSemActual?'var(--orange)':s.hasData?'var(--og)':'var(--card)'
+        const col=s.esSemActual?'#fff':s.hasData?'var(--orange)':'var(--text3)'
+        const bor=s.esSemActual?'none':`1px solid ${s.hasData?'var(--icon-border)':'var(--border)'}`
+        return `<div onclick="calSemClick('${s.desde}')" style="border-radius:var(--r-sm);background:${bg};border:${bor};padding:7px 3px;text-align:center;cursor:${s.hasData?'pointer':'default'};transition:background .15s">
+          <div style="font-size:0.7rem;font-weight:${s.esSemActual?800:600};color:${col}">Sem ${s.semNum}</div>
+          <div style="font-size:0.5rem;color:${s.esSemActual?'rgba(255,255,255,.75)':'var(--text3)'};margin-top:1px">${s.dFmt}</div>
+          <div style="font-size:0.5rem;color:${s.esSemActual?'rgba(255,255,255,.75)':'var(--text3)'}">– ${s.hFmt}</div>
+          ${s.hasData?`<div style="font-size:0.6rem;font-weight:700;color:${s.esSemActual?'rgba(255,255,255,.9)':'var(--orange)'};margin-top:3px">$${s.total.toLocaleString('es-MX',{maximumFractionDigits:0})}</div>`:''}
+        </div>`
+      }).join('')}
+    </div>
+    <div id="cal-sem-det">
+      ${semActual?.hasData?_corteTablaHTML(semActual.rows,true):`<div class="empty" style="padding:20px"><div class="ei" style="font-size:26px">📆</div><div class="et">Sin registros esta semana</div></div>`}
     </div>`
-  }).join('')
+  window.calSemClick=function(desde){
+    const s=semanas.find(x=>x.desde===desde)
+    if(!s||!s.hasData) return
+    const det=document.getElementById('cal-sem-det')
+    if(det) det.innerHTML=_corteTablaHTML(s.rows,true)
+    _setCortesTotal(s.total,`Sem ${s.semNum}: ${s.dFmt} – ${s.hFmt}`)
+  }
 }
 
 function _renderCortesMes(now, hoy){
   const cont=document.getElementById('cortes-vista-mes')
-  const year=now.getFullYear()
-  const mesActual=now.getMonth() // 0-11
-  const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
-  const totalMesActual_rows=_rowsForRange(`${year}-${String(mesActual+1).padStart(2,'0')}-01`,
-    `${year}-${String(mesActual+1).padStart(2,'0')}-31`)
-  const totalMesActual=totalMesActual_rows.reduce((s,r)=>s+numF(r.total),0)
-  _setCortesTotal(totalMesActual, meses[mesActual])
-  document.getElementById('badge-cortes').textContent=12
-
-  // Mostrar los 12 meses del año actual, del más reciente al más antiguo
-  const mesesHTML=Array.from({length:12},(_,i)=>11-i).map(m=>{
-    const desde=`${year}-${String(m+1).padStart(2,'0')}-01`
-    const hasta=`${year}-${String(m+1).padStart(2,'0')}-31`
-    const rows=_rowsForRange(desde,hasta)
-    const total=rows.reduce((s,r)=>s+numF(r.total),0)
-    const esMesActual=m===mesActual
-    const id=`cm-${year}-${m}`
-    const hasData=rows.length>0
-    return `<div class="ccard" style="margin-bottom:6px" id="${id}">
-      <div style="display:flex;align-items:center;padding:9px 14px;cursor:${hasData?'pointer':'default'};gap:10px"
-        onclick="${hasData?`togCorteCard('${id}')`:''}">
-        <div style="flex:1;display:flex;align-items:center;gap:8px">
-          <span style="font-size:0.85rem;font-weight:${esMesActual?'800':'600'};color:${esMesActual?'var(--orange)':'var(--text)'}">${meses[m]}</span>
-          ${esMesActual?'<span style="font-size:0.6rem;background:var(--og);color:var(--orange);border:1px solid var(--icon-border);border-radius:20px;padding:1px 7px;font-weight:700">Actual</span>':''}
-          ${hasData?`<span style="font-size:0.62rem;color:var(--text3)">${rows.length} rep.</span>`:'<span style="font-size:0.62rem;color:var(--text3)">Sin registros</span>'}
-        </div>
-        ${hasData?`<span style="font-size:0.88rem;font-weight:800;color:var(--orange)">${f$(total)}</span>`:''}
-      </div>
-      <div class="corte-detail" id="det-${id}" style="${esMesActual&&hasData?'':'display:none'}">
-        <div style="padding:0 8px 10px">${_corteTablaHTML(rows,true)}</div>
-      </div>
+  const year=now.getFullYear(), mesActual=now.getMonth()
+  const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+  const meses=Array.from({length:12},(_,m)=>{
+    const rows=_rowsForRange(`${year}-${String(m+1).padStart(2,'0')}-01`,`${year}-${String(m+1).padStart(2,'0')}-31`)
+    return{m,label:MESES[m],rows,total:rows.reduce((s,r)=>s+numF(r.total),0),esActual:m===mesActual,hasData:rows.length>0}
+  })
+  const actual=meses[mesActual]
+  _setCortesTotal(actual.total,MESES[mesActual])
+  document.getElementById('badge-cortes').textContent=meses.filter(x=>x.hasData).length
+  cont.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:8px">
+      ${meses.map(m=>{
+        const bg=m.esActual?'var(--orange)':m.hasData?'var(--og)':'var(--card)'
+        const col=m.esActual?'#fff':m.hasData?'var(--orange)':'var(--text3)'
+        const bor=m.esActual?'none':`1px solid ${m.hasData?'var(--icon-border)':'var(--border)'}`
+        return `<div onclick="calMesClick(${m.m})" style="border-radius:var(--r-sm);background:${bg};border:${bor};padding:8px 4px;text-align:center;cursor:${m.hasData?'pointer':'default'};transition:background .15s">
+          <div style="font-size:0.82rem;font-weight:${m.esActual?800:600};color:${col}">${m.label}</div>
+          ${m.hasData?`<div style="font-size:0.6rem;font-weight:700;color:${m.esActual?'rgba(255,255,255,.9)':'var(--orange)'};margin-top:2px">$${m.total.toLocaleString('es-MX',{maximumFractionDigits:0})}</div>`:`<div style="font-size:0.52rem;color:var(--text3);margin-top:2px">—</div>`}
+        </div>`
+      }).join('')}
+    </div>
+    <div id="cal-mes-det">
+      ${actual.hasData?_corteTablaHTML(actual.rows,true):`<div class="empty" style="padding:20px"><div class="ei" style="font-size:26px">🗓</div><div class="et">Sin registros este mes</div></div>`}
     </div>`
-  }).join('')
-  cont.innerHTML=mesesHTML
+  window.calMesClick=function(m){
+    const mes=meses[m]
+    if(!mes||!mes.hasData) return
+    document.getElementById('cal-mes-det').innerHTML=_corteTablaHTML(mes.rows,true)
+    _setCortesTotal(mes.total,MESES[m])
+  }
 }
 
 function _setCortesTotal(total, label){
