@@ -127,8 +127,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .logo-text{font-family:var(--font-title);font-size:clamp(1.4rem,5vw,4rem);font-weight:800;letter-spacing:.03em;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .logo-text span{color:var(--orange)}
 .home-sub{color:var(--text2);font-size:0.75rem;margin-top:2px}
-.home-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(4px,0.8vw,8px);padding:clamp(8px,1.5vw,16px) 12px;overflow-x:auto;scrollbar-width:none}
-@media(max-width:480px){.home-stats{grid-template-columns:repeat(3,1fr)}}
+.home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(4px,0.8vw,8px);padding:clamp(8px,1.5vw,16px) 12px;scrollbar-width:none}
 .home-stats::-webkit-scrollbar{display:none}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:clamp(9px,1.2vw,14px);padding:clamp(6px,1vw,10px) clamp(6px,1vw,10px);min-width:0;overflow:hidden}
 .stat .sv{font-family:var(--font-title);font-size:clamp(0.95rem,2.2vw,1.5rem);font-weight:800;color:var(--orange);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
@@ -629,7 +628,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
           <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
-            <span style="font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;margin-bottom:1px">v1.0.0</span>
+            <span style="font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;margin-bottom:1px">v1.0.1</span>
             <div class="km-btn" onclick="openKMenu()">⋮</div>
             <div class="sync-chip" style="border:none;background:transparent;padding:0">
               <div class="sync-dot pending" id="sd-home"></div>
@@ -645,6 +644,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="stat"><div class="sv" id="s-pend">0</div><div class="sl">Pendientes</div></div>
       <div class="stat" id="stat-sem"><div class="sv" id="s-sem">$0</div><div class="sl" id="sl-sem">Semana</div></div>
       <div class="stat" id="stat-mes"><div class="sv" id="s-mes">$0</div><div class="sl" id="sl-mes">Mes</div></div>
+      <div class="stat" id="stat-dia"><div class="sv" id="s-dia">$0</div><div class="sl">Hoy</div></div>
     </div>
     <div class="home-menu">
       <!-- Siempre visible -->
@@ -1247,7 +1247,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-badge" id="badge-corte">0</div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
         <div class="km-btn" onclick="openKMenu()">⋮</div>
-        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot pending" id="sd-corte"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
+        <div class="sync-chip" style="border:none;background:transparent;padding:0"><div class="sync-dot ok" id="sd-corte"></div><span class="sync-chip-label" style="font-size:clamp(0.45rem,0.8vw,0.58rem);color:var(--text3)">Sincronizado</span></div>
       </div>
     </div>
     <!-- Tabs -->
@@ -2211,6 +2211,12 @@ function updateStats(){
     const closedSem=DB[SH_CIE].filter(c=>mKey(c.closedAt)===mk&&getWeekNum(c.closedAt)===wn).reduce((s,c)=>s+numF(c.total),0)
     const sem=activeSem+closedSem
     document.getElementById('s-sem').textContent=sem>=1000?'$'+(sem/1000).toFixed(1)+'k':f$(sem)
+    // Día
+    const hoy=_hoyKey()
+    const activeDia=DB[SH_SES].filter(r=>String(r.fecha||'').slice(0,10)===hoy).reduce((s,r)=>s+numF(r.total),0)
+    const closedDia=DB[SH_CIE].filter(r=>String(r.fechaRep||r.closedAt||'').slice(0,10)===hoy).reduce((s,r)=>s+numF(r.total),0)
+    const dia=activeDia+closedDia
+    document.getElementById('s-dia').textContent=dia>=1000?'$'+(dia/1000).toFixed(1)+'k':f$(dia)
     // Labels dinámicos
     const mesLabel=now.toLocaleDateString('es-MX',{month:'long'}).replace(/^\w/,ch=>ch.toUpperCase())
     const slMes=document.getElementById('sl-mes');if(slMes)slMes.textContent=mesLabel
@@ -2219,9 +2225,11 @@ function updateStats(){
   const repStat=document.getElementById('stat-rep')
   const mesStat=document.getElementById('stat-mes')
   const semStat=document.getElementById('stat-sem')
+  const diaStat=document.getElementById('stat-dia')
   if(repStat) repStat.style.display=isAdmin()?'':'none'
   if(mesStat) mesStat.style.display=isAdmin()?'':'none'
   if(semStat) semStat.style.display=isAdmin()?'':'none'
+  if(diaStat) diaStat.style.display=isAdmin()?'':'none'
 }
 
 // ── Autocomplete ──────────────────────────────────────────────────
@@ -2683,50 +2691,43 @@ function renderMensual(){
       <div class="es">Aparece cuando un cliente esté completado y liquidado</div></div>`
     return
   }
-  // Agrupar: mes → semana → cliente
+  // Agrupar: mes → día → cliente
   const byMonth={}
   rows.forEach(r=>{
     const mk=mKey(r.closedAt)
-    if(!byMonth[mk])byMonth[mk]={key:mk,label:fMes(r.closedAt),weeks:{}}
-    const wk=getWeekNum(r.closedAt)
-    if(!byMonth[mk].weeks[wk])byMonth[mk].weeks[wk]={week:wk,clients:{}}
+    if(!byMonth[mk])byMonth[mk]={key:mk,label:fMes(r.closedAt),days:{}}
+    const dk=String(r.closedAt||'').slice(0,10) // YYYY-MM-DD
+    if(!byMonth[mk].days[dk])byMonth[mk].days[dk]={key:dk,clients:{}}
     const ck=`${r.nombre}__${r.vehiculo}__${mk}`
-    if(!byMonth[mk].weeks[wk].clients[ck])
-      byMonth[mk].weeks[wk].clients[ck]={nombre:r.nombre,vehiculo:r.vehiculo,repairs:[]}
-    byMonth[mk].weeks[wk].clients[ck].repairs.push(r)
+    if(!byMonth[mk].days[dk].clients[ck])
+      byMonth[mk].days[dk].clients[ck]={nombre:r.nombre,vehiculo:r.vehiculo,repairs:[]}
+    byMonth[mk].days[dk].clients[ck].repairs.push(r)
   })
   const months=Object.values(byMonth).sort((a,b)=>b.key.localeCompare(a.key))
   document.getElementById('badge-mes').textContent=months.length
   list.innerHTML=months.map((m,mi)=>{
-    const allClients=Object.values(m.weeks).flatMap(w=>Object.values(w.clients))
+    const allClients=Object.values(m.days).flatMap(d=>Object.values(d.clients))
     const totalMes=allClients.reduce((s,c)=>s+c.repairs.reduce((ss,r)=>ss+numF(r.total),0),0)
     const totalReps=allClients.reduce((s,c)=>s+c.repairs.length,0)
-    const weeksHTML=[1,2,3,4].map(wn=>{
-      const w=m.weeks[wn]
-      const wid=`w-${m.key}-${wn}`
-      const hasData=!!w
-      const wTotal=w?Object.values(w.clients).reduce((s,c)=>s+c.repairs.reduce((ss,r)=>ss+numF(r.total),0),0):0
-      return `<div class="week-block${hasData?' has-data':''}" id="${wid}"
-        onclick="${hasData?`togWeekTab('${m.key}',${wn})`:''}">
-        <div class="week-head">
-          <span class="week-label">Sem ${wn}</span>
-          <span class="week-amount" style="${hasData?'color:var(--orange)':'color:var(--text3)'}">${f$(wTotal)}</span>
-        </div>
-      </div>`
-    }).join('')
 
-    // Detalles por semana — cada uno oculto, se muestra al seleccionar
-    const weekDetails=[1,2,3,4].map(wn=>{
-      const w=m.weeks[wn]
-      if(!w) return `<div class="week-detail" id="wd-${m.key}-${wn}"></div>`
-      const clientsHTML=Object.values(w.clients).map((c,ci)=>{
-        const cid=`c-${m.key}-${wn}-${ci}`
+    // Tarjetas de días — ordenadas de más reciente a más antiguo
+    const daysHTML=Object.values(m.days).sort((a,b)=>b.key.localeCompare(a.key)).map((d,di)=>{
+      const did=`d-${m.key}-${di}`
+      const dTotal=Object.values(d.clients).reduce((s,c)=>s+c.repairs.reduce((ss,r)=>ss+numF(r.total),0),0)
+      const dCount=Object.values(d.clients).reduce((s,c)=>s+c.repairs.length,0)
+      // Formatear fecha legible: "Lun 3" o "Lun 3 ene"
+      const dDate=new Date(d.key+'T12:00:00')
+      const dLabel=dDate.toLocaleDateString('es-MX',{weekday:'short',day:'numeric'})
+        .replace(/^\w/,ch=>ch.toUpperCase())
+
+      const clientsHTML=Object.values(d.clients).map((c,ci)=>{
+        const cid=`c-${m.key}-${di}-${ci}`
         const tot=c.repairs.reduce((s,r)=>s+numF(r.total),0)
         const repsHTML=c.repairs.map(r=>`
           <div class="rep-row">
             <div class="rep-row-info">
               <div class="rep-row-desc">${r.reparacion}</div>
-              <div class="rep-row-sub">${fD(r.fechaRep)} · MO: ${f$(r.manoObra)} · Mat: ${f$(r.material)}</div>
+              <div class="rep-row-sub">MO: ${f$(r.manoObra)} · Mat: ${f$(r.material)}</div>
             </div>
             <div class="rep-row-total">${f$(r.total)}</div>
           </div>`).join('')
@@ -2739,14 +2740,24 @@ function renderMensual(){
             <div class="cli-right">
               <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap">${c.repairs.length} rep.</div>
               <div class="cli-tot">${f$(tot)}</div>
-              
             </div>
           </div>
           <div class="cli-body">${repsHTML}</div>
         </div>`
       }).join('')
-      return `<div class="week-detail" id="wd-${m.key}-${wn}">${clientsHTML}</div>`
+
+      return `<div class="week-block has-data" id="${did}" onclick="togDayTab('${did}')">
+        <div class="week-head">
+          <span class="week-label">${dLabel}</span>
+          <span style="font-size:0.6rem;color:var(--text3)">${dCount} rep.</span>
+          <span class="week-amount" style="color:var(--orange)">${f$(dTotal)}</span>
+        </div>
+        <div class="week-detail" id="wd-${did}" style="display:none">
+          ${clientsHTML}
+        </div>
+      </div>`
     }).join('')
+
     return `<div class="mcard ani" style="animation-delay:${mi*.05}s" id="mc-${m.key}">
       <div class="mcard-head" onclick="togMonth('${m.key}')">
         <div class="mcard-ico">📅</div>
@@ -2756,12 +2767,10 @@ function renderMensual(){
         </div>
         <div class="mcard-right">
           <div class="mcard-total">${f$(totalMes)}</div>
-          
         </div>
       </div>
       <div class="mcard-body">
-        <div class="weeks-row">${weeksHTML}</div>
-        ${weekDetails}
+        <div style="display:flex;flex-direction:column;gap:6px;padding:6px 0">${daysHTML}</div>
       </div>
     </div>`
   }).join('')
@@ -2771,26 +2780,24 @@ function togMonth(k){
   const card=document.getElementById('mc-'+k); if(!card)return
   const wasOpen=card.classList.contains('open')
   if(wasOpen){
-    // Al cerrar: retraer semanas y clientes hijos
-    card.querySelectorAll('.week-detail.open').forEach(w=>w.classList.remove('open'))
-    card.querySelectorAll('.week-block.active-week').forEach(w=>w.classList.remove('active-week'))
+    card.querySelectorAll('.week-detail').forEach(w=>w.style.display='none')
     card.querySelectorAll('.cli-block.open').forEach(c=>c.classList.remove('open'))
   }
   card.classList.toggle('open')
 }
-function togWeekTab(mKey,wn){
-  const detail=document.getElementById(`wd-${mKey}-${wn}`)
-  const tab=document.getElementById(`w-${mKey}-${wn}`)
-  const isOpen=detail?.classList.contains('open')
-  // Cerrar todos los detalles y deseleccionar tabs de este mes
-  const mc=document.getElementById('mc-'+mKey)
-  mc?.querySelectorAll('.week-detail').forEach(d=>d.classList.remove('open'))
-  mc?.querySelectorAll('.week-block').forEach(t=>t.classList.remove('active-week'))
-  if(!isOpen){
-    detail?.classList.add('open')
-    tab?.classList.add('active-week')
-  }
+function togDayTab(did){
+  const detail=document.getElementById('wd-'+did)
+  const tab=document.getElementById(did)
+  if(!detail) return
+  const isOpen=detail.style.display==='block'
+  // Cerrar todos los días del mismo mes
+  const mc=tab?.closest('.mcard')
+  mc?.querySelectorAll('.week-detail').forEach(d=>{ if(d.id!=='wd-'+did) d.style.display='none' })
+  mc?.querySelectorAll('.week-block').forEach(t=>{ if(t.id!==did) t.classList.remove('active-week') })
+  detail.style.display=isOpen?'none':'block'
+  tab?.classList.toggle('active-week',!isOpen)
 }
+function togWeekTab(mKey,wn){} // kept for compatibility
 function togWeek(id){} // kept for compatibility
 function togCli(id){document.getElementById(id)?.classList.toggle('open')}
 
@@ -4024,8 +4031,6 @@ function applyRoleUI(){
   const homeEmp=document.getElementById('home-emp-btns')
   if(homeAdmin) homeAdmin.style.display=isAdmin()?'flex':'none'
   if(homeEmp) homeEmp.style.display=isEmpleado()?'flex':'none'
-  const statsGrid=document.querySelector('.home-stats')
-  if(statsGrid) statsGrid.style.gridTemplateColumns=isAdmin()?'repeat(5,1fr)':'repeat(2,1fr)'
   updateStats()
 }
 
