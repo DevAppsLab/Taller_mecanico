@@ -124,11 +124,19 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .logo-text{font-family:var(--font-title);font-size:clamp(1.2rem,3.5vw,1.8rem) !important;font-weight:800;letter-spacing:.03em;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .logo-text span{color:var(--orange)}
 .home-sub{color:var(--text2);font-size:0.75rem;margin-top:2px}
+/* ── STAT CARDS — editar aquí para cambiar todas a la vez ── */
+:root{
+  --stat-min-h:80px;
+  --stat-radius:clamp(9px,1.2vw,14px);
+  --stat-pad:clamp(8px,1.2vw,14px) clamp(6px,1vw,10px);
+  --stat-val-size:clamp(1.1rem,2.8vw,1.6rem);
+  --stat-lbl-size:clamp(0.52rem,0.9vw,0.65rem);
+}
 .home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(4px,0.8vw,8px);padding:clamp(8px,1.5vw,16px) 12px;scrollbar-width:none}
 .home-stats::-webkit-scrollbar{display:none}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:clamp(9px,1.2vw,14px);padding:clamp(6px,1vw,10px) clamp(6px,1vw,10px);min-width:0;overflow:hidden}
-.stat .sv{font-family:var(--font-title);font-size:clamp(0.95rem,2.2vw,1.5rem);font-weight:800;color:var(--orange);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
-.stat .sl{font-size:clamp(0.45rem,0.85vw,0.6rem);color:var(--text3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--stat-radius);padding:var(--stat-pad);min-width:0;overflow:hidden;min-height:var(--stat-min-h);display:flex;flex-direction:column;justify-content:center}
+.stat .sv{font-family:var(--font-title);font-size:var(--stat-val-size);font-weight:800;color:var(--orange);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.stat .sl{font-size:var(--stat-lbl-size);color:var(--text3);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .home-menu{padding:12px 20px 24px;display:flex;flex-direction:column;gap:12px}
 .mc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;
   cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s}
@@ -620,7 +628,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
           <div class="tb-sync-wrap">
-            <span style="font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;margin-bottom:1px">v1.2.1</span>
+            <span style="font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.04em;opacity:.7;line-height:1;margin-bottom:1px">v1.2.2</span>
             <div class="km-btn" onclick="openKMenu()">⋮</div>
             <div class="sync-chip-bare">
               <div class="sync-dot pending" id="sd-home"></div>
@@ -4732,7 +4740,7 @@ function applyFontSize(val,save=true){
 .tb-back{font-size:clamp(1rem,2vw,1.4rem) !important;width:clamp(32px,4vw,42px) !important;height:clamp(32px,4vw,42px) !important}
 .tb-badge{font-size:0.68rem !important}
 .tab-btn{font-size:0.8rem !important}
-.stat .sl{font-size:clamp(0.45rem,0.85vw,0.6rem) !important}
+.stat .sl{font-size:var(--stat-lbl-size) !important}
 `
   const lbl=$id('font-size-label')
   if(lbl) lbl.textContent=SIZE_LABELS[String(val)]||'Normal'
