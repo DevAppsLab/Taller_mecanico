@@ -608,7 +608,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div class="tb-sync-wrap">
-          <span class="tb-version">v1.3.0</span>
+          <span class="tb-version">v1.3.1</span>
           <div class="km-btn" onclick="openKMenu()">⋮</div>
           <div class="sync-chip-bare">
             <div class="sync-dot pending" id="sd-home-cli"></div>
@@ -639,7 +639,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div class="tb-sync-wrap">
-          <span class="tb-version">v1.3.0</span>
+          <span class="tb-version">v1.3.1</span>
           <div class="km-btn" onclick="openKMenu()">⋮</div>
           <div class="sync-chip-bare">
             <div class="sync-dot pending" id="sd-home"></div>
@@ -907,6 +907,15 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
               </span>
             </label>
           </div>
+        </div>
+        <div class="admin-section-title" style="flex-shrink:0">App</div>
+        <div id="btn-instalar-pwa" class="mc mc-compact" onclick="instalarPWA()" style="align-items:center;gap:8px;display:none">
+          <div class="mc-icon">📲</div>
+          <div class="mc-info"><div class="mc-title mc-title-sm">Instalar App</div><div class="mc-sub">Sin pestañas nuevas cada vez</div></div>
+        </div>
+        <div class="mc mc-compact" onclick="instalarPWA()" style="align-items:center;gap:8px" id="btn-instalar-pwa-info">
+          <div class="mc-icon">📲</div>
+          <div class="mc-info"><div class="mc-title mc-title-sm">Instalar App</div><div class="mc-sub">Agregar a pantalla de inicio</div></div>
         </div>
         <div class="admin-section-title" style="flex-shrink:0">Bases de datos</div>
         <div class="mc mc-compact" onclick="goToFrom('screen-datos','screen-admin')" style="align-items:center;gap:8px">
@@ -1352,7 +1361,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 <div class="toast" id="toast"></div>
 <script>
 // ── Versión — cambiar aquí actualiza todos los headers ───────────
-const APP_VERSION='v1.3.0'
+const APP_VERSION='v1.3.1'
 // ── Helpers globales ─────────────────────────────────────────────
 const $id=id=>document.getElementById(id)
 const $qs=(sel,ctx=document)=>ctx.querySelector(sel)
@@ -3785,6 +3794,7 @@ function acFinDesc(el){
   const gas=DB[SH_GAS]||[]
   const seen=new Set()
   const fil=gas.filter(g=>{
+    if(g.tipo!==_finTipo) return false
     if(seen.has(g.desc)) return false
     seen.add(g.desc)
     return !q||g.desc.toLowerCase().includes(q)
@@ -3813,6 +3823,7 @@ function acFinCat(el){
   const gas=DB[SH_GAS]||[]
   const seen=new Set()
   const fil=gas.filter(g=>{
+    if(g.tipo!==_finTipo) return false
     const cat=g.cat||''; if(!cat||seen.has(cat)) return false
     seen.add(cat)
     return !q||cat.toLowerCase().includes(q)
