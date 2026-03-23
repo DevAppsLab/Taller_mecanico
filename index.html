@@ -612,7 +612,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div class="tb-sync-wrap">
-          <span class="tb-version">v1.3.1</span>
+          <span class="tb-version">v1.3.2</span>
           <div class="km-btn" onclick="openKMenu()">⋮</div>
           <div class="sync-chip-bare">
             <div class="sync-dot pending" id="sd-home-cli"></div>
@@ -643,7 +643,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div class="tb-sync-wrap">
-          <span class="tb-version">v1.3.1</span>
+          <span class="tb-version">v1.3.2</span>
           <div class="km-btn" onclick="openKMenu()">⋮</div>
           <div class="sync-chip-bare">
             <div class="sync-dot pending" id="sd-home"></div>
@@ -707,7 +707,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Nuevo Ingreso</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-registro"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -832,7 +832,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-title">Clientes</div>
       <div class="tb-badge" id="badge-cli-emp">0</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-clientes-emp"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -851,7 +851,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-title">Clientes</div>
       <div class="tb-badge" id="badge-cli">0</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-clientes"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -869,7 +869,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Cortes</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-cortes"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -893,7 +893,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Administración</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-admin"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -917,24 +917,15 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
             </label>
           </div>
         </div>
-        <div class="admin-section-title" style="flex-shrink:0">App</div>
-        <div id="btn-instalar-pwa" class="mc mc-compact" onclick="instalarPWA()" style="align-items:center;gap:8px;display:none">
-          <div class="mc-icon">📲</div>
-          <div class="mc-info"><div class="mc-title mc-title-sm">Instalar App</div><div class="mc-sub">Sin pestañas nuevas cada vez</div></div>
-        </div>
-        <div class="mc mc-compact" onclick="instalarPWA()" style="align-items:center;gap:8px" id="btn-instalar-pwa-info">
-          <div class="mc-icon">📲</div>
-          <div class="mc-info"><div class="mc-title mc-title-sm">Instalar App</div><div class="mc-sub">Agregar a pantalla de inicio</div></div>
-        </div>
         <div class="admin-section-title" style="flex-shrink:0">Bases de datos</div>
         <div class="mc mc-compact" onclick="goToFrom('screen-datos','screen-admin')" style="align-items:center;gap:8px">
           <div class="mc-icon">📊</div>
           <div class="mc-info"><div class="mc-title mc-title-sm">Datos e Historial</div></div>
           <div class="mc-arr">›</div>
         </div>
-        <div class="mc mc-compact" onclick="goToFrom('screen-bases','screen-admin')" style="align-items:center;gap:8px">
+        <div class="mc mc-compact" onclick="goToFrom('screen-dbgeneral','screen-admin')" style="align-items:center;gap:8px">
           <div class="mc-icon">🗂</div>
-          <div class="mc-info"><div class="mc-title mc-title-sm">Bases y Usuarios</div></div>
+          <div class="mc-info"><div class="mc-title mc-title-sm">Base de Datos General</div></div>
           <div class="mc-arr">›</div>
         </div>
         <div class="mc mc-compact" onclick="openDeleteAll()" style="align-items:center;gap:8px;border-color:rgba(239,68,68,.3)">
@@ -950,7 +941,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Inventario</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-inventario"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -978,7 +969,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Cotizaciones</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-cotizaciones"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -995,7 +986,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Personalizar App</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-apariencia"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -1100,7 +1091,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Datos e Historial</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-datos"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -1152,7 +1143,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Bases y Usuarios</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-bases"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -1184,13 +1175,96 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       </div>
     </div>
   </div>
+  <!-- ══ BASE DE DATOS GENERAL ══ -->
+  <div id="screen-dbgeneral" class="screen">
+    <div class="topbar">
+      <div class="tb-back" onclick="dbgBack()">‹</div>
+      <div class="tb-title" id="dbg-title">Base de Datos</div>
+      <div class="tb-sync-wrap">
+        <span class="tb-version">v1.3.2</span>
+        <div class="km-btn" onclick="openKMenu()">⋮</div>
+        <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-dbgeneral"></div><span class="sync-chip-label">Sincronizado</span></div>
+      </div>
+    </div>
+    <!-- Nivel 1: menú de bases -->
+    <div id="dbg-menu" class="scrollbody" style="padding:12px 16px 60px;display:flex;flex-direction:column;gap:8px">
+      <div class="admin-section-title">Selecciona una base de datos</div>
+      <div class="mc mc-compact" onclick="openDbSheet('clientes')" style="align-items:center;gap:10px">
+        <div class="mc-icon">👥</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Clientes</div><div class="mc-sub" id="dbg-count-clientes">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('sesiones')" style="align-items:center;gap:10px">
+        <div class="mc-icon">🔧</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Sesiones</div><div class="mc-sub" id="dbg-count-sesiones">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('cierre')" style="align-items:center;gap:10px">
+        <div class="mc-icon">📦</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Cierre (Historial)</div><div class="mc-sub" id="dbg-count-cierre">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('abonos')" style="align-items:center;gap:10px">
+        <div class="mc-icon">💰</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Abonos</div><div class="mc-sub" id="dbg-count-abonos">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('catalogo_reparaciones')" style="align-items:center;gap:10px">
+        <div class="mc-icon">🗂</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Catálogo Reparaciones</div><div class="mc-sub" id="dbg-count-catalogo_reparaciones">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('catalogo_clientes')" style="align-items:center;gap:10px">
+        <div class="mc-icon">🗂</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Catálogo Clientes</div><div class="mc-sub" id="dbg-count-catalogo_clientes">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('config')" style="align-items:center;gap:10px">
+        <div class="mc-icon">⚙️</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Configuración</div><div class="mc-sub" id="dbg-count-config">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('usuarios')" style="align-items:center;gap:10px">
+        <div class="mc-icon">👤</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Usuarios</div><div class="mc-sub" id="dbg-count-usuarios">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('inventario')" style="align-items:center;gap:10px">
+        <div class="mc-icon">📦</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Inventario</div><div class="mc-sub" id="dbg-count-inventario">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('cotizaciones')" style="align-items:center;gap:10px">
+        <div class="mc-icon">📄</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Cotizaciones</div><div class="mc-sub" id="dbg-count-cotizaciones">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc mc-compact" onclick="openDbSheet('gastos')" style="align-items:center;gap:10px">
+        <div class="mc-icon">💸</div>
+        <div class="mc-info"><div class="mc-title mc-title-sm">Gastos / Ingresos</div><div class="mc-sub" id="dbg-count-gastos">—</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+    </div>
+    <!-- Nivel 2: vista de registros de una base -->
+    <div id="dbg-sheet" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+      <div style="padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:center">
+        <div class="si-wrap" style="flex:1;position:relative">
+          <span class="si-ico" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:0.9rem">🔍</span>
+          <input type="text" id="dbg-search" placeholder="Filtrar…" autocomplete="off"
+            oninput="renderDbgSheet()" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:9px 13px 9px 34px;color:var(--text);font-family:var(--font);font-size:0.8rem;outline:none">
+        </div>
+        <button onclick="dbgClearSheet()" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:var(--r-sm);color:var(--red);font-size:0.72rem;font-weight:700;padding:7px 11px;cursor:pointer;white-space:nowrap;flex-shrink:0">🗑 Borrar todo</button>
+      </div>
+      <div id="dbg-list" style="flex:1;overflow-y:auto;padding:10px 14px 60px"></div>
+    </div>
+  </div>
   <!-- ══ FINANZAS ══ -->
   <div id="screen-finanzas" class="screen">
         <div class="topbar">
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Finanzas</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.1</span>
+        <span class="tb-version">v1.3.2</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-finanzas"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -1376,7 +1450,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 <div class="toast" id="toast"></div>
 <script>
 // ── Versión — cambiar aquí actualiza todos los headers ───────────
-const APP_VERSION='v1.3.1'
+const APP_VERSION='v1.3.2'
 // ── Helpers globales ─────────────────────────────────────────────
 const $id=id=>document.getElementById(id)
 const $qs=(sel,ctx=document)=>ctx.querySelector(sel)
@@ -1963,7 +2037,7 @@ function startAutoSync(){
 }
 
 // ── Indicadores ───────────────────────────────────────────────────
-const DOT_IDS=['sd-home','sd-home-cli','sd-registro','sd-clientes','sd-clientes-emp','sd-admin','sd-apariencia','sd-datos','sd-bases','sd-inventario','sd-cotizaciones','sd-cortes','sd-finanzas']
+const DOT_IDS=['sd-home','sd-home-cli','sd-registro','sd-clientes','sd-clientes-emp','sd-admin','sd-apariencia','sd-datos','sd-bases','sd-inventario','sd-cotizaciones','sd-cortes','sd-finanzas','sd-dbgeneral']
 function setDot(status,label=''){
   DOT_IDS.forEach(id=>{ const el=$id(id); if(el) el.className='sync-dot '+status })
   // Actualizar label en home
@@ -2048,6 +2122,7 @@ const _parentScreen={
   'screen-admin':          'screen-home',
   'screen-datos':          'screen-admin',
   'screen-bases':          'screen-admin',
+  'screen-dbgeneral':      'screen-admin',
   'screen-apariencia':     'screen-admin',
 }
 // ── Navegación atrás ─────────────────────────────────────────────
@@ -2140,6 +2215,7 @@ function rerenderActive(){
     if(id==='screen-clientes-emp')   renderClientesEmp()
     if(id==='screen-datos')          renderDatos()
     if(id==='screen-bases')          renderBases()
+    if(id==='screen-dbgeneral')      renderDbGeneral()
     if(id==='screen-inventario')     renderInventario()
     if(id==='screen-cotizaciones')   renderCotizaciones()
     if(id==='screen-cortes')         renderCortes()
@@ -2939,6 +3015,171 @@ function showDatosTab(tab){
 function renderDatos(){
   if(_datosTab==='tabla') renderTabla()
   else renderHistorial()
+}
+
+// ── Base de Datos General ────────────────────────────────────────
+const DBG_META={
+  clientes:           {ico:'👥', label:'Clientes',             sh:'clientes',          fields:['id','nombre','vehiculo','status','createdAt']},
+  sesiones:           {ico:'🔧', label:'Sesiones',             sh:'sesiones',          fields:['id','clientId','reparacion','manoObra','material','total','fecha']},
+  cierre:             {ico:'📦', label:'Cierre (Historial)',   sh:'cierre',            fields:['nombre','vehiculo','reparacion','manoObra','material','total','closedAt']},
+  abonos:             {ico:'💰', label:'Abonos',               sh:'abonos',            fields:['id','clientId','monto','nota','fecha']},
+  catalogo_reparaciones:{ico:'🗂', label:'Catálogo Reparaciones',sh:'catalogo_reparaciones',fields:['reparacion','manoObra','material']},
+  catalogo_clientes:  {ico:'🗂', label:'Catálogo Clientes',    sh:'catalogo_clientes', fields:['nombre','vehiculo']},
+  config:             {ico:'⚙️', label:'Configuración',        sh:'config',            fields:['clave','valor']},
+  usuarios:           {ico:'👤', label:'Usuarios',             sh:'usuarios',          fields:['id','nombre','rol']},
+  inventario:         {ico:'📦', label:'Inventario',           sh:'inventario',        fields:['id','nombre','categoria','cantidad','minimo','costo']},
+  cotizaciones:       {ico:'📄', label:'Cotizaciones',         sh:'cotizaciones',      fields:['id','cliente','vehiculo','fecha','status']},
+  gastos:             {ico:'💸', label:'Gastos / Ingresos',    sh:'gastos',            fields:['id','tipo','desc','cat','monto','fecha']}
+}
+let _dbgSheet=null // clave activa (null = menú)
+
+function renderDbGeneral(){
+  // Actualizar contadores del menú
+  Object.keys(DBG_META).forEach(k=>{
+    const el=$id('dbg-count-'+k)
+    if(el){
+      const n=(DB[DBG_META[k].sh]||[]).length
+      el.textContent=n+' registro'+(n!==1?'s':'')
+    }
+  })
+  if(_dbgSheet) renderDbgSheet()
+}
+
+function openDbSheet(key){
+  _dbgSheet=key
+  const meta=DBG_META[key]
+  $id('dbg-title').textContent=meta.ico+' '+meta.label
+  $id('dbg-search').value=''
+  $id('dbg-menu').style.display='none'
+  $id('dbg-sheet').style.display='flex'
+  renderDbgSheet()
+}
+
+function dbgBack(){
+  if(_dbgSheet){
+    _dbgSheet=null
+    $id('dbg-title').textContent='Base de Datos'
+    $id('dbg-menu').style.display=''
+    $id('dbg-sheet').style.display='none'
+    renderDbGeneral()
+  } else {
+    _goBack()
+  }
+}
+
+function renderDbgSheet(){
+  if(!_dbgSheet) return
+  const meta=DBG_META[_dbgSheet]
+  const q=($id('dbg-search')?.value||'').trim().toLowerCase()
+  const rows=(DB[meta.sh]||[]).filter(r=>{
+    if(!q) return true
+    return meta.fields.some(f=>String(r[f]||'').toLowerCase().includes(q))
+  })
+  const list=$id('dbg-list')
+  if(!rows.length){
+    list.innerHTML=`<div class="empty"><div class="ei">${meta.ico}</div><div class="et">Sin registros</div><div class="es">Esta base está vacía</div></div>`
+    return
+  }
+  // Campo identificador primario por sheet
+  const idField=_dbgSheet==='catalogo_reparaciones'?'reparacion':
+                _dbgSheet==='catalogo_clientes'?'nombre':
+                _dbgSheet==='config'?'clave':'id'
+
+  list.innerHTML=rows.map((r,i)=>{
+    const eid='dbge-'+i
+    const displayFields=meta.fields.filter(f=>f!=='id'&&f!=='clientId')
+    const mainVal=String(r[meta.fields[0]]||'')
+    const subFields=displayFields.slice(1)
+    // Construir inputs de edición
+    const editInputs=meta.fields.map(f=>`
+      <div class="field" style="margin-bottom:6px">
+        <label>${f}</label>
+        <input type="text" id="dbge-f-${i}-${f}" value="${escQ(String(r[f]||''))}" placeholder="${f}"
+          style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;color:var(--text);font-family:var(--font);font-size:0.8rem;outline:none">
+      </div>`).join('')
+
+    return `<div class="db-item ani" id="dbgi-${i}" style="animation-delay:${i*.02}s;margin-bottom:8px">
+      <div class="db-item-head" style="padding:10px 12px">
+        <div class="db-item-ico" style="font-size:1.1rem">${meta.ico}</div>
+        <div class="db-item-info" style="overflow:hidden">
+          <div class="db-item-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escH(mainVal)}</div>
+          ${subFields.slice(0,2).map(f=>`<div class="db-item-sub">${f}: ${escH(String(r[f]||''))}</div>`).join('')}
+        </div>
+        <div class="db-item-actions">
+          <button class="dba edit" onclick="dbgTogEdit(${i})">✏️</button>
+          <button class="dba del"  onclick="dbgDelRow('${escQ(String(r[idField]||''))}','${idField}')">🗑</button>
+        </div>
+      </div>
+      <div id="${eid}" style="display:none;padding:10px 12px 12px;border-top:1px solid var(--border);flex-direction:column;gap:4px">
+        ${editInputs}
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button onclick="dbgSaveRow(${i},'${escQ(String(r[idField]||''))}','${idField}')"
+            style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--green);color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.82rem">✅ Guardar</button>
+          <button onclick="dbgTogEdit(${i})"
+            style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--surface);color:var(--text2);border:1px solid var(--border);font-weight:600;cursor:pointer;font-size:0.82rem">✕ Cancelar</button>
+        </div>
+      </div>
+    </div>`
+  }).join('')
+}
+
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function dbgTogEdit(i){
+  const el=$id('dbge-'+i)
+  if(!el) return
+  const open=el.style.display==='flex'
+  $all('#dbg-list [id^="dbge-"]').forEach(e=>e.style.display='none')
+  if(!open) el.style.display='flex'
+}
+
+function dbgSaveRow(i, idVal, idField){
+  if(!_dbgSheet) return
+  const meta=DBG_META[_dbgSheet]
+  const sh=meta.sh
+  const idx=DB[sh].findIndex(r=>String(r[idField])===String(idVal))
+  if(idx===-1){showToast('⚠️ Registro no encontrado','error');return}
+  const updated={...DB[sh][idx]}
+  meta.fields.forEach(f=>{
+    const inp=$id(`dbge-f-${i}-${f}`)
+    if(inp) updated[f]=inp.value
+  })
+  DB[sh][idx]=updated
+  gsUpdateBg(sh, updated, idField)
+  renderDbgSheet()
+  showToast('✅ Registro actualizado','success')
+}
+
+function dbgDelRow(idVal, idField){
+  if(!_dbgSheet) return
+  if(!confirm('¿Eliminar este registro?')) return
+  const sh=DBG_META[_dbgSheet].sh
+  DB[sh]=DB[sh].filter(r=>String(r[idField])!==String(idVal))
+  bumpVersion()
+  queueOp({action:'delete', sheet:sh, idVal, idCol:idField})
+  renderDbgSheet()
+  renderDbGeneral()
+  showToast('🗑 Registro eliminado','error')
+}
+
+function dbgClearSheet(){
+  if(!_dbgSheet) return
+  const meta=DBG_META[_dbgSheet]
+  if(!confirm('\u00bfBorrar TODOS los registros de "'+meta.label+'"?\nEsta acci\u00f3n no se puede deshacer.')) return
+  const sh=meta.sh
+  const idField=_dbgSheet==='catalogo_reparaciones'?'reparacion':
+                _dbgSheet==='catalogo_clientes'?'nombre':
+                _dbgSheet==='config'?'clave':'id'
+  const rows=[...(DB[sh]||[])]
+  DB[sh]=[]
+  bumpVersion()
+  rows.forEach(r=>{
+    const idVal=String(r[idField]||'')
+    if(idVal) queueOp({action:'delete', sheet:sh, idVal, idCol:idField})
+  })
+  renderDbgSheet()
+  renderDbGeneral()
+  showToast('\ud83d\uddd1 Base "'+meta.label+'" borrada','error')
 }
 
 // ── Bases y Usuarios ─────────────────────────────────────────────
@@ -4020,24 +4261,7 @@ self.addEventListener('message',e=>{
   navigator.serviceWorker.register(swUrl).catch(()=>{})
 }
 
-// ── PWA Install prompt ───────────────────────────────────────────
-let _pwaPrompt=null
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault()
-  _pwaPrompt=e
-  const btn=$id('btn-instalar-pwa')
-  if(btn) btn.style.display='flex'
-})
-window.addEventListener('appinstalled',()=>{
-  _pwaPrompt=null
-  const btn=$id('btn-instalar-pwa')
-  if(btn) btn.style.display='none'
-  showToast('✅ App instalada correctamente','ok')
-})
-function instalarPWA(){
-  if(_pwaPrompt){ _pwaPrompt.prompt(); _pwaPrompt.userChoice.then(()=>{_pwaPrompt=null}) }
-  else { showToast('ℹ️ Usa el menú del navegador → "Instalar app" o "Agregar a pantalla de inicio"','info',4000) }
-}
+
 
 // ── Login tabs ────────────────────────────────────────────────────
 function showLoginTab(tab){
