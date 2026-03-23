@@ -1026,11 +1026,6 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         <div class="mc-info"><div class="mc-title mc-title-sm">Base de Datos General</div></div>
         <div class="mc-arr">›</div>
       </div>
-      <div class="mc mc-compact" onclick="navigate('screen-bases')" style="align-items:center;gap:8px">
-        <div class="mc-icon">👥</div>
-        <div class="mc-info"><div class="mc-title mc-title-sm">Bases y Usuarios</div></div>
-        <div class="mc-arr">›</div>
-      </div>
       <div class="mc mc-compact" onclick="openDeleteAll()" style="align-items:center;gap:8px;border-color:rgba(239,68,68,.3)">
         <div class="mc-icon" style="background:rgba(239,68,68,.12);color:var(--red)">🗑</div>
         <div class="mc-info"><div class="mc-title mc-title-sm" style="color:var(--red)">Borrar Todo</div></div>
@@ -1574,7 +1569,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 // ══════════════════════════════════════════════════════════════════
 
 // ── Versión — cambiar SOLO aquí; se propaga a todos los headers ──
-const APP_VERSION='v1.6.0'
+const APP_VERSION='v1.6.1'
 // ── Helpers globales ─────────────────────────────────────────────
 const $id=id=>document.getElementById(id)
 const $qs=(sel,ctx=document)=>ctx.querySelector(sel)
@@ -2319,6 +2314,9 @@ function _goBack(){
   const homeScreen = (_session.rol==='cliente') ? 'screen-home-cliente' : 'screen-home'
   // Si estamos en home → logout
   if(activeNow===homeScreen || activeNow==='') { logout(); return }
+  // ── Caso especial: screen-dbgeneral tiene dos niveles internos ──
+  // Si hay un sheet abierto, el back va al menú interno (no a admin)
+  if(activeNow==='screen-dbgeneral' && _dbgSheet){ dbgBack(); return }
   // 1. Sacar la pantalla actual del stack
   if(navStack[navStack.length-1] === activeNow) navStack.pop()
   // 2. El tope del stack es el "anterior real" del usuario
