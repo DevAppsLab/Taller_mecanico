@@ -178,8 +178,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .field label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px;
   text-transform:uppercase;letter-spacing:.05em}
 .field input,.field textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);
-  border-radius:var(--r-sm);padding:7px 11px;color:var(--text);font-family:var(--font);
-  font-size:15px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+  border-radius:var(--r-sm);padding:8px 12px;color:var(--text);font-family:var(--font);
+  font-size:18px;outline:none;transition:border-color .2s;-webkit-appearance:none}
 .field input:focus,.field textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--og)}
 .field textarea{resize:none;height:50px;line-height:1.4}
 .cost-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
@@ -535,6 +535,11 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .mc-compact{padding:clamp(13px,1.5vw,16px) clamp(12px,1.8vw,16px) !important}
 .mc-compact .mc-icon{width:38px;height:38px;font-size:1.15rem;flex-shrink:0}
 .mc-compact .mc-title{font-size:clamp(0.82rem,1.4vw,0.92rem)}
+/* Admin screen — botones 50% más grandes */
+#screen-admin .mc-compact{padding:clamp(19px,2.2vw,24px) clamp(18px,2.7vw,24px) !important}
+#screen-admin .mc-compact .mc-icon{width:57px;height:57px;font-size:1.7rem;flex-shrink:0}
+#screen-admin .mc-compact .mc-title{font-size:clamp(1.23rem,2.1vw,1.38rem)}
+#screen-admin .mc-compact .mc-arr{font-size:1.6rem}
 /* TOAST */
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(72px);
   background:var(--card);border:1px solid var(--border2);border-radius:11px;padding:11px 18px;
@@ -612,7 +617,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div class="tb-sync-wrap">
-          <span class="tb-version">v1.3.2</span>
+          <span class="tb-version">v1.4.0</span>
           <div class="km-btn" onclick="openKMenu()">⋮</div>
           <div class="sync-chip-bare">
             <div class="sync-dot pending" id="sd-home-cli"></div>
@@ -643,7 +648,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0">
         <div class="logo"><div class="logo-icon">🔧</div><div class="logo-text">Taller Mecánico</div></div>
         <div class="tb-sync-wrap">
-          <span class="tb-version">v1.3.2</span>
+          <span class="tb-version">v1.4.0</span>
           <div class="km-btn" onclick="openKMenu()">⋮</div>
           <div class="sync-chip-bare">
             <div class="sync-dot pending" id="sd-home"></div>
@@ -707,7 +712,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Nuevo Ingreso</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-registro"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -832,7 +837,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-title">Clientes</div>
       <div class="tb-badge" id="badge-cli-emp">0</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-clientes-emp"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -851,7 +856,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-title">Clientes</div>
       <div class="tb-badge" id="badge-cli">0</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-clientes"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -869,7 +874,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Cortes</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-cortes"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -893,7 +898,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Administración</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-admin"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -941,7 +946,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Inventario</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-inventario"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -969,7 +974,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Cotizaciones</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-cotizaciones"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -986,7 +991,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Personalizar App</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-apariencia"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -1091,7 +1096,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Datos e Historial</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-datos"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -1143,7 +1148,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Bases y Usuarios</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-bases"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -1181,7 +1186,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="dbgBack()">‹</div>
       <div class="tb-title" id="dbg-title">Base de Datos</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-dbgeneral"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -1264,7 +1269,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="tb-back" onclick="_goBack()">‹</div>
       <div class="tb-title">Finanzas</div>
       <div class="tb-sync-wrap">
-        <span class="tb-version">v1.3.2</span>
+        <span class="tb-version">v1.4.0</span>
         <div class="km-btn" onclick="openKMenu()">⋮</div>
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-finanzas"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
@@ -1389,7 +1394,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
     <div class="modal-body">
       <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5">
-        Elimina <strong style="color:var(--red)">permanentemente</strong> clientes, reparaciones, abonos e historial. Ingresa tu contraseña para continuar.
+        Elimina <strong style="color:var(--red)">permanentemente</strong> clientes, reparaciones, historial, abonos, catálogos, inventario, cotizaciones y gastos. Los <strong>usuarios</strong> y <strong>configuración</strong> se conservan. Ingresa tu contraseña para continuar.
       </div>
       <div class="field">
         <label>Contraseña</label>
@@ -1450,7 +1455,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 <div class="toast" id="toast"></div>
 <script>
 // ── Versión — cambiar aquí actualiza todos los headers ───────────
-const APP_VERSION='v1.3.2'
+const APP_VERSION='v1.4.0'
 // ── Helpers globales ─────────────────────────────────────────────
 const $id=id=>document.getElementById(id)
 const $qs=(sel,ctx=document)=>ctx.querySelector(sel)
@@ -3057,13 +3062,15 @@ function openDbSheet(key){
 
 function dbgBack(){
   if(_dbgSheet){
+    // Dentro de una base específica → volver al menú general
     _dbgSheet=null
     $id('dbg-title').textContent='Base de Datos'
     $id('dbg-menu').style.display=''
     $id('dbg-sheet').style.display='none'
     renderDbGeneral()
   } else {
-    _goBack()
+    // En el menú general → volver a Administración
+    goToFrom('screen-admin','screen-home')
   }
 }
 
@@ -3080,43 +3087,92 @@ function renderDbgSheet(){
     list.innerHTML=`<div class="empty"><div class="ei">${meta.ico}</div><div class="et">Sin registros</div><div class="es">Esta base está vacía</div></div>`
     return
   }
-  // Campo identificador primario por sheet
   const idField=_dbgSheet==='catalogo_reparaciones'?'reparacion':
                 _dbgSheet==='catalogo_clientes'?'nombre':
                 _dbgSheet==='config'?'clave':'id'
 
+  // Etiquetas legibles para cada campo
+  const FIELD_LABELS={
+    id:'ID',clientId:'ID Cliente',nombre:'Nombre',vehiculo:'Vehículo',rol:'Rol',
+    reparacion:'Reparación',manoObra:'Mano de Obra',material:'Material',total:'Total',
+    fecha:'Fecha',status:'Estado',activeSession:'Sesión activa',saldo:'Saldo',
+    clave:'Clave',valor:'Valor',tipo:'Tipo',desc:'Descripción',cat:'Categoría',
+    monto:'Monto',cantidad:'Cantidad',minimo:'Mínimo',costo:'Costo unit.',
+    categoria:'Categoría',cliente:'Cliente',reps:'Reparaciones',
+    closedAt:'Fecha cierre',fechaRep:'Fecha rep.',
+    nombre2:'Nombre',abono:'Abono',clienteId:'ID Cliente'
+  }
+  const lbl=f=>FIELD_LABELS[f]||f
+  const fmtVal=(f,v)=>{
+    if(v===null||v===undefined||v==='') return '<span style="color:var(--text3);font-style:italic">—</span>'
+    const s=String(v)
+    if(f==='manoObra'||f==='material'||f==='total'||f==='monto'||f==='costo'||f==='abono'){
+      const n=parseFloat(s); return isNaN(n)?escH(s):`<span style="color:var(--orange);font-weight:700">$${n.toLocaleString('es-MX',{minimumFractionDigits:0,maximumFractionDigits:2})}</span>`
+    }
+    if(f==='fecha'||f==='closedAt'||f==='fechaRep'){
+      try{const d=new Date(s);if(!isNaN(d))return'<span style="color:var(--text2)">'+d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+'</span>'}catch(e){}
+    }
+    if(f==='status'){
+      const m={pending:'⏳ Pendiente',accepted:'✅ Aceptada',rejected:'❌ Rechazada',
+               active:'🔧 Activo',closed:'✅ Cerrado',admin:'👑 Admin',empleado:'🔧 Empleado',cliente:'👤 Cliente'}
+      return m[s]?`<span style="font-weight:700">${m[s]}</span>`:escH(s)
+    }
+    if(f==='rol'){
+      const m={admin:'👑 Admin',empleado:'🔧 Empleado',cliente:'👤 Cliente'}
+      return m[s]?`<span style="font-weight:700">${m[s]}</span>`:escH(s)
+    }
+    if(f==='activeSession') return s&&s!==''&&s!=='false'?'<span style="color:var(--green);font-weight:700">✅ Sí</span>':'<span style="color:var(--text3)">No</span>'
+    if(f==='reps'){try{const a=JSON.parse(s);if(Array.isArray(a))return'<span style="color:var(--text2)">'+a.length+' rep(s)</span>'}catch(e){}}
+    if(s.length>60) return `<span title="${escH(s)}">${escH(s.slice(0,60))}…</span>`
+    return escH(s)
+  }
+  // Campos a mostrar en la cabecera de cada card
+  const HEAD_FIELDS={
+    clientes:['nombre','vehiculo','saldo','activeSession'],
+    sesiones:['reparacion','total','fecha','status'],
+    cierre:['nombre','reparacion','total','fecha'],
+    abonos:['clientId','abono','fecha'],
+    catalogo_reparaciones:['reparacion','manoObra','material'],
+    catalogo_clientes:['nombre','vehiculo'],
+    config:['clave','valor'],
+    usuarios:['nombre','rol'],
+    inventario:['nombre','categoria','cantidad','costo'],
+    cotizaciones:['cliente','vehiculo','fecha','status'],
+    gastos:['tipo','desc','monto','fecha']
+  }
+  const headFields=HEAD_FIELDS[_dbgSheet]||meta.fields.slice(0,4)
+  const editInputs=(r,i)=>meta.fields.map(f=>`
+    <div class="field" style="margin-bottom:6px">
+      <label>${lbl(f)}</label>
+      <input type="text" id="dbge-f-${i}-${f}" value="${escQ(String(r[f]||''))}" placeholder="${lbl(f)}"
+        style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:8px 10px;color:var(--text);font-family:var(--font);font-size:0.85rem;outline:none">
+    </div>`).join('')
+
   list.innerHTML=rows.map((r,i)=>{
     const eid='dbge-'+i
-    const displayFields=meta.fields.filter(f=>f!=='id'&&f!=='clientId')
-    const mainVal=String(r[meta.fields[0]]||'')
-    const subFields=displayFields.slice(1)
-    // Construir inputs de edición
-    const editInputs=meta.fields.map(f=>`
-      <div class="field" style="margin-bottom:6px">
-        <label>${f}</label>
-        <input type="text" id="dbge-f-${i}-${f}" value="${escQ(String(r[f]||''))}" placeholder="${f}"
-          style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;color:var(--text);font-family:var(--font);font-size:0.8rem;outline:none">
-      </div>`).join('')
-
-    return `<div class="db-item ani" id="dbgi-${i}" style="animation-delay:${i*.02}s;margin-bottom:8px">
-      <div class="db-item-head" style="padding:10px 12px">
-        <div class="db-item-ico" style="font-size:1.1rem">${meta.ico}</div>
-        <div class="db-item-info" style="overflow:hidden">
-          <div class="db-item-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escH(mainVal)}</div>
-          ${subFields.slice(0,2).map(f=>`<div class="db-item-sub">${f}: ${escH(String(r[f]||''))}</div>`).join('')}
+    const primaryField=headFields[0]
+    const primaryVal=String(r[primaryField]||r[meta.fields[0]]||'')
+    const subPairs=headFields.slice(1).filter(f=>r[f]!==undefined&&r[f]!==null&&r[f]!=='')
+    return `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;animation:fadein .22s ease both;animation-delay:${i*.018}s" id="dbgi-${i}">
+      <div style="padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="dbgTogEdit(${i})">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--og);border:1px solid var(--icon-border);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">${meta.ico}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px">${escH(primaryVal)||'<span style="color:var(--text3)">Sin nombre</span>'}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px 12px">
+            ${subPairs.map(f=>`<span style="font-size:0.72rem;color:var(--text3)">${lbl(f)}: ${fmtVal(f,r[f])}</span>`).join('')}
+          </div>
         </div>
-        <div class="db-item-actions">
-          <button class="dba edit" onclick="dbgTogEdit(${i})">✏️</button>
-          <button class="dba del"  onclick="dbgDelRow('${escQ(String(r[idField]||''))}','${idField}')">🗑</button>
-        </div>
+        <button onclick="event.stopPropagation();dbgDelRow('${escQ(String(r[idField]||''))}','${idField}')"
+          style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:var(--r-sm);color:var(--red);padding:6px 9px;cursor:pointer;font-size:0.75rem;font-weight:700;flex-shrink:0">🗑</button>
       </div>
-      <div id="${eid}" style="display:none;padding:10px 12px 12px;border-top:1px solid var(--border);flex-direction:column;gap:4px">
-        ${editInputs}
+      <div id="${eid}" style="display:none;padding:12px 14px 14px;border-top:1px solid var(--border);flex-direction:column;gap:4px">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px">✏️ Editar registro</div>
+        ${editInputs(r,i)}
         <div style="display:flex;gap:8px;margin-top:6px">
           <button onclick="dbgSaveRow(${i},'${escQ(String(r[idField]||''))}','${idField}')"
-            style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--green);color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.82rem">✅ Guardar</button>
+            style="flex:1;padding:10px;border-radius:var(--r-sm);background:var(--green);color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.85rem">✅ Guardar</button>
           <button onclick="dbgTogEdit(${i})"
-            style="flex:1;padding:9px;border-radius:var(--r-sm);background:var(--surface);color:var(--text2);border:1px solid var(--border);font-weight:600;cursor:pointer;font-size:0.82rem">✕ Cancelar</button>
+            style="flex:1;padding:10px;border-radius:var(--r-sm);background:var(--surface);color:var(--text2);border:1px solid var(--border);font-weight:600;cursor:pointer;font-size:0.85rem">✕ Cancelar</button>
         </div>
       </div>
     </div>`
@@ -3322,8 +3378,8 @@ async function confirmDeleteAll(){
     _queue.length=0
     const r=await gsPost({action:'clearAll'})
     if(r.ok){
-      // No borrar config — conserva nombre, logo, fondo y tema
-      const CLEAR_SHEETS=[SH_CLI,SH_SES,SH_CIE,SH_ABO,SH_CAT_REP,SH_CAT_CLI]
+      // No borrar usuarios ni config — conserva usuarios, nombre, logo, fondo y tema
+      const CLEAR_SHEETS=[SH_CLI,SH_SES,SH_CIE,SH_ABO,SH_CAT_REP,SH_CAT_CLI,SH_INV,SH_COT,SH_GAS]
       CLEAR_SHEETS.forEach(sh=>DB[sh]=[])
       // Conservar config pero resetear _lastmod
       bumpVersion()
