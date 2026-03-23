@@ -152,7 +152,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .stat .sl{font-size:var(--stat-lbl-size);color:var(--text3);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .home-menu{padding:12px 20px 24px;display:flex;flex-direction:column;gap:12px}
 .mc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;
-  cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s}
+  cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s;width:100%}
 .mc:active{transform:scale(.98)}
 .mc.primary{background:linear-gradient(135deg,var(--orange),var(--orange2));border-color:transparent;
   box-shadow:0 5px 18px var(--shadow-orange)}
@@ -271,6 +271,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 .abo-saldo.ok{color:var(--green)}.abo-saldo.pend{color:var(--red)}
 /* btn-abo, btn-entregar → ver bloque SISTEMA DE BOTONES */
 .cc-body{display:none}.ccard.expanded .cc-body{display:block}
+.cli-block .cli-body{display:none}.cli-block.open .cli-body{display:block}
 .add-rep-btn{display:flex;align-items:center;gap:7px;padding:10px 14px;background:var(--surface);
   border:none;border-bottom:1px solid var(--border);color:var(--orange);font-family:var(--font);
   font-size:0.75rem;font-weight:600;cursor:pointer;width:100%}
@@ -795,10 +796,9 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         </div>
       </div>
       <div id="home-emp-btns" style="display:none;flex-direction:column;gap:12px">
-        <div class="mc" onclick="goTo('screen-clientes-emp')">
+        <div class="mc" style="cursor:default;opacity:.7">
           <div class="mc-icon">👥</div>
           <div class="mc-info"><div class="mc-title">Clientes</div><div class="mc-desc">Ver estado y agregar abonos</div></div>
-          <div class="mc-arr">›</div>
         </div>
       </div>
     </div>
@@ -914,6 +914,18 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
           <div class="field" style="margin-bottom:0"><label>Material ($)</label>
             <input type="number" id="inp-mat" placeholder="0.00" min="0" step="0.01" oninput="calcT()" inputmode="decimal"></div>
         </div>
+        <div class="field" style="margin-top:8px">
+          <label>🔩 Material utilizado (inventario)</label>
+          <div class="ac-wrap">
+            <input type="text" id="inp-inv-mat" placeholder="Buscar pieza del inventario…" autocomplete="off"
+              oninput="acInvMat(this)" onfocus="acInvMat(this)" onkeydown="acK(event,'ac-inv-mat')">
+            <div class="ac-list" id="ac-inv-mat"></div>
+          </div>
+          <div id="inv-mat-seleccionado" style="display:none;margin-top:5px;background:var(--og);border:1px solid var(--icon-border);border-radius:var(--r-sm);padding:6px 10px;align-items:center;justify-content:space-between;gap:8px">
+            <span id="inv-mat-label" style="font-size:0.75rem;font-weight:600;color:var(--orange)"></span>
+            <button onclick="clearInvMat()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.9rem;padding:0">✕</button>
+          </div>
+        </div>
         <div onclick="regIngreso()" style="margin-top:10px;background:linear-gradient(135deg,var(--orange),var(--orange2));border-radius:var(--r);
           padding:14px 16px;display:flex;justify-content:space-between;align-items:center;
           box-shadow:0 4px 14px var(--shadow-orange);cursor:pointer;user-select:none;transition:transform .1s;active:scale(.98)"
@@ -997,38 +1009,30 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         <div class="sync-chip-bare"><div class="sync-dot pending" id="sd-admin"></div><span class="sync-chip-label">Sincronizado</span></div>
       </div>
     </div>
-    <div class="scrollbody" style="padding:12px 20px 40px;display:flex;flex-direction:column;gap:8px">
-      <div class="admin-section-title">Apariencia</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-        <div class="mc mc-compact" onclick="goTo('screen-apariencia')" style="align-items:center;gap:8px">
-          <div class="mc-icon">🎨</div>
-          <div class="mc-info"><div class="mc-title mc-title-sm">Personalizar</div></div>
-        </div>
-        <div class="mc mc-compact" style="align-items:center;gap:8px;cursor:default;pointer-events:none">
-          <div class="mc-icon">🌓</div>
-          <div class="mc-info"><div class="mc-title mc-title-sm">Tema</div></div>
-          <label style="position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0;pointer-events:all;margin-left:auto">
-            <input type="checkbox" class="theme-toggle-input" onchange="toggleTheme()" style="opacity:0;width:0;height:0">
-            <span style="position:absolute;inset:0;background:var(--border2);border-radius:22px;cursor:pointer;transition:.3s;display:flex;align-items:center;padding:2px">
-              <span class="theme-toggle-knob" style="width:18px;height:18px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.3)"></span>
-            </span>
-          </label>
-        </div>
+    <div class="scrollbody" style="padding:12px 20px 40px;display:flex;flex-direction:column;gap:12px">
+      <div class="mc" onclick="goTo('screen-apariencia')">
+        <div class="mc-icon">🎨</div>
+        <div class="mc-info"><div class="mc-title">Personalizar</div><div class="mc-desc">Colores, tema, fuente y apariencia</div></div>
+        <div class="mc-arr">›</div>
       </div>
-      <div class="admin-section-title">Bases de datos</div>
-      <div class="mc mc-compact" onclick="navigate('screen-datos')" style="align-items:center;gap:8px">
+      <div class="mc" onclick="navigate('screen-datos')">
         <div class="mc-icon">📊</div>
-        <div class="mc-info"><div class="mc-title mc-title-sm">Datos e Historial</div></div>
+        <div class="mc-info"><div class="mc-title">Datos e Historial</div><div class="mc-desc">Ver y exportar registros del taller</div></div>
         <div class="mc-arr">›</div>
       </div>
-      <div class="mc mc-compact" onclick="navigate('screen-dbgeneral')" style="align-items:center;gap:8px">
+      <div class="mc" onclick="navigate('screen-dbgeneral')">
         <div class="mc-icon">🗂</div>
-        <div class="mc-info"><div class="mc-title mc-title-sm">Base de Datos General</div></div>
+        <div class="mc-info"><div class="mc-title">Base de Datos General</div><div class="mc-desc">Editar todos los registros directamente</div></div>
         <div class="mc-arr">›</div>
       </div>
-      <div class="mc mc-compact" onclick="openDeleteAll()" style="align-items:center;gap:8px;border-color:rgba(239,68,68,.3)">
-        <div class="mc-icon" style="background:rgba(239,68,68,.12);color:var(--red)">🗑</div>
-        <div class="mc-info"><div class="mc-title mc-title-sm" style="color:var(--red)">Borrar Todo</div></div>
+      <div class="mc" onclick="navigate('screen-bases');showBasesTab('usr')">
+        <div class="mc-icon">👤</div>
+        <div class="mc-info"><div class="mc-title">Usuarios</div><div class="mc-desc">Crear y gestionar cuentas de acceso</div></div>
+        <div class="mc-arr">›</div>
+      </div>
+      <div class="mc" style="border-color:rgba(239,68,68,.3)" onclick="openDeleteAll()">
+        <div class="mc-icon" style="background:rgba(239,68,68,.12)">🗑</div>
+        <div class="mc-info"><div class="mc-title" style="color:var(--red)">Borrar Todo</div><div class="mc-desc">Eliminar todos los datos del taller</div></div>
         <div class="mc-arr" style="color:var(--red)">›</div>
       </div>
     </div>
@@ -1133,6 +1137,20 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
               <button onclick="removeBg()" style="width:34px;height:34px;background:var(--surface);color:var(--text3);border:1px solid var(--border);border-radius:var(--r-sm);padding:0;cursor:pointer;font-size:0.8rem;flex-shrink:0">🗑</button>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="sec-card">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div class="sec-lbl" style="margin-bottom:2px">🌓 Tema</div>
+            <div style="font-size:0.68rem;color:var(--text3)" id="apariencia-tema-label">Oscuro</div>
+          </div>
+          <label style="position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0">
+            <input type="checkbox" class="theme-toggle-input" onchange="toggleTheme();updateAparienciaTemaLabel()" style="opacity:0;width:0;height:0">
+            <span style="position:absolute;inset:0;background:var(--border2);border-radius:26px;cursor:pointer;transition:.3s;display:flex;align-items:center;padding:2px">
+              <span class="theme-toggle-knob" style="width:22px;height:22px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.3)"></span>
+            </span>
+          </label>
         </div>
       </div>
       <div class="sec-card">
@@ -1569,7 +1587,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 // ══════════════════════════════════════════════════════════════════
 
 // ── Versión — cambiar SOLO aquí; se propaga a todos los headers ──
-const APP_VERSION='v1.6.1'
+const APP_VERSION='v1.7.0'
 // ── Helpers globales ─────────────────────────────────────────────
 const $id=id=>document.getElementById(id)
 const $qs=(sel,ctx=document)=>ctx.querySelector(sel)
@@ -2278,6 +2296,7 @@ function navigate(id){
   if(prev === id) return
   // Limpiar UI de pantalla anterior
   if(prev==='screen-registro') clearIngreso()
+  if(prev==='screen-finanzas') _clearFinForm()
   $clsRm('.ac-list','open')
   $all('.mcard.open').forEach(m=>m.classList.remove('open'))
   $all('.week-detail.open').forEach(w=>w.classList.remove('open'))
@@ -2328,6 +2347,7 @@ function _goBack(){
   if(!(target in ROUTES)) { navigate(homeScreen); return }
   const prev2 = $qs('.screen.active')?.id
   if(prev2==='screen-registro') clearIngreso()
+  if(prev2==='screen-finanzas') _clearFinForm()
   $clsRm('.ac-list','open')
   $all('.mcard.open').forEach(m=>m.classList.remove('open'))
   $all('.hist-body[style*="block"]').forEach(h=>h.style.display='none')
@@ -2382,7 +2402,8 @@ window.addEventListener('popstate',()=>{
 })
 function clearIngreso(){
   selCid=null
-  ;['inp-nombre','inp-vehiculo','inp-rep','inp-mo','inp-mat'].forEach(id=>{const el=$id(id);if(el)el.value=''})
+  ;['inp-nombre','inp-vehiculo','inp-rep','inp-mo','inp-mat','inp-inv-mat'].forEach(id=>{const el=$id(id);if(el)el.value=''})
+  if(typeof clearInvMat==='function') clearInvMat()
   calcT()
   $show('campo-vehiculo')
   const selV=$id('campo-vehiculo-sel');if(selV)selV.style.display='none'
@@ -2633,9 +2654,12 @@ function regIngreso(){
     sAC('db-reparaciones',rep,mo,mat)
     showToast('✅ Cliente registrado','success')
   }
+  // Descontar material de inventario si se seleccionó
+  _descontarInvMat()
   // Limpiar formulario
   selCid=null
-  ;['inp-nombre','inp-vehiculo','inp-rep','inp-mo','inp-mat'].forEach(id=>{ const el=$id(id); if(el) el.value='' })
+  ;['inp-nombre','inp-vehiculo','inp-rep','inp-mo','inp-mat','inp-inv-mat'].forEach(id=>{ const el=$id(id); if(el) el.value='' })
+  clearInvMat()
   calcT()
   $show('campo-vehiculo')
   const selV=$id('campo-vehiculo-sel'); if(selV) selV.style.display='none'
@@ -2917,6 +2941,57 @@ function regDesdeModal(){
   setTimeout(()=>$id('cc-'+cid)?.classList.add('expanded'),50)
 }
 
+let _invMatSelId=null // id del item de inventario seleccionado
+
+function acInvMat(el){
+  const q=el.value.trim().toLowerCase()
+  const list=$id('ac-inv-mat')
+  const inv=(DB[SH_INV]||[]).filter(i=>numF(i.cantidad)>0)
+  const fil=q?inv.filter(i=>String(i.nombre||'').toLowerCase().includes(q)||String(i.categoria||'').toLowerCase().includes(q)):inv.slice(-10).reverse()
+  if(!fil.length){list.classList.remove('open');return}
+  list.innerHTML=fil.map((item,i)=>`<div class="ac-item" onclick="selInvMat('${escQ(String(item.id||item.nombre))}','${escQ(item.nombre)}',${numF(item.costo)})">
+    <span class="ac-ico">📦</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600">${item.nombre}</div>
+      <div style="font-size:0.68rem;color:var(--text3)">${item.categoria||'—'} · Stock: ${item.cantidad} · <span style="color:var(--orange)">${f$(item.costo)}</span></div>
+    </div></div>`).join('')
+  closeOtherAC('ac-inv-mat')
+  list.classList.add('open')
+}
+
+function selInvMat(id,nombre,costo){
+  _invMatSelId=id
+  const inp=$id('inp-inv-mat'); if(inp) inp.value=nombre
+  $id('ac-inv-mat')?.classList.remove('open')
+  // Mostrar badge de seleccionado
+  const sel=$id('inv-mat-seleccionado')
+  const lbl=$id('inv-mat-label')
+  if(sel){ sel.style.display='flex' }
+  if(lbl){ lbl.textContent=`📦 ${nombre} — ${f$(costo)} se descontará del inventario` }
+  // Auto-fill material cost
+  const matInp=$id('inp-mat')
+  if(matInp&&(!matInp.value||parseFloat(matInp.value)===0)) matInp.value=costo
+  calcT()
+}
+
+function clearInvMat(){
+  _invMatSelId=null
+  const inp=$id('inp-inv-mat'); if(inp) inp.value=''
+  const sel=$id('inv-mat-seleccionado')
+  if(sel) sel.style.display='none'
+}
+
+function _descontarInvMat(){
+  if(!_invMatSelId) return
+  const idx=DB[SH_INV].findIndex(i=>String(i.id||i.nombre)===String(_invMatSelId))
+  if(idx===-1) return
+  const item=DB[SH_INV][idx]
+  const nuevaCantidad=Math.max(0,numF(item.cantidad)-1)
+  DB[SH_INV][idx]={...item,cantidad:nuevaCantidad}
+  gsUpdateBg(SH_INV,DB[SH_INV][idx])
+  showToast(`📦 ${item.nombre} descontado del inventario (quedan ${nuevaCantidad})`,'success')
+  clearInvMat()
+}
 // ── Cierre Mensual ────────────────────────────────────────────────
 function getWeekNum(dateStr){
   const d=new Date(dateStr),day=d.getDate()
@@ -3354,11 +3429,13 @@ function renderDbgSheet(){
         </div>
         <button onclick="event.stopPropagation();dbgDelRow('${escQ(String(r[idField]||''))}','${idField}')"
           style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:var(--r-sm);color:var(--red);padding:6px 9px;cursor:pointer;font-size:0.75rem;font-weight:700;flex-shrink:0">🗑</button>
+        <button onclick="event.stopPropagation();dbgTogEdit(${i})"
+          style="background:var(--og);border:1px solid var(--icon-border);border-radius:var(--r-sm);color:var(--orange);padding:6px 9px;cursor:pointer;font-size:0.75rem;font-weight:700;flex-shrink:0">✏️</button>
       </div>
-      <div id="${eid}" style="display:none;padding:12px 14px 14px;border-top:1px solid var(--border);flex-direction:column;gap:4px">
-        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px">✏️ Editar registro</div>
+      <div id="${eid}" style="display:none;padding:12px 14px 14px;border-top:1px solid var(--border);flex-direction:column;gap:4px;max-height:60vh;overflow-y:auto">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:8px;background:var(--og);padding:6px 10px;border-radius:var(--r-sm)">✏️ Editar registro</div>
         ${editInputs(r,i)}
-        <div style="display:flex;gap:8px;margin-top:6px">
+        <div style="display:flex;gap:8px;margin-top:8px;position:sticky;bottom:0;background:var(--card);padding-top:8px">
           <button onclick="dbgSaveRow(${i},'${escQ(String(r[idField]||''))}','${idField}')"
             style="flex:1;padding:10px;border-radius:var(--r-sm);background:var(--green);color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.85rem">✅ Guardar</button>
           <button onclick="dbgTogEdit(${i})"
@@ -3630,18 +3707,29 @@ async function openApariencia(){
   const chev=$id('pass-chev')
   if(chev) chev.style.transform=''
   updateToggleKnob()
+  updateAparienciaTemaLabel()
 }
 function updateToggleKnob(){
   const isLight=cfgGet('theme','dark')==='light'
-  // Actualizar todos los toggles que existan
   $all('.theme-toggle-input').forEach(tog=>{
     tog.checked=isLight
+    const knob=tog.nextElementSibling?.querySelector('.theme-toggle-knob')
+    if(knob){
+      const trackH=tog.nextElementSibling?.offsetHeight||22
+      const knobSize=trackH-4
+      knob.style.transform=isLight?`translateX(${knobSize}px)`:'translateX(0)'
+      const track=tog.nextElementSibling
+      if(track) track.style.background=isLight?'var(--orange)':'var(--border2)'
+    }
   })
-  $all('.theme-toggle-knob').forEach(knob=>{
-    knob.style.transform=isLight?'translateX(20px)':'translateX(0)'
-    const track=knob.parentElement
-    if(track) track.style.background=isLight?'var(--orange)':'var(--border2)'
-  })
+  updateAparienciaTemaLabel()
+}
+function updateAparienciaTemaLabel(){
+  const isLight=cfgGet('theme','dark')==='light'
+  const lbl=$id('apariencia-tema-label')
+  if(lbl) lbl.textContent=isLight?'Claro':'Oscuro'
+  const kmLbl=$id('km-theme-label')
+  if(kmLbl) kmLbl.textContent=isLight?'Claro':'Oscuro'
 }
 function saveCfgName(){
   const val=$id('cfg-name').value.trim()
@@ -4305,19 +4393,20 @@ function acFinDesc(el){
   }).slice(-10).reverse()
   if(!fil.length){list.classList.remove('open');return}
   list.innerHTML=fil.map(g=>`<div class="ac-item"
-    onclick="selFinDesc('${escQ(g.desc)}','${escQ(g.cat||'')}')">
+    onclick="selFinDesc('${escQ(g.desc)}','${escQ(g.cat||'')}',${numF(g.monto)})">
     <span class="ac-ico">${g.tipo==='gasto'?'💸':'💵'}</span>
     <div style="flex:1;min-width:0">
       <div style="font-weight:600">${g.desc}</div>
-      <div style="font-size:0.68rem;color:var(--text3)">${g.cat||''}</div>
+      <div style="font-size:0.68rem;color:var(--text3)">${g.cat||''} · <span style="color:var(--orange);font-weight:700">${f$(g.monto)}</span></div>
     </div></div>`).join('')
   closeOtherAC('ac-fin-desc')
   list.classList.add('open')
 }
 
-function selFinDesc(desc,cat){
+function selFinDesc(desc,cat,monto){
   const d=$id('fin-desc'); if(d) d.value=desc
   const c=$id('fin-cat'); if(c&&cat) c.value=cat
+  const m=$id('fin-monto'); if(m&&monto) m.value=monto
   $id('ac-fin-desc')?.classList.remove('open')
 }
 
@@ -4349,6 +4438,10 @@ function regFinanza(){
   // Limpiar campos
   ;['fin-desc','fin-cat','fin-monto'].forEach(id=>{const el=$id(id);if(el)el.value=''})
   showToast(_finTipo==='gasto'?'💸 Gasto registrado':'💵 Ingreso registrado','success')
+}
+
+function _clearFinForm(){
+  ;['fin-desc','fin-cat','fin-monto'].forEach(id=>{const el=$id(id);if(el)el.value=''})
 }
 
 function showFinTab(tab){
@@ -4397,21 +4490,6 @@ function _finRowsForRange(desde, hasta){
 }
 
 function _finResumenHTML(rows){
-  const ingresos=rows.filter(r=>r.tipo==='ingreso').reduce((s,r)=>s+r.monto,0)
-  const gastos=rows.filter(r=>r.tipo==='gasto').reduce((s,r)=>s+r.monto,0)
-  const util=ingresos-gastos
-  // Update summary cards
-  $set('fin-res-ing',f$(ingresos))
-  $set('fin-res-gas',f$(gastos))
-  $set('fin-res-util',f$(util))
-  const uc=$id('fin-res-util-card')
-  if(uc){
-    const pos=util>=0
-    uc.style.background=pos?'var(--og)':'rgba(239,68,68,.08)'
-    uc.style.borderColor=pos?'var(--icon-border)':'rgba(239,68,68,.25)'
-    $id('fin-res-util').style.color=pos?'var(--orange)':'var(--red)'
-    uc.querySelector('div').style.color=pos?'var(--orange)':'var(--red)'
-  }
   if(!rows.length) return `<div class="empty"><div class="ei">💰</div><div class="et">Sin movimientos</div></div>`
   // Tabla detallada
   return rows.map(r=>{
@@ -4441,22 +4519,161 @@ function delFinanza(id){
 function renderFinCorte(){
   const cont=$id('fin-corte-cont'); if(!cont) return
   const now=new Date(), hoy=_hoyKey()
-  let desde,hasta,label
+  const year=now.getFullYear(), month=now.getMonth()
   if(_finCorteTab==='dia'){
-    desde=hasta=hoy; label='Hoy'
+    _renderFinCorteDia(now,hoy,year,month,cont)
   } else if(_finCorteTab==='sem'){
-    const d=new Date(now); d.setDate(d.getDate()-d.getDay())
-    desde=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
-    const h=new Date(d); h.setDate(h.getDate()+6)
-    hasta=`${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}`
-    label='Esta semana'
+    _renderFinCorteSem(now,hoy,year,month,cont)
   } else {
-    desde=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`
-    hasta=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-31`
-    label=now.toLocaleDateString('es-MX',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase())
+    _renderFinCorteMes(now,hoy,year,month,cont)
   }
-  const rows=_finRowsForRange(desde,hasta)
-  cont.innerHTML=_finResumenHTML(rows)
+}
+
+function _renderFinCorteDia(now,hoy,year,month,cont){
+  const firstDay=new Date(year,month,1)
+  let calStart=new Date(firstDay)
+  calStart.setDate(calStart.getDate()-calStart.getDay())
+  const semanas=[]
+  let cur=new Date(calStart)
+  const lastDay=new Date(year,month+1,0)
+  while(cur<=lastDay){
+    const sem=[]
+    for(let d=0;d<7;d++){
+      const key=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`
+      const inMonth=cur.getMonth()===month&&cur.getFullYear()===year
+      const rows=inMonth?_finRowsForRange(key,key):[]
+      const tot=rows.reduce((s,r)=>s+r.monto*(r.tipo==='ingreso'?1:-1),0)
+      sem.push({key,day:cur.getDate(),inMonth,esHoy:key===hoy,rows,tot})
+      cur.setDate(cur.getDate()+1)
+    }
+    semanas.push(sem)
+  }
+  const DIAS=['D','L','M','M','J','V','S']
+  const rowsHoy=_finRowsForRange(hoy,hoy)
+  _finUpdateResumen(rowsHoy)
+  cont.innerHTML=`
+    <div style="margin-bottom:6px">
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px">
+        ${DIAS.map(d=>`<div style="text-align:center;font-size:0.55rem;font-weight:700;color:var(--text3);padding:2px 0">${d}</div>`).join('')}
+      </div>
+      ${semanas.map(sem=>`
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px">
+          ${sem.map(d=>{
+            if(!d.inMonth) return `<div style="height:38px"></div>`
+            const hasData=d.rows.length>0
+            const bg=d.esHoy?'var(--orange)':hasData?'var(--og)':'var(--card)'
+            const col=d.esHoy?'#fff':hasData?'var(--orange)':'var(--text3)'
+            const bor=d.esHoy?'none':`1px solid ${hasData?'var(--icon-border)':'var(--border)'}`
+            return `<div onclick="finCalDiaClick('${d.key}')" style="height:38px;border-radius:var(--r-sm);background:${bg};border:${bor};display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:${hasData?'pointer':'default'};transition:background .15s">
+              <span style="font-size:0.7rem;font-weight:${d.esHoy?800:600};color:${col};line-height:1">${d.day}</span>
+              ${hasData?`<span style="font-size:0.42rem;font-weight:700;color:${d.esHoy?'rgba(255,255,255,.85)':'var(--orange)'};line-height:1.2">${d.rows.length}mov</span>`:''}
+            </div>`
+          }).join('')}
+        </div>`).join('')}
+    </div>
+    <div id="fin-cal-det" style="margin-top:2px">
+      ${rowsHoy.length?_finResumenHTML(rowsHoy):`<div class="empty" style="padding:20px"><div class="ei" style="font-size:26px">📅</div><div class="et">Sin movimientos hoy</div></div>`}
+    </div>`
+  window.finCalDiaClick=function(key){
+    const rows=_finRowsForRange(key,key)
+    if(!rows.length) return
+    _finUpdateResumen(rows)
+    const det=$id('fin-cal-det')
+    if(det) det.innerHTML=_finResumenHTML(rows)
+  }
+}
+
+function _renderFinCorteSem(now,hoy,year,month,cont){
+  const firstDay=new Date(year,month,1)
+  const lastDay=new Date(year,month+1,0)
+  let cur=new Date(firstDay); cur.setDate(cur.getDate()-cur.getDay())
+  const semanas=[]; let semNum=1
+  while(cur<=lastDay){
+    const desde=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`
+    const hastaDate=new Date(cur); hastaDate.setDate(hastaDate.getDate()+6)
+    const hasta=`${hastaDate.getFullYear()}-${String(hastaDate.getMonth()+1).padStart(2,'0')}-${String(hastaDate.getDate()).padStart(2,'0')}`
+    const rows=_finRowsForRange(desde,hasta)
+    const total=rows.reduce((s,r)=>s+r.monto*(r.tipo==='ingreso'?1:-1),0)
+    const esSemActual=hoy>=desde&&hoy<=hasta
+    const dFmt=new Date(desde+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'})
+    const hFmt=new Date(hasta+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'})
+    semanas.push({semNum,desde,hasta,dFmt,hFmt,rows,total,esSemActual,hasData:rows.length>0})
+    cur.setDate(cur.getDate()+7); semNum++
+  }
+  const semActual=semanas.find(s=>s.esSemActual)
+  if(semActual) _finUpdateResumen(semActual.rows)
+  cont.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(${semanas.length},1fr);gap:4px;margin-bottom:8px">
+      ${semanas.map(s=>{
+        const bg=s.esSemActual?'var(--orange)':s.hasData?'var(--og)':'var(--card)'
+        const col=s.esSemActual?'#fff':s.hasData?'var(--orange)':'var(--text3)'
+        const bor=s.esSemActual?'none':`1px solid ${s.hasData?'var(--icon-border)':'var(--border)'}`
+        return `<div onclick="finCalSemClick('${s.desde}')" style="border-radius:var(--r-sm);background:${bg};border:${bor};padding:7px 3px;text-align:center;cursor:${s.hasData?'pointer':'default'};transition:background .15s">
+          <div style="font-size:0.7rem;font-weight:${s.esSemActual?800:600};color:${col}">Sem ${s.semNum}</div>
+          <div style="font-size:0.5rem;color:${s.esSemActual?'rgba(255,255,255,.75)':'var(--text3)'};margin-top:1px">${s.dFmt}</div>
+          <div style="font-size:0.5rem;color:${s.esSemActual?'rgba(255,255,255,.75)':'var(--text3)'}">– ${s.hFmt}</div>
+          ${s.hasData?`<div style="font-size:0.6rem;font-weight:700;color:${s.esSemActual?'rgba(255,255,255,.9)':'var(--orange)'};margin-top:3px">${s.rows.length}mov</div>`:''}
+        </div>`
+      }).join('')}
+    </div>
+    <div id="fin-cal-sem-det">
+      ${semActual?.hasData?_finResumenHTML(semActual.rows):`<div class="empty" style="padding:20px"><div class="ei" style="font-size:26px">📆</div><div class="et">Sin movimientos esta semana</div></div>`}
+    </div>`
+  window.finCalSemClick=function(desde){
+    const s=semanas.find(x=>x.desde===desde)
+    if(!s||!s.hasData) return
+    _finUpdateResumen(s.rows)
+    const det=$id('fin-cal-sem-det')
+    if(det) det.innerHTML=_finResumenHTML(s.rows)
+  }
+}
+
+function _renderFinCorteMes(now,hoy,year,month,cont){
+  const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+  const meses=Array.from({length:12},(_,m)=>{
+    const rows=_finRowsForRange(`${year}-${String(m+1).padStart(2,'0')}-01`,`${year}-${String(m+1).padStart(2,'0')}-31`)
+    return{m,label:MESES[m],rows,total:rows.reduce((s,r)=>s+(r.tipo==='ingreso'?r.monto:-r.monto),0),esActual:m===month,hasData:rows.length>0}
+  })
+  const actual=meses[month]
+  if(actual) _finUpdateResumen(actual.rows)
+  cont.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:8px">
+      ${meses.map(m=>{
+        const bg=m.esActual?'var(--orange)':m.hasData?'var(--og)':'var(--card)'
+        const col=m.esActual?'#fff':m.hasData?'var(--orange)':'var(--text3)'
+        const bor=m.esActual?'none':`1px solid ${m.hasData?'var(--icon-border)':'var(--border)'}`
+        return `<div onclick="finCalMesClick(${m.m})" style="border-radius:var(--r-sm);background:${bg};border:${bor};padding:8px 4px;text-align:center;cursor:${m.hasData?'pointer':'default'};transition:background .15s">
+          <div style="font-size:0.82rem;font-weight:${m.esActual?800:600};color:${col}">${m.label}</div>
+          ${m.hasData?`<div style="font-size:0.6rem;font-weight:700;color:${m.esActual?'rgba(255,255,255,.9)':'var(--orange)'};margin-top:2px">${m.rows.length}mov</div>`:`<div style="font-size:0.52rem;color:var(--text3);margin-top:2px">—</div>`}
+        </div>`
+      }).join('')}
+    </div>
+    <div id="fin-cal-mes-det">
+      ${actual.hasData?_finResumenHTML(actual.rows):`<div class="empty" style="padding:20px"><div class="ei" style="font-size:26px">🗓</div><div class="et">Sin movimientos este mes</div></div>`}
+    </div>`
+  window.finCalMesClick=function(m){
+    const mes=meses[m]
+    if(!mes||!mes.hasData) return
+    _finUpdateResumen(mes.rows)
+    $id('fin-cal-mes-det').innerHTML=_finResumenHTML(mes.rows)
+  }
+}
+
+function _finUpdateResumen(rows){
+  const ingresos=rows.filter(r=>r.tipo==='ingreso').reduce((s,r)=>s+r.monto,0)
+  const gastos=rows.filter(r=>r.tipo==='gasto').reduce((s,r)=>s+r.monto,0)
+  const util=ingresos-gastos
+  $set('fin-res-ing',f$(ingresos))
+  $set('fin-res-gas',f$(gastos))
+  $set('fin-res-util',f$(util))
+  const uc=$id('fin-res-util-card')
+  if(uc){
+    const pos=util>=0
+    uc.style.background=pos?'var(--og)':'rgba(239,68,68,.08)'
+    uc.style.borderColor=pos?'var(--icon-border)':'rgba(239,68,68,.25)'
+    $id('fin-res-util').style.color=pos?'var(--orange)':'var(--red)'
+    uc.querySelector('div').style.color=pos?'var(--orange)':'var(--red)'
+  }
 }
 
 function renderFinanzas(){
@@ -4479,7 +4696,7 @@ function showToast(msg,type='success'){
 // ── Service Worker — cachea el HTML para carga instantánea ────────
 if('serviceWorker' in navigator){
   const swCode=`
-const CACHE='tallerpro-v7'
+const CACHE='tallerpro-v8'
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(
   caches.open(CACHE).then(c=>c.addAll([location.pathname]))
 )})
@@ -4598,16 +4815,7 @@ function renderClienteActivo(){
       <div style="padding:0 16px 12px">
         ${reps.map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
           <div style="flex:1;font-size:0.82rem;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.reparacion}</div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
-            <div style="display:flex;align-items:center;gap:4px">
-              <span style="font-size:0.6rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Total</span>
-              <span style="font-size:0.78rem;font-weight:700;color:var(--orange)">${f$(r.total)}</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:4px">
-              <span style="font-size:0.6rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Pendiente</span>
-              <span style="font-size:0.72rem;font-weight:700;color:${saldo<=0?'var(--green)':'var(--red)'}">${saldo<=0?'Al día':f$(saldo)}</span>
-            </div>
-          </div>
+          <div style="font-size:0.65rem;color:var(--text3);white-space:nowrap;flex-shrink:0">📅 ${fD(r.fecha)}</div>
         </div>`).join('')}
       </div>
     </div>`
@@ -4928,7 +5136,6 @@ function renderClientesEmp(){
           <button onclick="doAbonoEmp('${c.id}',event)"
             style="padding:7px 14px;background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);font-weight:700;cursor:pointer">💵</button>
         </div>
-        ${isDone?`<button class="btn-entregar" onclick="entregar('${c.id}',event)" style="margin-top:8px">🚗 Entregar</button>`:''}
       </div>
     </div>`
   }).join('')
