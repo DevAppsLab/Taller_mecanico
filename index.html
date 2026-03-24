@@ -654,158 +654,88 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   cursor:pointer;flex-shrink:0
 }
 
-/* ══ HOVER HIGHLIGHTS GLOBALES ════════════════════════════════════ */
-/* Transición base unificada */
-.mc,.mc.primary,.stat,.ccard-head,.cc-av,.cc-info,.mcard,.week-block,
-.cli-head,.km-item,.km-btn,.modal-close,.mci,.tab-btn,.s-btn,.add-rep-btn,
-.dba,.rab,.btn-se,.ri-edit-save,.ri-edit-cancel,.inv-adj button,
-.btn-seg,.btn,.btn-reg,.btn-entregar,.btn-abo,.btn-danger,.btn-success,
-.btn-secondary,.btn-ghost,.btn-purple,.btn-primary,.cropper-btn,
-.font-option,.palette-item,.abo-del,.tb-back,.tb-sync,.ac-item,
-.cc-chev,.ccard-head,[onclick]{
-  transition:filter .15s, background .15s, opacity .15s,
-             transform .15s, border-color .18s, box-shadow .15s;
+/* ══ HOVER HIGHLIGHTS GLOBALES ════════════════════════════════════
+   Regla universal: cualquier <button> o elemento con cursor:pointer
+   recibe transición y brillo. Las reglas específicas afinan el efecto.
+═══════════════════════════════════════════════════════════════════ */
+
+/* 1) Transición base universal */
+button,[onclick],[style*="cursor:pointer"]{
+  transition:filter .15s,background .15s,opacity .15s,
+             transform .15s,border-color .18s,box-shadow .15s !important;
 }
 
-/* ── Tarjetas menú home ── */
-.mc:not(.primary):hover{
-  background:var(--border2);
-  border-color:var(--orange);
-  transform:translateY(-1px);
-  box-shadow:0 6px 20px rgba(0,0,0,.25);
-}
-.mc.primary:hover{ filter:brightness(1.15); transform:translateY(-1px) }
-
-/* ── Stats ── */
-.stat:hover{
-  filter:brightness(1.18);
-  border-color:var(--orange);
-  transform:translateY(-1px);
-}
-
-/* ── Tarjetas clientes ── */
-.ccard-head:hover{ background:rgba(255,255,255,.06); }
-.cc-av:hover,.cc-info:hover{ filter:brightness(1.1) }
-
-/* ── Tarjetas mensuales ── */
-.mcard:hover{ filter:brightness(1.1); transform:translateY(-1px) }
-
-/* ── Semanas acordeón ── */
-.week-block:hover{ filter:brightness(1.15); border-color:var(--orange) }
-
-/* ── Filas clientes mensual ── */
-.cli-head:hover{ background:rgba(255,255,255,.06) }
-
-/* ── Menú ⋮ ── */
-.km-btn:hover{ background:var(--border2); color:var(--text); filter:brightness(1.1) }
-.km-item:hover{ background:var(--card); filter:brightness(1.08) }
-
-/* ── Cerrar modal ── */
-.modal-close:hover{ background:var(--border2); color:var(--text); transform:scale(1.08) }
-
-/* ── Selector de cliente en modal ── */
-.mci:hover{ background:var(--card); border-color:var(--orange) }
-
-/* ── Pestañas ── */
-.tab-btn:not(.active):hover{
-  background:rgba(255,255,255,.07);
-  color:var(--text);
-  filter:brightness(1.1);
-}
-
-/* ── Botones de estado ── */
-.s-btn:hover{ filter:brightness(1.2); transform:scale(1.02) }
-
-/* ── Agregar reparación ── */
-.add-rep-btn:hover{ background:var(--card); color:var(--orange); filter:brightness(1.1) }
-
-/* ── Autocomplete items ── */
-.ac-item:hover,.ac-item.focused{ background:var(--border); filter:brightness(1.08) }
-
-/* ── Botones de acción pequeños ── */
-.dba:hover{ filter:brightness(1.25); transform:scale(1.08) }
-.rab:hover{ opacity:1; filter:brightness(1.2); transform:scale(1.08) }
-.btn-se:hover{ filter:brightness(1.18); transform:scale(1.05) }
-.abo-del:hover{ opacity:1; filter:brightness(1.2); transform:scale(1.08) }
-
-/* ── Botones inline de edición ── */
-.ri-edit-save:hover{ filter:brightness(1.15); transform:scale(1.03) }
-.ri-edit-cancel:hover{ background:var(--border2); transform:scale(1.03) }
-
-/* ── Inventario +/- ── */
-.inv-adj button:hover{
-  background:var(--border2);
-  color:var(--text);
-  border-color:var(--orange);
-  transform:scale(1.1);
-}
-
-/* ── Botones segmento ── */
-.btn-seg:not(.seg-active):hover{
-  border-color:var(--border2);
-  color:var(--text);
-  background:rgba(255,255,255,.06);
-  filter:brightness(1.1);
-}
-
-/* ── Botones primarios (naranja) ── */
-.btn-primary:hover,.btn-reg:hover{
+/* 2) Catch-all: todo botón y elemento clicable brilla */
+button:hover,[onclick]:hover,[style*="cursor:pointer"]:hover{
   filter:brightness(1.14);
-  transform:translateY(-1px);
-  box-shadow:0 6px 20px rgba(255,107,43,.5);
-}
-
-/* ── Botón entregar (morado) ── */
-.btn-entregar:hover{
-  filter:brightness(1.14);
-  transform:translateY(-1px);
-  box-shadow:0 6px 16px rgba(139,92,246,.5);
-}
-
-/* ── Botón abono (verde) ── */
-.btn-abo:hover{ opacity:.82; filter:brightness(1.1); transform:translateY(-1px) }
-
-/* ── Botones de peligro ── */
-.btn-danger:hover{ filter:brightness(1.18); transform:scale(1.02) }
-
-/* ── Botones de éxito ── */
-.btn-success:hover{ filter:brightness(1.15); transform:scale(1.02) }
-
-/* ── Botones secundarios ── */
-.btn-secondary:hover{ background:var(--border2); color:var(--text); filter:brightness(1.1) }
-
-/* ── Botones ghost ── */
-.btn-ghost:hover{ background:var(--card); color:var(--text); filter:brightness(1.1) }
-
-/* ── Botones purple ── */
-.btn-purple:hover{ filter:brightness(1.14); transform:translateY(-1px) }
-
-/* ── Cropper ── */
-.cropper-btn:hover{ filter:brightness(1.15); transform:scale(1.03) }
-
-/* ── Fuentes y paletas ── */
-.font-option:not(.active):hover{
-  border-color:var(--orange);
-  background:var(--og);
-  filter:brightness(1.08);
-}
-.palette-item:hover{ filter:brightness(1.2); transform:scale(1.06) }
-
-/* ── Botón volver (tb-back) ── */
-.tb-back:hover{ background:var(--border2); color:var(--text); transform:scale(1.06) }
-
-/* ── Botón sync ── */
-.tb-sync:hover{ background:var(--border2); color:var(--text) }
-
-/* ── Captura genérica: divs/spans con onclick que no tienen clase propia ── */
-[onclick]:not(button):not(.mc):not(.stat):not(.ccard-head):not(.mcard)
-:not(.week-block):not(.km-item):not(.km-btn):not(.tab-btn):not(.s-btn)
-:not(.add-rep-btn):not(.modal-close):not(.mci):not(.dba):not(.rab)
-:not(.btn-seg):not(.cc-av):not(.cc-info):not(.abo-del):not(.tb-back)
-:not(.tb-sync):not(.cli-head):not(.font-option):not(.palette-item):hover{
-  filter:brightness(1.1);
   cursor:pointer;
 }
+
+/* ── Refinamientos específicos por tipo ─────────────────────────── */
+
+/* Tarjetas menú home */
+.mc:not(.primary):hover{background:var(--border2);border-color:var(--orange);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);filter:brightness(1.1)}
+.mc.primary:hover{filter:brightness(1.15);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,43,.5)}
+
+/* Stats */
+.stat:hover{filter:brightness(1.15);border-color:var(--orange);transform:translateY(-2px)}
+
+/* Tarjetas */
+.ccard-head:hover{background:rgba(255,255,255,.06);filter:brightness(1.06)}
+.mcard:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.cli-head:hover{background:rgba(255,255,255,.06);filter:brightness(1.06)}
+.week-block:hover{filter:brightness(1.18);border-color:var(--orange)}
+
+/* Menú ⋮ */
+.km-btn:hover{background:var(--border2);color:var(--text);filter:brightness(1.12)}
+.km-item:hover{background:var(--card);filter:brightness(1.1)}
+
+/* Modal */
+.modal-close:hover{background:var(--border2);color:var(--text);transform:scale(1.1)}
+.mci:hover{background:var(--card);border-color:var(--orange)}
+
+/* Pestañas */
+.tab-btn:not(.active):hover{background:rgba(255,255,255,.08);color:var(--text);filter:brightness(1.12)}
+#ctab-activo:hover,#ctab-hist:hover,#tab-login:hover,#tab-reg:hover{filter:brightness(1.12)}
+
+/* Estado / agregar rep / autocomplete */
+.s-btn:hover{filter:brightness(1.22);transform:scale(1.03)}
+.add-rep-btn:hover{background:var(--card);color:var(--orange);filter:brightness(1.1)}
+.ac-item:hover,.ac-item.focused{background:var(--border);filter:brightness(1.1)}
+
+/* Botones pequeños */
+.dba:hover{filter:brightness(1.28);transform:scale(1.1)}
+.rab:hover{opacity:1;filter:brightness(1.22);transform:scale(1.1)}
+.abo-del:hover{opacity:1;filter:brightness(1.22);transform:scale(1.1)}
+.btn-se:hover{filter:brightness(1.18);transform:scale(1.06)}
+.ri-edit-save:hover{filter:brightness(1.15);transform:scale(1.04)}
+.ri-edit-cancel:hover{background:var(--border2);transform:scale(1.04)}
+.inv-adj button:hover{background:var(--border2);border-color:var(--orange);color:var(--text);transform:scale(1.12)}
+
+/* Segmento */
+.btn-seg:not(.seg-active):hover{border-color:var(--border2);color:var(--text);background:rgba(255,255,255,.07);filter:brightness(1.12)}
+
+/* Botones de color */
+.btn-primary:hover,.btn-reg:hover{filter:brightness(1.15);transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,43,.5)}
+.btn-entregar:hover{filter:brightness(1.15);transform:translateY(-1px);box-shadow:0 6px 18px rgba(139,92,246,.5)}
+.btn-abo:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.btn-danger:hover{filter:brightness(1.18);transform:scale(1.03)}
+.btn-success:hover{filter:brightness(1.15);transform:scale(1.03)}
+.btn-secondary:hover{background:var(--border2);color:var(--text);filter:brightness(1.12)}
+.btn-ghost:hover{background:var(--card);color:var(--text);filter:brightness(1.1)}
+.btn-purple:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.cropper-btn:hover{filter:brightness(1.15);transform:scale(1.04)}
+
+/* Fuentes / paletas / personalizar */
+.font-option:not(.active):hover{border-color:var(--orange);background:var(--og);filter:brightness(1.1)}
+.palette-item:hover{filter:brightness(1.22);transform:scale(1.07)}
+.tb-back:hover{background:var(--border2);color:var(--text);transform:scale(1.08)}
+.tb-sync:hover{background:var(--border2);color:var(--text)}
+[onclick="togFontPanel()"]:hover,[onclick="togPassForm()"]:hover{background:rgba(255,255,255,.04);filter:brightness(1.1)}
+
+/* Labels de carpeta upload (logo/fondo) */
+label[style*="cursor:pointer"]:hover{filter:brightness(1.15);transform:scale(1.05)}
+
 </style>
 </head>
 <body>
