@@ -653,6 +653,87 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;flex-shrink:0
 }
+
+/* ══ HOVER HIGHLIGHTS GLOBALES ════════════════════════════════════ */
+/* Transición base en todos los elementos interactivos */
+.mc,.stat,.ccard-head,.cc-av,.cc-info,.mcard,.week-block,.cli-head,
+.km-item,.km-btn,.modal-close,.mci,.tab-btn,.s-btn,.add-rep-btn,
+.dba,.rab,.btn-se,.ri-edit-save,.ri-edit-cancel,.inv-adj button,
+.btn-seg,.btn-reg,.btn-entregar,.btn-abo,.btn-danger,.cropper-btn,
+.font-option,.palette-item,.db-item-head{
+  transition:filter .15s, background .15s, opacity .15s, transform .15s, border-color .18s;
+}
+
+/* Tarjetas del menú home — iluminado suave */
+.mc:not(.primary):hover{ background:var(--border); filter:brightness(1.08) }
+.mc.primary:hover{ filter:brightness(1.1) }
+
+/* Stats — brillo suave */
+.stat:hover{ filter:brightness(1.12); border-color:var(--border2) }
+
+/* Tarjetas de clientes y mensuales */
+.ccard-head:hover,.cc-av:hover,.cc-info:hover{ background:rgba(255,255,255,.04) }
+.mcard:hover{ filter:brightness(1.07) }
+
+/* Semanas acordeón */
+.week-block:hover{ filter:brightness(1.1) }
+
+/* Filas de clientes en mensual */
+.cli-head:hover{ background:rgba(255,255,255,.04) }
+
+/* Menú ⋮ items */
+.km-item:hover{ background:var(--card) }
+.km-btn:hover{ background:var(--border); color:var(--text) }
+
+/* Botón cerrar modal */
+.modal-close:hover{ background:var(--border); color:var(--text) }
+
+/* Selector de cliente en modal */
+.mci:hover{ background:var(--card); border-color:var(--border) }
+
+/* Pestañas */
+.tab-btn:not(.active):hover{ background:rgba(255,255,255,.05); color:var(--text2) }
+
+/* Botones de estado (Pendiente/Proceso/Listo) */
+.s-btn:hover{ filter:brightness(1.15) }
+
+/* Botón agregar reparación */
+.add-rep-btn:hover{ background:var(--card) }
+
+/* Botones de acción pequeños (editar/eliminar) */
+.dba:hover{ filter:brightness(1.2) }
+.rab:hover{ opacity:1 }
+.btn-se:hover{ filter:brightness(1.12) }
+.ri-edit-save:hover{ filter:brightness(1.1) }
+.ri-edit-cancel:hover{ background:var(--border) }
+
+/* Botones de ajuste de inventario */
+.inv-adj button:hover{ background:var(--border2); color:var(--text) }
+
+/* Botones segmento (Reparación/Cotización) */
+.btn-seg:not(.seg-active):hover{ border-color:var(--border2); color:var(--text2); background:rgba(255,255,255,.04) }
+
+/* Botones primarios — brillo al hover */
+.btn-reg:hover,.btn-primary:hover{ filter:brightness(1.1) }
+.btn-entregar:hover{ filter:brightness(1.1) }
+.btn-abo:hover{ opacity:.86 }
+.btn-danger:hover{ filter:brightness(1.12) }
+.cropper-btn:hover{ filter:brightness(1.1) }
+
+/* Opciones de fuente y paleta */
+.font-option:not(.active):hover{ border-color:var(--border2); background:var(--card) }
+.palette-item:hover{ filter:brightness(1.15); transform:scale(1.04) }
+
+/* Elementos de base de datos */
+.db-item-head:hover .dba{ opacity:1 }
+
+/* Captura genérica: divs/spans con onclick inline que no tienen clase propia */
+[onclick]:not(.mc):not(.stat):not(.ccard-head):not(.mcard):not(.week-block)
+:not(.km-item):not(.km-btn):not(.tab-btn):not(.s-btn):not(.add-rep-btn)
+:not(.modal-close):not(.mci):not(.dba):not(.rab):not(.btn-seg):not(button):hover{
+  filter:brightness(1.08);
+  cursor:pointer;
+}
 </style>
 </head>
 <body>
