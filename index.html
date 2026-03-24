@@ -657,11 +657,16 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 <body>
 <div id="app">
   <div id="screen-login" class="screen active" style="justify-content:center;align-items:center;background:var(--bg);overflow-y:auto">
-    <div style="width:min(100%,340px);padding:clamp(20px,5vw,40px);display:flex;flex-direction:column;align-items:center;gap:14px;box-sizing:border-box">
-      <div id="login-logo" style="width:72px;height:72px;background:var(--orange);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 6px 20px var(--shadow-orange);margin-bottom:4px">🔧</div>
-      <div style="text-align:center;margin-bottom:4px;width:100%;overflow:hidden">
-        <div id="login-title" class="logo-text" style="font-size:clamp(1.1rem,7vw,2rem);white-space:nowrap;overflow:hidden;text-overflow:clip;display:block;width:100%">Taller Mecánico</div>
+    <div style="width:min(100%,340px);display:flex;flex-direction:column;align-items:center;gap:14px;box-sizing:border-box">
+      <!-- Logo -->
+      <div style="padding:clamp(20px,5vw,40px) clamp(20px,5vw,40px) 0;display:contents"></div>
+      <div id="login-logo" style="margin-top:clamp(20px,5vw,40px);width:72px;height:72px;background:var(--orange);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 6px 20px var(--shadow-orange)">🔧</div>
+      <!-- Título — ancho completo de la pantalla, centrado, sin clips -->
+      <div style="width:100vw;text-align:center">
+        <div id="login-title" class="logo-text" style="font-size:clamp(1.6rem,6vw,2.4rem);white-space:nowrap">Taller Mecánico</div>
       </div>
+      <!-- Resto del formulario con padding lateral -->
+      <div style="width:100%;padding:0 clamp(20px,5vw,40px) clamp(20px,5vw,40px);display:flex;flex-direction:column;gap:14px;box-sizing:border-box">
       <div style="display:flex;width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px;gap:3px;box-sizing:border-box;overflow:hidden">
         <button id="tab-login" onclick="showLoginTab('login')"
           class="btn btn-primary" style="flex:1;min-width:0;height:38px;border-radius:7px;font-size:clamp(0.7rem,1.8vw,0.82rem);padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
@@ -706,7 +711,8 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         <button class="btn-reg" onclick="doRegister()">Crear cuenta</button>
       </div>
       <div id="login-loading" style="display:none;font-size:0.75rem;color:var(--text3)">🔄 Verificando...</div>
-    </div>
+      </div><!-- /form-padding -->
+    </div><!-- /340px container -->
   </div>
   <div id="screen-home-cliente" class="screen">
     <div class="home-header">
