@@ -656,13 +656,13 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
 </head>
 <body>
 <div id="app">
-  <div id="screen-login" class="screen active" style="justify-content:center;align-items:center;background:var(--bg)">
-    <div style="width:100%;max-width:340px;padding:clamp(20px,5vw,40px);display:flex;flex-direction:column;align-items:center;gap:14px">
+  <div id="screen-login" class="screen active" style="justify-content:center;align-items:center;background:var(--bg);overflow-y:auto">
+    <div style="width:100%;max-width:340px;padding:clamp(20px,5vw,40px);display:flex;flex-direction:column;align-items:center;gap:14px;box-sizing:border-box">
       <div id="login-logo" style="width:72px;height:72px;background:var(--orange);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 6px 20px var(--shadow-orange);margin-bottom:4px">🔧</div>
       <div style="text-align:center;margin-bottom:4px">
         <div id="login-title" class="logo-text" style="font-size:clamp(1.6rem,5vw,2.4rem)">Taller Mecánico</div>
       </div>
-      <div style="display:flex;width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px;gap:3px">
+      <div style="display:flex;width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px;gap:3px;box-sizing:border-box">
         <button id="tab-login" onclick="showLoginTab('login')"
           class="btn btn-primary" style="flex:1;height:38px;border-radius:7px;font-size:0.8rem">
           Iniciar sesión</button>
@@ -754,9 +754,9 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
       </div>
     </div>
     <div class="home-stats">
-      <div class="stat" onclick="goToFrom('screen-bases','screen-home');showBasesTab('cli')" style="cursor:pointer"><div class="sv" id="s-cli">0</div><div class="sl">Clientes</div></div>
+      <div class="stat" id="stat-cli" onclick="goToFrom('screen-bases','screen-home');showBasesTab('cli')" style="cursor:pointer"><div class="sv" id="s-cli">0</div><div class="sl">Clientes</div></div>
       <div class="stat" id="stat-rep" onclick="goToFrom('screen-bases','screen-home');showBasesTab('rep')" style="cursor:pointer"><div class="sv" id="s-rep">0</div><div class="sl">Reparaciones</div></div>
-      <div class="stat" onclick="goTo('screen-clientes')" style="cursor:pointer"><div class="sv" id="s-pend">0</div><div class="sl">Pendientes</div></div>
+      <div class="stat" id="stat-pend" onclick="isEmpleado()?goTo('screen-clientes-emp'):goTo('screen-clientes')" style="cursor:pointer"><div class="sv" id="s-pend">0</div><div class="sl">Pendientes</div></div>
       <div class="stat" id="stat-dia" onclick="goTo('screen-cortes');showCortesTab('dia')" style="cursor:pointer"><div class="sv" id="s-dia">$0</div><div class="sl">Hoy</div></div>
       <div class="stat" id="stat-sem" onclick="goTo('screen-cortes');showCortesTab('sem')" style="cursor:pointer"><div class="sv" id="s-sem">$0</div><div class="sl" id="sl-sem">Semana</div></div>
       <div class="stat" id="stat-mes" onclick="goTo('screen-cortes');showCortesTab('mes')" style="cursor:pointer"><div class="sv" id="s-mes">$0</div><div class="sl" id="sl-mes">Mes</div></div>
@@ -795,7 +795,7 @@ html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(
         </div>
       </div>
       <div id="home-emp-btns" style="display:none;flex-direction:column;gap:12px">
-        <div class="mc" style="cursor:default;pointer-events:none;opacity:0.65">
+        <div class="mc" onclick="goTo('screen-clientes-emp')">
           <div class="mc-icon">👥</div>
           <div class="mc-info"><div class="mc-title">Clientes</div><div class="mc-desc">Ver estado y agregar abonos</div></div>
           <div class="mc-arr">›</div>
@@ -2338,8 +2338,14 @@ function _goBack(){
   if(activeNow===homeScreen || activeNow==='') { logout(); return }
   // ── Caso especial: screen-dbgeneral tiene dos niveles internos ──
   if(activeNow==='screen-dbgeneral' && _dbgSheet){ dbgBack(); return }
-  // Siempre usar el árbol ROUTES como fuente de verdad
-  // El navStack NO define el back — solo el árbol jerárquico lo hace
+  // Usar el árbol ROUTES como fuente de verdad, PERO si el penúltimo en el navStack
+  // es screen-home (no screen-admin), regresar directo a home en vez de al padre del árbol
+  const prev = navStack.length >= 2 ? navStack[navStack.length-2] : null
+  if(prev === homeScreen){
+    navStack.pop()
+    navigate(homeScreen)
+    return
+  }
   const target = ROUTES[activeNow] || homeScreen
   navigate(target)
 }
@@ -2939,7 +2945,14 @@ function getWeekNum(dateStr){
 }
 function weekLabel(n){return['','Semana 1 (1–7)','Semana 2 (8–14)','Semana 3 (15–21)','Semana 4 (22–31)'][n]}
 // ── Helpers compartidos de cortes ────────────────────────────────
-function togCli(id){$id(id)?.classList.toggle('open')}
+function togCli(id){
+  const el=$id(id)
+  if(!el) return
+  el.classList.toggle('open')
+  // Forzar display en el body para que el CSS class selector funcione correctamente
+  const body=el.querySelector('.cli-body')
+  if(body) body.style.display=el.classList.contains('open')?'block':'none'
+}
 // Genera tabla de clientes para un conjunto de reparaciones
 // rows: [{nombre,vehiculo,reparacion,manoObra,material,total,_activo,_liquidado,fecha}]
 // showFecha: mostrar columna de fecha (semana/mes) o no (día)
@@ -4881,20 +4894,15 @@ function renderClienteActivo(){
         <div style="font-size:0.9rem;font-weight:800">🚗 ${c.vehiculo}</div>
         <div style="font-size:0.72rem;font-weight:700;color:var(--${st==='pending'?'yellow':st==='process'?'orange':'green'})">${stL[st]}</div>
       </div>
-      <div style="padding:0 16px 12px">
+      <div style="padding:0 16px 8px">
         ${reps.map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
           <div style="flex:1;font-size:0.82rem;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.reparacion}</div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
-            <div style="display:flex;align-items:center;gap:4px">
-              <span style="font-size:0.6rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Total</span>
-              <span style="font-size:0.78rem;font-weight:700;color:var(--orange)">${f$(r.total)}</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:4px">
-              <span style="font-size:0.6rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Pendiente</span>
-              <span style="font-size:0.72rem;font-weight:700;color:${saldo<=0?'var(--green)':'var(--red)'}">${saldo<=0?'Al día':f$(saldo)}</span>
-            </div>
-          </div>
+          <div style="font-size:0.68rem;color:var(--text3);white-space:nowrap;flex-shrink:0">📅 ${fD(r.fecha)}</div>
         </div>`).join('')}
+      </div>
+      <div style="margin:0 16px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Saldo pendiente</div>
+        <div style="font-size:0.88rem;font-weight:800;color:${saldo<=0?'var(--green)':'var(--red)'}">${saldo<=0?'✅ Al día':f$(saldo)}</div>
       </div>
     </div>`
   }).join('')
@@ -5026,10 +5034,22 @@ async function doLogin(){
     // ↑ soporta hashes nuevos Y contraseñas viejas en texto plano (compatibilidad temporal)
   )
   if(!user){
-    const adminPassRaw=String(cfgGet('admin_pass','administrador1505')).trim()
-    const adminPassHash=await sha256(adminPassRaw)
-    if(nombre.toLowerCase()==='admin'&&(pass.trim()===adminPassRaw||passHash===adminPassHash)){
-      _session={id:'admin',nombre:'Admin',rol:'admin'}
+    // Solo permitir admin/admin123 si NO existe ningún usuario con rol admin en la DB
+    const hayAdminReal=DB[SH_USR].some(u=>u.rol==='admin')
+    if(!hayAdminReal){
+      const adminPassRaw=String(cfgGet('admin_pass','administrador1505')).trim()
+      const adminPassHash=await sha256(adminPassRaw)
+      const FALLBACK_PASSES=['admin123','administrador1505',adminPassRaw]
+      const passHashAdmin=await sha256('admin123')
+      if(nombre.toLowerCase()==='admin'&&(
+        pass.trim()==='admin123'||passHash===passHashAdmin||
+        pass.trim()===adminPassRaw||passHash===adminPassHash
+      )){
+        _session={id:'admin',nombre:'Admin',rol:'admin'}
+      } else {
+        hideLoader()
+        errEl.style.display='block';errEl.textContent='❌ Usuario o contraseña incorrectos';return
+      }
     } else {
       hideLoader()
       errEl.style.display='block';errEl.textContent='❌ Usuario o contraseña incorrectos';return
@@ -5081,6 +5101,34 @@ function applyRoleUI(){
   const homeEmp=$id('home-emp-btns')
   if(homeAdmin) homeAdmin.style.display=isAdmin()?'flex':'none'
   if(homeEmp) homeEmp.style.display=isEmpleado()?'flex':'none'
+  // En modo empleado: ocultar stats de costos
+  const costStats=['stat-dia','stat-sem','stat-mes']
+  costStats.forEach(id=>{
+    const el=$id(id)
+    if(el) el.style.display=isAdmin()?'':'none'
+  })
+  // Stat de clientes — en empleado sin navegación a bases de datos
+  const statCliEl=$id('stat-cli')
+  if(statCliEl){
+    if(isEmpleado()){
+      statCliEl.style.cursor='default'
+      statCliEl.onclick=null
+    } else {
+      statCliEl.style.cursor='pointer'
+      statCliEl.onclick=function(){ goToFrom('screen-bases','screen-home');showBasesTab('cli') }
+    }
+  }
+  // Stat reparaciones — en empleado sin navegación a bases de datos
+  const statRepEl=$id('stat-rep')
+  if(statRepEl){
+    if(isEmpleado()){
+      statRepEl.style.cursor='default'
+      statRepEl.onclick=null
+    } else {
+      statRepEl.style.cursor='pointer'
+      statRepEl.onclick=function(){ goToFrom('screen-bases','screen-home');showBasesTab('rep') }
+    }
+  }
   updateStats()
 }
 
