@@ -6054,5 +6054,31 @@ initApp()
     </div>
   </div>
 </div>
+<!-- ══ KEEP ALIVE — evita que el browser duerma la pestaña ══ -->
+<script>
+(function(){
+  // 1) Cuando la pestaña vuelve a ser visible, fuerza un re-render ligero
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'visible'){
+      document.body.style.opacity = '0.99';
+      requestAnimationFrame(function(){ document.body.style.opacity = '1'; });
+    }
+  });
+  // 2) Web Locks API — le dice al browser que esta pestaña tiene trabajo pendiente
+  if(navigator.locks && navigator.locks.request){
+    const keepAlive = () => {
+      navigator.locks.request('keep_alive_lock', { mode:'shared' }, () =>
+        new Promise(resolve => { setInterval(resolve, 25000); })
+      ).then(keepAlive).catch(()=>{});
+    };
+    keepAlive();
+  }
+  // 3) Fallback: toca el DOM cada 20s para que el browser no la congele
+  setInterval(function(){
+    if(document.visibilityState === 'visible') return;
+    var t = document.title; document.title = t;
+  }, 20000);
+})();
+</script>
 </body>
 </html>
