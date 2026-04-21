@@ -1760,21 +1760,81 @@ function isCliente(){ return _session?.rol==='cliente' }
 const DB={clientes:[],sesiones:[],cierre:[],abonos:[],catalogo_reparaciones:[],catalogo_clientes:[],config:[],usuarios:[]}
 let _ready=false, _polling=false, _version=localStorage.getItem(LS_VER)||'0'
 
-// ── localStorage — carga y guarda cache local ─────────────────────
-function lsLoad(){
+// ── Hash Tables — índices por id para búsquedas O(1) ─────────────
+// En lugar de DB[sh].find(r=>r.id===x) → usar _IDX[sh][x]  (instantáneo)
+const _IDX={}
+function rebuildIndexes(){
+  ALL_SHEETS.forEach(sh=>{
+    _IDX[sh]={}
+    if(Array.isArray(DB[sh])) DB[sh].forEach(r=>{ if(r.id!=null) _IDX[sh][String(r.id)]=r })
+  })
+}
+function _idxAdd(sh,row){ if(row?.id!=null) _IDX[sh][String(row.id)]=row }
+function _idxDel(sh,id){ delete _IDX[sh][String(id)] }
+function _idxUpd(sh,row){ if(row?.id!=null) _IDX[sh][String(row.id)]={..._IDX[sh][String(row.id)],...row} }
+
+// ── IndexedDB — reemplaza localStorage para caché y cola ──────────
+// localStorage sigue para: sesión, deviceId, versión, tema, fuente (son strings pequeños)
+let _idb=null
+const IDB_NAME='taller_db', IDB_VER=1, IDB_STORE='cache'
+function idbOpen(){
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open(IDB_NAME,IDB_VER)
+    req.onupgradeneeded=e=>{
+      const db=e.target.result
+      if(!db.objectStoreNames.contains(IDB_STORE))
+        db.createObjectStore(IDB_STORE,{keyPath:'key'})
+    }
+    req.onsuccess=e=>{ _idb=e.target.result; res(_idb) }
+    req.onerror=()=>rej(req.error)
+  })
+}
+function idbSet(key,value){
+  return new Promise((res,rej)=>{
+    try{
+      const tx=_idb.transaction(IDB_STORE,'readwrite')
+      tx.objectStore(IDB_STORE).put({key,value})
+      tx.oncomplete=res
+      tx.onerror=()=>rej(tx.error)
+    }catch(e){ rej(e) }
+  })
+}
+function idbGet(key){
+  return new Promise((res,rej)=>{
+    try{
+      const tx=_idb.transaction(IDB_STORE,'readonly')
+      const req=tx.objectStore(IDB_STORE).get(key)
+      req.onsuccess=()=>res(req.result?.value??null)
+      req.onerror=()=>rej(req.error)
+    }catch(e){ rej(e) }
+  })
+}
+function idbDel(key){
+  return new Promise((res,rej)=>{
+    try{
+      const tx=_idb.transaction(IDB_STORE,'readwrite')
+      tx.objectStore(IDB_STORE).delete(key)
+      tx.oncomplete=res
+      tx.onerror=()=>rej(tx.error)
+    }catch(e){ rej(e) }
+  })
+}
+
+// lsLoad / lsSave ahora usan IndexedDB (async)
+async function lsLoad(){
   try{
-    const raw=localStorage.getItem(LS_KEY)
-    if(!raw) return false
-    const cached=JSON.parse(raw)
+    const cached=await idbGet(LS_KEY)
+    if(!cached) return false
     ALL_SHEETS.forEach(sh=>{ if(Array.isArray(cached[sh])) DB[sh]=cached[sh] })
+    rebuildIndexes()  // reconstruir hash tables tras cargar caché
     return true
   }catch(e){ return false }
 }
-function lsSave(){
+async function lsSave(){
   try{
     const data={}
     ALL_SHEETS.forEach(sh=>data[sh]=DB[sh])
-    localStorage.setItem(LS_KEY,JSON.stringify(data))
+    await idbSet(LS_KEY,data)
     localStorage.setItem(LS_VER,String(_version))
   }catch(e){}
 }
@@ -1927,7 +1987,7 @@ function queueOp(op){
   if(_isOnline){
     flushQueue() // envío inmediato
   } else {
-    try{ localStorage.setItem(LS_QUEUE,JSON.stringify(_queue)) }catch(e){}
+    idbSet(LS_QUEUE,_queue).catch(()=>{})
   }
 }
 
@@ -1940,7 +2000,7 @@ async function flushQueue(){
   _queue.length=0
   clearTimeout(_flushTimeout)
   try{
-    localStorage.removeItem(LS_QUEUE)
+    await idbDel(LS_QUEUE).catch(()=>{})
     await gsPost({action:'batch',ops:JSON.stringify(ops)})
     // Registrar la versión que enviamos como "nuestra"
     _myVersions.add(_version)
@@ -1960,25 +2020,22 @@ window.addEventListener('offline',()=>{
   _isOnline=false
   setDot('pending','Sin conexión')
   // Guardar cola actual en localStorage
-  if(_queue.length) try{ localStorage.setItem(LS_QUEUE,JSON.stringify(_queue)) }catch(e){}
+  if(_queue.length) idbSet(LS_QUEUE,_queue).catch(()=>{})
 })
 
 // Al reconectar — vaciar cola acumulada y sincronizar
 window.addEventListener('online',()=>{
   _isOnline=true
   setDot('syncing','Reconectando...')
-  // Recuperar operaciones guardadas offline
-  try{
-    const saved=localStorage.getItem(LS_QUEUE)
-    if(saved){
-      const savedOps=JSON.parse(saved)
+  // Recuperar operaciones guardadas offline desde IndexedDB
+  idbGet(LS_QUEUE).then(savedOps=>{
+    if(Array.isArray(savedOps)){
       savedOps.forEach(o=>{
         if(!_queue.find(q=>JSON.stringify(q)===JSON.stringify(o))) _queue.push(o)
       })
     }
-  }catch(e){}
-  // Enviar todo y luego sincronizar UI
-  flushQueue().then(()=>{ if(_ready) autoSync() })
+    flushQueue().then(()=>{ if(_ready) autoSync() })
+  }).catch(()=>{ flushQueue().then(()=>{ if(_ready) autoSync() }) })
 })
 
 // ── HTTP ──────────────────────────────────────────────────────────
@@ -2021,7 +2078,8 @@ async function gsLoadAll(){
   _version=sheetLastmod
   localStorage.setItem(LS_VER,_version)
   takeSnap()
-  lsSave()
+  rebuildIndexes()  // reconstruir hash tables tras sync
+  lsSave().catch(()=>{})
 }
 
 // ── Operaciones — solo encolar, no tocar UI ───────────────────────
@@ -2029,7 +2087,7 @@ async function gsLoadAll(){
 let _lsSaveTimer=null
 function lsSaveDeferred(){
   clearTimeout(_lsSaveTimer)
-  _lsSaveTimer=setTimeout(lsSave, 300) // espera 300ms de silencio antes de guardar
+  _lsSaveTimer=setTimeout(()=>lsSave().catch(()=>{}), 300)
 }
 
 function bumpVersion(){
@@ -2043,18 +2101,20 @@ function bumpVersion(){
 
 function gsAppendBg(sheet,row){
   DB[sheet].push(row)
+  _idxAdd(sheet,row)
   _invalidateRenderCache()
   bumpVersion()
   queueOp({action:'append',sheet,row})
 }
 function gsUpdateBg(sheet,row,idCol='id'){
   const i=DB[sheet].findIndex(r=>String(r[idCol])===String(row[idCol]))
-  if(i!==-1) DB[sheet][i]={...DB[sheet][i],...row}
+  if(i!==-1){ DB[sheet][i]={...DB[sheet][i],...row}; _idxUpd(sheet,DB[sheet][i]) }
   bumpVersion()
   queueOp({action:'update',sheet,row,idCol})
 }
 function gsDeleteBg(sheet,idVal,idCol='id'){
   DB[sheet]=DB[sheet].filter(r=>String(r[idCol])!==String(idVal))
+  _idxDel(sheet,idVal)
   _invalidateRenderCache()
   bumpVersion()
   queueOp({action:'delete',sheet,idVal,idCol})
@@ -2117,7 +2177,7 @@ async function autoSync(){
     setDot('syncing','Sincronizando...')
     const prevSnap={..._snap}
     await gsLoadAll()
-    lsSave()
+    await lsSave()
     applyConfig()
     smartUpdate(prevSnap)
     setDot('ok','Sincronizado')
@@ -2738,7 +2798,7 @@ function regIngreso(){
   if(!rep){showToast('⚠️ Describe la reparación','error');return}
   const now=new Date().toISOString()
   if(selCid){
-    const ci=DB[SH_CLI].findIndex(c=>c.id===selCid);if(ci===-1)return
+    const ci=DB[SH_CLI].indexOf(_IDX[SH_CLI][String(selCid)]);if(ci===-1)return
     let sid=DB[SH_CLI][ci].activeSession
     if(!sid||sid==='') sid=gid()
     DB[SH_CLI][ci]={...DB[SH_CLI][ci],activeSession:sid,status:'pending'}
@@ -2775,7 +2835,7 @@ function regExistente(){ regIngreso() }
 // ── Status ────────────────────────────────────────────────────────
 function setStatus(cid,status,e){
   e&&e.stopPropagation()
-  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  const ci=DB[SH_CLI].indexOf(_IDX[SH_CLI][String(cid)]);if(ci===-1)return
   DB[SH_CLI][ci]={...DB[SH_CLI][ci],status}
   gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
   // Actualizar solo la tarjeta afectada — sin re-renderizar toda la lista
@@ -2789,7 +2849,7 @@ function setStatus(cid,status,e){
     const existing=card.querySelector('.btn-entregar')
     if(existing) existing.closest('div[style*="padding"]')?.remove()
     if(status==='done'){
-      const _sid=DB[SH_CLI].find(c=>c.id===cid)?.activeSession
+      const _sid=_IDX[SH_CLI][String(cid)]?.activeSession
       const _tot=DB[SH_SES].filter(r=>r.clientId===cid&&r.sessionId===_sid).reduce((s,r)=>s+numF(r.total),0)
       const _abo=DB[SH_ABO].filter(a=>a.clientId===cid).reduce((s,a)=>s+numF(a.monto),0)
       if(_abo>=_tot){
@@ -2818,7 +2878,7 @@ function doAbono(cid,e){
   showToast('💵 Abono registrado','success')
   const _abCard=$id('cc-'+cid)
   if(_abCard){
-    const _abCi=DB[SH_CLI].findIndex(c=>c.id===cid)
+    const _abCi=DB[SH_CLI].indexOf(_IDX[SH_CLI][String(cid)])
     if(_abCi!==-1&&DB[SH_CLI][_abCi].status==='done'){
       const _abSid=DB[SH_CLI][_abCi].activeSession
       const _abTot=DB[SH_SES].filter(r=>r.clientId===cid&&r.sessionId===_abSid).reduce((s,r)=>s+numF(r.total),0)
@@ -2842,7 +2902,7 @@ function doAbono(cid,e){
 
 // ── Cierre ────────────────────────────────────────────────────────
 function autoClose(cid){
-  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  const ci=DB[SH_CLI].indexOf(_IDX[SH_CLI][String(cid)]);if(ci===-1)return
   const client=DB[SH_CLI][ci];if(client.status!=='done')return
   const sid=client.activeSession
   const cycleReps=DB[SH_SES].filter(r=>r.clientId===cid&&r.sessionId===sid)
@@ -2862,7 +2922,7 @@ function autoClose(cid){
 // ── Entregar — archiva al cliente cuando completado y liquidado ───
 function entregar(cid,e){
   e&&e.stopPropagation()
-  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  const ci=DB[SH_CLI].indexOf(_IDX[SH_CLI][String(cid)]);if(ci===-1)return
   const client=DB[SH_CLI][ci]
   if(client.status!=='done'){showToast('⚠️ Marca el carro como Completado primero','error');return}
   const sid=client.activeSession
@@ -2997,7 +3057,7 @@ function togEdit(rid){
 function saveEdit(rid,cid){
   const mo=numF($id('emo-'+rid).value)
   const mat=numF($id('emat-'+rid).value)
-  const ri=DB[SH_SES].findIndex(r=>r.id===rid);if(ri===-1)return
+  const ri=DB[SH_SES].indexOf(_IDX[SH_SES][String(rid)]);if(ri===-1)return
   DB[SH_SES][ri]={...DB[SH_SES][ri],manoObra:mo,material:mat,total:mo+mat}
   gsUpdateBg(SH_SES,DB[SH_SES][ri])
   sAC('db-reparaciones',DB[SH_SES][ri].reparacion,mo,mat)
@@ -3033,7 +3093,7 @@ function regDesdeModal(){
   const mo=numF($id('inp-mmo').value)
   const mat=numF($id('inp-mmat').value)
   if(!rep){showToast('⚠️ Describe la reparación','error');return}
-  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  const ci=DB[SH_CLI].indexOf(_IDX[SH_CLI][String(cid)]);if(ci===-1)return
   let sid=DB[SH_CLI][ci].activeSession
   if(!sid||sid==='') sid=gid()
   const newRep={id:gid(),clientId:cid,sessionId:sid,reparacion:rep,manoObra:mo,material:mat,total:mo+mat,fecha:new Date().toISOString()}
@@ -3727,8 +3787,9 @@ async function confirmDeleteAll(){
       // Conservar config pero resetear _lastmod
       bumpVersion()
       bumpVersion()
-      lsSave() // guarda config intacto
+      lsSave().catch(()=>{}) // guarda config intacto
       localStorage.removeItem(LS_VER)
+      idbDel(LS_KEY).catch(()=>{})
       closeModal('modal-deleteall')
       showToast('🗑 Todo borrado','error')
     } else throw new Error(r.error||'Error en servidor')
@@ -3866,7 +3927,7 @@ function addInventario(){
   showToast('✅ Pieza agregada','success')
 }
 function adjInv(id,delta){
-  const p=DB[SH_INV].find(x=>x.id===id); if(!p)return
+  const p=_IDX[SH_INV][String(id)]; if(!p)return
   const newQty=Math.max(0,(parseInt(p.cantidad)||0)+delta)
   gsUpdateBg(SH_INV,{...p,cantidad:newQty})
   renderInventario()
@@ -4055,7 +4116,7 @@ function openNuevaCot(){
   showCotModal()
 }
 function editCot(id){
-  _cotActual=DB[SH_COT].find(c=>c.id===id); if(!_cotActual)return
+  _cotActual=_IDX[SH_COT][String(id)]; if(!_cotActual)return
   const reps=_parseReps(_cotActual)
   _cotActual={..._cotActual,reps:JSON.parse(JSON.stringify(reps))}
   showCotModal()
@@ -4340,7 +4401,7 @@ function saveDbcEdit(cid){
   const nombre=toTitle($id('dbc-nombre-'+cid).value.trim())
   const vehiculo=toTitle($id('dbc-vehiculo-'+cid).value.trim())
   if(!nombre||!vehiculo){showToast('⚠️ Completa todos los campos','error');return}
-  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  const ci=DB[SH_CLI].indexOf(_IDX[SH_CLI][String(cid)]);if(ci===-1)return
   DB[SH_CLI][ci]={...DB[SH_CLI][ci],nombre,vehiculo}
   gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
   renderDbClientes();showToast('✅ Cliente actualizado','success')
@@ -5311,7 +5372,7 @@ function togUsrEdit(i){
 async function saveUsrEdit(i,uid){
   const newPass=$id('usr-np-'+i).value.trim()
   const newRol=$id('usr-nr-'+i).value
-  const ui=DB[SH_USR].findIndex(u=>u.id===uid); if(ui===-1)return
+  const ui=DB[SH_USR].indexOf(_IDX[SH_USR][String(uid)]); if(ui===-1)return
   const updated={...DB[SH_USR][ui],rol:newRol}
   if(newPass&&newPass.length>=4) updated.password=await sha256(newPass)
   else if(newPass&&newPass.length<4){showToast('⚠️ Contraseña mínimo 4 caracteres','error');return}
@@ -5402,7 +5463,7 @@ function renderClientesEmp(){
 }
 function setStatusEmp(cid,status,e){
   e&&e.stopPropagation()
-  const ci=DB[SH_CLI].findIndex(c=>c.id===cid);if(ci===-1)return
+  const ci=DB[SH_CLI].indexOf(_IDX[SH_CLI][String(cid)]);if(ci===-1)return
   DB[SH_CLI][ci]={...DB[SH_CLI][ci],status}
   gsUpdateBg(SH_CLI,DB[SH_CLI][ci])
   renderClientesEmp()
@@ -5942,15 +6003,16 @@ const _origRerenderActive = typeof rerenderActive === 'function' ? rerenderActiv
 // ══════════════════════════════════════════════════════════════════
 // ── PUNTO DE ENTRADA ÚNICO: initApp() ────────────────────────────
 // ══════════════════════════════════════════════════════════════════
-function initApp(){
+async function initApp(){
   // 1. Preparar historial de navegación del browser
   try{
     history.replaceState({nav:0},'','')
     for(let i=1;i<=50;i++) history.pushState({nav:i},'','')
   }catch(e){}
 
-  // 2. Cargar caché local
-  const hasCached = lsLoad()
+  // 2. Abrir IndexedDB y cargar caché local (con hash tables)
+  await idbOpen().catch(()=>{})
+  const hasCached = await lsLoad()
 
   // 3. Recuperar sesión guardada
   const savedSession = localStorage.getItem(LS_SESSION)
@@ -5975,7 +6037,7 @@ function initApp(){
           if(remoteV!==_version && !remoteV.includes(_deviceId)){
             await gsLoadAll()
             _version = remoteV
-            lsSave()
+            await lsSave()
             applyConfig()
             rerenderActive()
           }
